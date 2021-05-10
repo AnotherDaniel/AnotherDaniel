@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Switch home assistant entity via command-line</title>
+  <meta name="description" content="home assistant, bash, curl">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="/">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="http://central.home:8000/">
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Switch home assistant entity via command-line</h2>		
+	<time datetime="2021-05-07T00:00:00-05:00" class="by-line">07 May 2021</time>
+	<div class="content">
+
+		<p>The last few days we paused on the journey, doing real-world things involving a guitar and some frustration.
+Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</p>
+
+<p><img src="img/RaspiCluster.png" alt="Stack of Raspberry Pis and a zigbee power switch" width="60%" /></p>
+
+<p>With that I can switch the cluster with a physical button, or via the web UI of my home assistant installation (or a widget on my smartphone, etc pp). But I was thinking that I’d also like a way to do this switching from the command line of my computer. When the mood takes me, I’m going to be fooling around in a shell anyways, so a shell command would be much more seamless than going via the HA lovelace dashboard!</p>
+
+<h2 id="api-first">API first</h2>
+<p>As there’s an integration for homeassistant for anything and everything, I set out to look for an extension to make device switching available via REST API. Immediately I found documentation for various REST integrations of home assistant, for allowing switching of GPIO pins… or integrating other REST-style APIs as sensors/switches into HA. 
+Hm. I must be missing something fundamental.</p>
+
+<h2 id="api-the-second">API, the second</h2>
+<p>And I was! Turns out the functionality I’m looking for is actually built into home assistant, just requires enabling by putting <code class="language-plaintext highlighter-rouge">api:</code> as a top-level entry into the HA configuration.yml.</p>
+
+<p>Restart home assistant and run curl against a test endpoint: <code class="language-plaintext highlighter-rouge">curl 192.168.0.x:8123/api/states</code>, which gets us a ‘not authorized’ response. Good - there’s something there, then.
+The excellent <a href="https://developers.home-assistant.io/docs/api/rest/">home assistant documentation</a> mentions that we need to use an access token for this, so we do what’s necessary - e’voila.</p>
+
+<h2 id="making-the-sights-pretty">Making the sights pretty</h2>
+<p>The home assistant API is up and accessible, so let’s use it. For now I’m only interested in switching one entity’s state - to get started I want three straightforward shell scripts: get state, switch on, switch off</p>
+
+<p>Home assistant docs give us all we need for this, and I’m going to use curl to perform the http calls. However, the naked curl command is either very verbose (in case of the GET statement), or too silent (for the POST actions) - I want some friendly feedback!</p>
+
+<h3 id="get-switch-state">GET switch state</h3>
+<p>For the GET state case, there is a very nice command line tool to work with json data for filtering, pretty-printing and more: <code class="language-plaintext highlighter-rouge">jq</code>. Which I didn’t know about until today, so that’s a win right there! Using jq, my get-state script looks like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/bin/bash
+curl -s -X GET \
+  -H "Authorization: Bearer `cat api.token`" \
+  -H "Content-Type: application/json" \
+  http://192.168.0.10:8123/api/states/switch.power_smartplug_1 \
+  | jq '.state?'
+</code></pre></div></div>
+<p>Quite simple I’d say - after some playing around, I settled on a jq filter that reduces the curl output to just the value of the state property returned by the GET call: if the switch is off, the command will simply give us an <code class="language-plaintext highlighter-rouge">"off"</code>. Nice, works for me!</p>
+
+<h3 id="post-to-change-switch-state">POST to change switch state</h3>
+<p>When POSTing to the home assistant endpoint to switch power on or off, normally curl will just give us the (empty) body returned by the http request. That is not a lot - I want to see the http response code at least. There are many ways to skin this cat - after playing around with some options the internet offered, I decided to go with this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/bin/bash
+curl -is -X POST \
+  -H "Authorization: Bearer `cat api.token`" \
+  -H "Content-Type: application/json" \
+  -d '{"entity_id": "switch.power_smartplug_1"}' \
+  http://192.168.0.10:8123/api/services/switch/turn_on \
+  | head -n1  
+</code></pre></div></div>
+<p>the <code class="language-plaintext highlighter-rouge">-i</code> and <code class="language-plaintext highlighter-rouge">-s</code> switches tell curl to show http result information, but be silent otherwise. This will get us five lines of info about the http response - the http status code with a nice String representation (<code class="language-plaintext highlighter-rouge">HTTP/1.1 200 OK</code>), plus content-type, -length, date etc. That is nice but I’d rather just have the first line (the http status code). This can be done by piping the entire thing through the <code class="language-plaintext highlighter-rouge">head</code> command, telling it to just return the first line it’s seeing (<code class="language-plaintext highlighter-rouge">-n1</code>).</p>
+
+<h2 id="settling-down-for-the-day">Settling down for the day</h2>
+<p>That’s it, actually! We have three simple scripts that get us the cluster status, and can turn it on and off (modifying the POST script above to turn the cluster off is left as an exercise to the reader ;-) ). There might be follow-on ideas in the future, but for now I’m at the end of this little detour.</p>
+
+<hr />
+<h3 id="waymarks">Waymarks</h3>
+<ul>
+  <li>main takeaway from today is the <code class="language-plaintext highlighter-rouge">jq</code> tool</li>
+  <li>got some more knowledge about using curl</li>
+  <li>much happiness with home assistant! I love that system more each time I add something to it</li>
+  <li>added an image to this post, first time; figured out how to do sizing in jekyll/markdown</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>
