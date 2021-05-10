@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://central.home:8000/journey</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//journey</loc>
 <lastmod>2021-04-21T00:00:00-05:00</lastmod>
 </url>
 <url>
-<loc>http://central.home:8000/jekyllbuildpipe</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//jekyllbuildpipe</loc>
 <lastmod>2021-04-30T00:00:00-05:00</lastmod>
 </url>
 <url>
-<loc>http://central.home:8000/jekyllgithub</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//jekyllgithub</loc>
 <lastmod>2021-05-01T00:00:00-05:00</lastmod>
 </url>
 <url>
-<loc>http://central.home:8000/hassapi</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//hassapi</loc>
 <lastmod>2021-05-07T00:00:00-05:00</lastmod>
 </url>
 <url>
-<loc>http://central.home:8000/404</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//404</loc>
 </url>
 <url>
-<loc>http://central.home:8000/about</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//about</loc>
 </url>
 <url>
-<loc>http://central.home:8000/</loc>
+<loc>https://anotherdaniel.github.io/AnotherDaniel//</loc>
 </url>
 </urlset>
