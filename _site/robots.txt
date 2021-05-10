@@ -1,1 +1,0 @@
-Sitemap: http://central.home:8000/sitemap.xml
