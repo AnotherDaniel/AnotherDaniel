@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>A jekyll build pipe at home</title>
+  <meta name="description" content="jekyll, docker, ansible, css">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="/">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="http://central.home:8000/">
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>A jekyll build pipe at home</h2>		
+	<time datetime="2021-04-30T00:00:00-05:00" class="by-line">30 Apr 2021</time>
+	<div class="content">
+
+		<p>So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the <code class="language-plaintext highlighter-rouge">jekyll build</code> <strong>-b</strong> switch. That thing changes the <strong>site.baseurl</strong>, not the <strong>site.url</strong>! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the <code class="language-plaintext highlighter-rouge">main.css</code> stylesheet any longer… oh well.
+Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. 
+The primary takeaway on our jekyll experience is:</p>
+<ul>
+  <li>find a decent jekyll theme - not at all easy!</li>
+  <li>I found <a href="http://jekyllthemes.org/themes/monochrome/">monochrome</a>. Very nice, but needs some fixing esp for <a href="https://github.com/AnotherDaniel/messages-env/blob/main/monochrome/_sass/layout.scss">keeping the footer at the bottom of the page</a>.</li>
+</ul>
+
+<p>The code for this is <a href="https://github.com/AnotherDaniel/messages-env">up on github</a>.</p>
+
+<h2 id="also">Also!</h2>
+<p>We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the <a href="https://github.com/AnotherDaniel/messages-env/tree/main/docker">docker build files</a>, as well as the <a href="https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh">shell script</a> used to perform build&amp;push to our local container registry. 
+To complement this on the hosting side, I’ve created a little <a href="https://github.com/AnotherDaniel/messages-env/tree/main/ansible">ansible setup</a> to remote-control docker-compose on the home-central Raspi. It is an automation for stopping, then pulling and recreating our jekyll container according to this docker-compose definition we have created for our web-based diary:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: "3"
+services:
+  jekyll:
+    image: homecentral:5000/messages-env
+    container_name: jekyll
+    ports:
+      - 8000:80
+    restart: unless-stopped
+    healthcheck:
+      test: wget -q --spider http://192.168.0.10:8000 || exit 1
+      interval: 1m43s
+      timeout: 10s
+      retries: 3
+</code></pre></div></div>
+<p>Note that homecentral:5000 is our private docker registry, set up for this purpose. Not entirely sure whether we’ll stick with this setup for long, but consider it a stepping stone on the path…</p>
+
+<h2 id="wrapping-up-this-leg-one-question-remains">Wrapping up this leg, one question remains</h2>
+<p>How do I actually operate this? The first naive idea is to use a git commit hook to initiate our build and hosting pipeline. This would work fine, except for when I’m going to shut down my notebook right after committing my last diary update…
+As long as I’m hosting all of this on my own infrastructure, the only real alternative will be running build etc on my Raspi - initiated by the commit command maybe, but otherwise headless. Or go straight for a jenkins setup. But don’t feel like going there just yet…</p>
+
+<p>Maybe it will be more expedient to just make all of this public via github pages?</p>
+
+<hr />
+<h2 id="waymarks">Waymarks</h2>
+<ul>
+  <li>Stupid f*ing css and footers - hiding the bottom of the content pages. Who designs this stuff? (DONE, see commit eb6f3757bd213300f2e2602b2b30c49f5ac9dd6b)</li>
+  <li>css wants some changes to make hyperlinks more visible (DONE, see commit a52040ddbf554a5429601717671daa6db91b68bb)</li>
+  <li>Fix jekyll navigation links for our purposes. Hm, what to put here…?</li>
+  <li>See above - build and update on Raspi?</li>
+</ul>
+
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="http://central.home:8000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://central.home:8000/" rel="alternate" type="text/html" /><updated>2021-05-10T14:52:13-05:00</updated><id>http://central.home:8000/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Switch home assistant entity via command-line</title><link href="http://central.home:8000/hassapi" rel="alternate" type="text/html" title="Switch home assistant entity via command-line" /><published>2021-05-07T00:00:00-05:00</published><updated>2021-05-07T00:00:00-05:00</updated><id>http://central.home:8000/hassapi</id><content type="html" xml:base="http://central.home:8000/hassapi">&lt;p&gt;The last few days we paused on the journey, doing real-world things involving a guitar and some frustration.
+Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;img/RaspiCluster.png&quot; alt=&quot;Stack of Raspberry Pis and a zigbee power switch&quot; width=&quot;60%&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With that I can switch the cluster with a physical button, or via the web UI of my home assistant installation (or a widget on my smartphone, etc pp). But I was thinking that I’d also like a way to do this switching from the command line of my computer. When the mood takes me, I’m going to be fooling around in a shell anyways, so a shell command would be much more seamless than going via the HA lovelace dashboard!&lt;/p&gt;
+
+&lt;h2 id=&quot;api-first&quot;&gt;API first&lt;/h2&gt;
+&lt;p&gt;As there’s an integration for homeassistant for anything and everything, I set out to look for an extension to make device switching available via REST API. Immediately I found documentation for various REST integrations of home assistant, for allowing switching of GPIO pins… or integrating other REST-style APIs as sensors/switches into HA. 
+Hm. I must be missing something fundamental.&lt;/p&gt;
+
+&lt;h2 id=&quot;api-the-second&quot;&gt;API, the second&lt;/h2&gt;
+&lt;p&gt;And I was! Turns out the functionality I’m looking for is actually built into home assistant, just requires enabling by putting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;api:&lt;/code&gt; as a top-level entry into the HA configuration.yml.&lt;/p&gt;
+
+&lt;p&gt;Restart home assistant and run curl against a test endpoint: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl 192.168.0.x:8123/api/states&lt;/code&gt;, which gets us a ‘not authorized’ response. Good - there’s something there, then.
+The excellent &lt;a href=&quot;https://developers.home-assistant.io/docs/api/rest/&quot;&gt;home assistant documentation&lt;/a&gt; mentions that we need to use an access token for this, so we do what’s necessary - e’voila.&lt;/p&gt;
+
+&lt;h2 id=&quot;making-the-sights-pretty&quot;&gt;Making the sights pretty&lt;/h2&gt;
+&lt;p&gt;The home assistant API is up and accessible, so let’s use it. For now I’m only interested in switching one entity’s state - to get started I want three straightforward shell scripts: get state, switch on, switch off&lt;/p&gt;
+
+&lt;p&gt;Home assistant docs give us all we need for this, and I’m going to use curl to perform the http calls. However, the naked curl command is either very verbose (in case of the GET statement), or too silent (for the POST actions) - I want some friendly feedback!&lt;/p&gt;
+
+&lt;h3 id=&quot;get-switch-state&quot;&gt;GET switch state&lt;/h3&gt;
+&lt;p&gt;For the GET state case, there is a very nice command line tool to work with json data for filtering, pretty-printing and more: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt;. Which I didn’t know about until today, so that’s a win right there! Using jq, my get-state script looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
+curl -s -X GET \
+  -H &quot;Authorization: Bearer `cat api.token`&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  http://192.168.0.10:8123/api/states/switch.power_smartplug_1 \
+  | jq '.state?'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Quite simple I’d say - after some playing around, I settled on a jq filter that reduces the curl output to just the value of the state property returned by the GET call: if the switch is off, the command will simply give us an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;off&quot;&lt;/code&gt;. Nice, works for me!&lt;/p&gt;
+
+&lt;h3 id=&quot;post-to-change-switch-state&quot;&gt;POST to change switch state&lt;/h3&gt;
+&lt;p&gt;When POSTing to the home assistant endpoint to switch power on or off, normally curl will just give us the (empty) body returned by the http request. That is not a lot - I want to see the http response code at least. There are many ways to skin this cat - after playing around with some options the internet offered, I decided to go with this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
+curl -is -X POST \
+  -H &quot;Authorization: Bearer `cat api.token`&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;entity_id&quot;: &quot;switch.power_smartplug_1&quot;}' \
+  http://192.168.0.10:8123/api/services/switch/turn_on \
+  | head -n1  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-i&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-s&lt;/code&gt; switches tell curl to show http result information, but be silent otherwise. This will get us five lines of info about the http response - the http status code with a nice String representation (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HTTP/1.1 200 OK&lt;/code&gt;), plus content-type, -length, date etc. That is nice but I’d rather just have the first line (the http status code). This can be done by piping the entire thing through the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;head&lt;/code&gt; command, telling it to just return the first line it’s seeing (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-n1&lt;/code&gt;).&lt;/p&gt;
+
+&lt;h2 id=&quot;settling-down-for-the-day&quot;&gt;Settling down for the day&lt;/h2&gt;
+&lt;p&gt;That’s it, actually! We have three simple scripts that get us the cluster status, and can turn it on and off (modifying the POST script above to turn the cluster off is left as an exercise to the reader ;-) ). There might be follow-on ideas in the future, but for now I’m at the end of this little detour.&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;main takeaway from today is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt; tool&lt;/li&gt;
+  &lt;li&gt;got some more knowledge about using curl&lt;/li&gt;
+  &lt;li&gt;much happiness with home assistant! I love that system more each time I add something to it&lt;/li&gt;
+  &lt;li&gt;added an image to this post, first time; figured out how to do sizing in jekyll/markdown&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</summary></entry><entry><title type="html">Jekyll build via github Actions</title><link href="http://central.home:8000/jekyllgithub" rel="alternate" type="text/html" title="Jekyll build via github Actions" /><published>2021-05-01T00:00:00-05:00</published><updated>2021-05-01T00:00:00-05:00</updated><id>http://central.home:8000/jekyllgithub</id><content type="html" xml:base="http://central.home:8000/jekyllgithub">&lt;p&gt;Not quite ‘professional’ yet - but, another step. We created a &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml&quot;&gt;github Actions configuration&lt;/a&gt; that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.&lt;/p&gt;
+
+&lt;p&gt;Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll/jekyll&lt;/code&gt; docker image is only availeble to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup. 
+So it was either re-writing my setup to work with one of the arm64 jekyll images, or re-write my setup directly as a github Actions pipeline (and perhaps set myself up for public hosting on github pages, later).&lt;/p&gt;
+
+&lt;h2 id=&quot;deploying-at-home-still&quot;&gt;Deploying at home, still&lt;/h2&gt;
+&lt;p&gt;To complement the new build, I figured out how to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose pull&lt;/code&gt; from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login tokin in the github settins menus. The slightly updated docker-compose.yml looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: &quot;3&quot;
+services:
+  jekyll:
+    image: docker.pkg.github.com/anotherdaniel/messages-env/messages-env:latest
+    container_name: jekyll
+    ports:
+      - 8000:80
+    restart: unless-stopped
+    healthcheck:
+      test: wget -q --spider http://192.168.0.10:8000 || exit 1
+      interval: 1m43s
+      timeout: 10s
+      retries: 3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Seems to work for now! Only remaining question: how to trigger update on homecentral? Hm…&lt;/p&gt;
+
+&lt;h3 id=&quot;deferred-update-of-docker-contaienr-on-homecentral-raspi&quot;&gt;Deferred update of docker contaienr on homecentral Raspi&lt;/h3&gt;
+&lt;p&gt;Ok, this is where things become somewhat awkward, for now. We have a nice github Actions build running, and push our image to the github package registry - but still want to host it on our homecentral Raspi. With auto-updating after we pushed and built new content!
+The way I chose for now involves the git pre-push hook calling an ansible playbook that fire&amp;amp;forgets a script on the Raspi, which waits for a couple of minutes (for the github build to run), then pulls and recreates the nginx/jekyll image. The playbook can be &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/ansible/playbooks/delayedUpgrade.yml&quot;&gt;found here&lt;/a&gt;, and the delayed-upgrade script looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
+
+sleep 120
+cd /home/ubuntu/dockercompose/jekyll
+cat TOKEN.txt | docker login https://docker.pkg.github.com -u AnotherDaniel --password-stdin
+docker-compose pull
+docker-compose up -d --remove-orphans
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Fix jekyll navigation links for our purposes: DONE&lt;/li&gt;
+  &lt;li&gt;Build and update on Raspi? Solution decided on, and DONE (see above)&lt;/li&gt;
+  &lt;li&gt;This is brittle and non-elegant. Probably move to github pages hosting soon.&lt;/li&gt;
+  &lt;li&gt;Created my first git hook script&lt;/li&gt;
+  &lt;li&gt;Learned about ansible - “become” means root, and the working directory of a script exec command is probably user-home (instead of the location of the executed script)&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Not quite ‘professional’ yet - but, another step. We created a github Actions configuration that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.</summary></entry><entry><title type="html">A jekyll build pipe at home</title><link href="http://central.home:8000/jekyllbuildpipe" rel="alternate" type="text/html" title="A jekyll build pipe at home" /><published>2021-04-30T00:00:00-05:00</published><updated>2021-04-30T00:00:00-05:00</updated><id>http://central.home:8000/jekyllbuildpipe</id><content type="html" xml:base="http://central.home:8000/jekyllbuildpipe">&lt;p&gt;So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt; &lt;strong&gt;-b&lt;/strong&gt; switch. That thing changes the &lt;strong&gt;site.baseurl&lt;/strong&gt;, not the &lt;strong&gt;site.url&lt;/strong&gt;! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.css&lt;/code&gt; stylesheet any longer… oh well.
+Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. 
+The primary takeaway on our jekyll experience is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;find a decent jekyll theme - not at all easy!&lt;/li&gt;
+  &lt;li&gt;I found &lt;a href=&quot;http://jekyllthemes.org/themes/monochrome/&quot;&gt;monochrome&lt;/a&gt;. Very nice, but needs some fixing esp for &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/monochrome/_sass/layout.scss&quot;&gt;keeping the footer at the bottom of the page&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The code for this is &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env&quot;&gt;up on github&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;also&quot;&gt;Also!&lt;/h2&gt;
+&lt;p&gt;We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/docker&quot;&gt;docker build files&lt;/a&gt;, as well as the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh&quot;&gt;shell script&lt;/a&gt; used to perform build&amp;amp;push to our local container registry. 
+To complement this on the hosting side, I’ve created a little &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/ansible&quot;&gt;ansible setup&lt;/a&gt; to remote-control docker-compose on the home-central Raspi. It is an automation for stopping, then pulling and recreating our jekyll container according to this docker-compose definition we have created for our web-based diary:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: &quot;3&quot;
+services:
+  jekyll:
+    image: homecentral:5000/messages-env
+    container_name: jekyll
+    ports:
+      - 8000:80
+    restart: unless-stopped
+    healthcheck:
+      test: wget -q --spider http://192.168.0.10:8000 || exit 1
+      interval: 1m43s
+      timeout: 10s
+      retries: 3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Note that homecentral:5000 is our private docker registry, set up for this purpose. Not entirely sure whether we’ll stick with this setup for long, but consider it a stepping stone on the path…&lt;/p&gt;
+
+&lt;h2 id=&quot;wrapping-up-this-leg-one-question-remains&quot;&gt;Wrapping up this leg, one question remains&lt;/h2&gt;
+&lt;p&gt;How do I actually operate this? The first naive idea is to use a git commit hook to initiate our build and hosting pipeline. This would work fine, except for when I’m going to shut down my notebook right after committing my last diary update…
+As long as I’m hosting all of this on my own infrastructure, the only real alternative will be running build etc on my Raspi - initiated by the commit command maybe, but otherwise headless. Or go straight for a jenkins setup. But don’t feel like going there just yet…&lt;/p&gt;
+
+&lt;p&gt;Maybe it will be more expedient to just make all of this public via github pages?&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h2 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Stupid f*ing css and footers - hiding the bottom of the content pages. Who designs this stuff? (DONE, see commit eb6f3757bd213300f2e2602b2b30c49f5ac9dd6b)&lt;/li&gt;
+  &lt;li&gt;css wants some changes to make hyperlinks more visible (DONE, see commit a52040ddbf554a5429601717671daa6db91b68bb)&lt;/li&gt;
+  &lt;li&gt;Fix jekyll navigation links for our purposes. Hm, what to put here…?&lt;/li&gt;
+  &lt;li&gt;See above - build and update on Raspi?&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the jekyll build -b switch. That thing changes the site.baseurl, not the site.url! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the main.css stylesheet any longer… oh well. Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. The primary takeaway on our jekyll experience is: find a decent jekyll theme - not at all easy! I found monochrome. Very nice, but needs some fixing esp for keeping the footer at the bottom of the page.</summary></entry><entry><title type="html">The Journey</title><link href="http://central.home:8000/journey" rel="alternate" type="text/html" title="The Journey" /><published>2021-04-21T00:00:00-05:00</published><updated>2021-04-21T00:00:00-05:00</updated><id>http://central.home:8000/journey</id><content type="html" xml:base="http://central.home:8000/journey">&lt;p&gt;Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.&lt;/p&gt;
+
+&lt;p&gt;This blog is going to be my diary on this journey.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-we-have-been-learning-lately&quot;&gt;What we have been learning lately&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;some k8s, by setting up a bare metal cluster on some Raspis&lt;/li&gt;
+  &lt;li&gt;ansible basics, for provisioning our cluster&lt;/li&gt;
+  &lt;li&gt;playing around with helm&lt;/li&gt;
+  &lt;li&gt;dockerizing a Rust web service&lt;/li&gt;
+  &lt;li&gt;homer for a home-network utility web page&lt;/li&gt;
+  &lt;li&gt;jekyll, aka this diary&lt;/li&gt;
+  &lt;li&gt;too little nginx so far&lt;/li&gt;
+  &lt;li&gt;docker-compose and linux boot params, running dockerized deconz&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;so-whats-next&quot;&gt;So what’s next?&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;little bit of CSS. But only a little, because CSS is driving me up the wall every time.&lt;/li&gt;
+  &lt;li&gt;create a pipeline for jekyll-&amp;gt;docker-&amp;gt;deploy
+    &lt;ul&gt;
+      &lt;li&gt;use git post-commit hook (?) to&lt;/li&gt;
+      &lt;li&gt;run ansible playbook that&lt;/li&gt;
+      &lt;li&gt;on homecentral, git pulls, docker-jekyll-builds, serves via nginx&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;some real k8s work(load), but need ideas
+    &lt;ul&gt;
+      &lt;li&gt;gitea looks interesting&lt;/li&gt;
+      &lt;li&gt;minecraft? …&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.</summary></entry></feed>
