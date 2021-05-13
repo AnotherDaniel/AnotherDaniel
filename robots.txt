@@ -1,1 +1,1 @@
-Sitemap: https://www.danielkrippner.de/AnotherDaniel/sitemap.xml
+Sitemap: https://www.danielkrippner.de/sitemap.xml
