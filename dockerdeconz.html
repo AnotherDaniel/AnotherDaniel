@@ -138,7 +138,7 @@
 <p>So to prepare Ubuntu for running dockerized deconz, these are the configuration steps to follow:</p>
 
 <h2 id="turn-off-linux-kernel-serial-console">Turn off linux kernel serial console</h2>
-<p>Edit <code class="language-plaintext highlighter-rouge">/boot/firmware/cmdline.txt</code> and remove these two parameters <code class="language-plaintext highlighter-rouge">console=serial0,115200 console=tty1</code>. The cmdline.txt looks like this afterwards:</p>
+<p>Edit <code class="language-plaintext highlighter-rouge">/boot/firmware/cmdline.txt</code> and remove these two parameters: <code class="language-plaintext highlighter-rouge">console=serial0,115200 console=tty1</code>. My cmdline.txt looks like this afterwards:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dwc_otg.lpm_enable=0 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc quiet splash
 </code></pre></div></div>
 
