@@ -4,7 +4,7 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2021-05-19T14:45:25-05:00</updated>
+ <updated>2021-05-19T14:50:17-05:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
@@ -58,7 +58,7 @@
    <link href="https://www.danielkrippner.de/dockerdeconz"/>
    <id>https://www.danielkrippner.de/dockerdeconz</id>
    <updated>2021-04-18T00:00:00-05:00</updated>
-   <content type="html">&lt;p&gt;Ubuntu provides a server (headless) version that also is available for arm devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th gen Raspberry boards). This motivated me to move my home automation Raspi over...</content>
+   <content type="html">&lt;p&gt;Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto...</content>
  </entry>
 
  

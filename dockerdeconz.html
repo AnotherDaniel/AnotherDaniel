@@ -131,7 +131,7 @@
 	<time datetime="2021-04-18T00:00:00-05:00" class="by-line">18 Apr 2021</time>
 	<div class="content">
 
-		<p>Ubuntu provides a server (headless) version that also is available for arm devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th gen Raspberry boards). This motivated me to move my home automation Raspi over onto Ubuntu recently - and to the next discovery, namely that there aren’t any arm-architecture deconz<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> packages available for Ubuntu. I need deconz because I’m running a ZigBee shield with my Pi homeassistant setup. This is where Docker comes to the rescue, with the <a href="https://hub.docker.com/r/marthoc/deconz">images provided by marthoc</a>!</p>
+		<p>Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto Ubuntu - and led to the discovery that there aren’t any arm-architecture deconz<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> packages available for Ubuntu. I need deconz because I’m running a ZigBee shield with my Pi homeassistant setup. This is where Docker comes to the rescue, with the <a href="https://hub.docker.com/r/marthoc/deconz">images provided by marthoc</a>!</p>
 
 <p>To get dockerized deconz running, we need to prevent the kernel from allocating a serial console on the Raspis’s GPIO ports - because we need that serial port to connect to the RaspBee shield. Running Ubuntu, we do not have the raspi-config tool available to perform this configuration (as described in <a href="https://github.com/marthoc/docker-deconz/blob/a2e273cb5f6da8c95f283db51816652afd57e21b/README.md">marthoc’s Readme</a>).</p>
 
@@ -143,7 +143,7 @@
 </code></pre></div></div>
 
 <h2 id="tell-the-kernel-device-tree-which-uart-to-use">Tell the kernel device tree which UART to use</h2>
-<p>We can either map the Raspi’s mini UART device for communication with the RaspBee, or it’s first PL011 device - <a href="https://www.raspberrypi.org/documentation/configuration/uart.md">this page</a> is a good resource to learn about the Raspberry’s serial interfaces. Configuration happens in <code class="language-plaintext highlighter-rouge">/boot/firmware/config.txt</code></p>
+<p>We can either map the Raspi’s mini UART device for communication with the RaspBee, or the first PL011 device - <a href="https://www.raspberrypi.org/documentation/configuration/uart.md">this page</a> is a good resource to learn about the Raspberry’s serial interfaces. Configuration happens in <code class="language-plaintext highlighter-rouge">/boot/firmware/config.txt</code></p>
 
 <p>To drive the RaspBee board via mini UART, we add this line to config.txt:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtoverlay=disable_bt
@@ -155,10 +155,9 @@
 </code></pre></div></div>
 <p>After a reboot, the RaspBee will be available on /dev/ttyAMA0</p>
 
-<p>Information about the differences between these two UART options can be found on the raspberrypi documentation page referenced above.</p>
+<p>Information about the differences between these two UART options can be found on the raspberrypi documentation page referenced above. Once decided on the setup, putting in these configuration changes and rebooting the Raspberry, we are good to go.</p>
 
-<p>Once decided on the setup, putting in these configuration changes and rebooting the Raspberry, we are good to go. 
-Next steps are to</p>
+<p>Next steps are to</p>
 <ul>
   <li>install the wiringpi package</li>
   <li>add the docker-deconz user account to the dialout group</li>
@@ -201,7 +200,7 @@ services:
 <p>Note that I’m mapping the deconz configuration diretory to a location in the host file system, because I like to be able to directly work with some of these files (for backups etc).</p>
 
 <hr />
-<h2 id="waymarks">Waymarks</h2>
+<h3 id="waymarks">Waymarks</h3>
 <ul>
   <li>Ubuntu Server is a great OS for Raspberries!</li>
   <li>Running deconz in docker is a huge improvement wrt reproducibility and manageabiliy of your setup</li>
@@ -209,6 +208,7 @@ services:
   <li><a href="https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Setup-dockerized-deconz-in-Ubuntu,-connecting-to-a-RaspBee-board">Original post, plus some more info on the dtoverlay settings</a></li>
 </ul>
 
+<hr />
 <div class="footnotes" role="doc-endnotes">
   <ol>
     <li id="fn:1" role="doc-endnote">
