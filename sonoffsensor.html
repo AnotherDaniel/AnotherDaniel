@@ -153,29 +153,27 @@ The actual sensor setup is pretty straightforward, mirroring the first as descri
 <p>That’s it! The sensor status should now show up in the corresponding MQTT channel, in my case that is <code class="language-plaintext highlighter-rouge">cmnd/&lt;boardId&gt;/POWER3</code>. And no, I have no clue why a GPIO input status is mapped onto a ‘cmnd’ topic…</p>
 
 <h2 id="home-assistant-wrapup">Home assistant wrapup</h2>
-<p>The rest is even simpler - a straight copy of the first sensor configuration in the home assistant setup, in my case the sensors for one Sonoff SV board look like this:
-```</p>
-<ul>
-  <li>platform: mqtt
-name: “Tasmota1_Status”
-unique_id: “sensor.tasmota1.status”
-expire_after: 604800
-qos: 1
-state_topic: “tele/<boardId>/LWT"</boardId></li>
-  <li>platform: mqtt
-name: “Tasmota1_Open”
-unique_id: “sensor.tasmota1.open”
-expire_after: 604800
-qos: 1
-state_topic: “cmnd/<boardId>/POWER2"</boardId></li>
-  <li>platform: mqtt
-name: “Tasmota1_Close”
-unique_id: “sensor.tasmota1.close”
-expire_after: 604800
-qos: 1
-state_topic: “cmnd/<boardId>/POWER3"
-´´´</boardId></li>
-</ul>
+<p>The rest is even simpler - a straight copy of the first sensor configuration in the home assistant setup, in my case the sensors for one Sonoff SV board look like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- platform: mqtt
+  name: "Tasmota1_Status"
+  unique_id: "sensor.tasmota1.status"
+  expire_after: 604800
+  qos: 1
+  state_topic: "tele/&lt;boardId&gt;/LWT"
+- platform: mqtt
+  name: "Tasmota1_Open"
+  unique_id: "sensor.tasmota1.open"
+  expire_after: 604800
+  qos: 1
+  state_topic: "cmnd/&lt;boardId&gt;/POWER2"
+- platform: mqtt
+  name: "Tasmota1_Close"
+  unique_id: "sensor.tasmota1.close"
+  expire_after: 604800
+  qos: 1
+  state_topic: "cmnd/&lt;boardId&gt;/POWER3"
+</code></pre></div></div>
 
 <p>Voila! In my case, one of the things I’m doing with this is setting the value of a home assistant Dropdown Helper to “closed”, “opening”, “open”, “closing” - depending on the statue changes of the two sensors. And I can actually trust this info now!</p>
 
