@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Add a second hall sensor to Sonoff SV Garage Door Opener</title>
+  <meta name="description" content="home assistant, mqtt, soldering">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Add a second hall sensor to Sonoff SV Garage Door Opener</h2>		
+	<time datetime="2021-05-30T00:00:00-05:00" class="by-line">30 May 2021</time>
+	<div class="content">
+
+		<p>Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”. 
+During this phase, I came across the excellent <a href="https://www.hagensieker.com/wordpress/2019/02/18/sonoff-sv-for-garage-door-opener/">John’s Tech Blog writeup on how to automate garage door openers using Sonoff SV boards</a>.</p>
+
+<p>This setup uses one reed switch (open/close switch) to sense the garage door state. One sensor is not a lot for a garage door - you can know with certainty whether it’s closed (or opened, wherever you installed your sensor), but other than that the door might be in any position and the home automation wouldn’t have a chance to know. So I wanted to complement this straight away with a second sensor, for sensing both ‘open’ and ‘closed’ positions. Being lazy, I simply added a ZigBee open/close sensor. Which required a ZigBee repeater in the garage. And worked mostly, but wasn’t the morst reliable setup imaginable.</p>
+
+<h2 id="more-is-better">More is better</h2>
+<p>Some months later, looking at the Sonoff SV GPIOs and the associated Tasmota firmware config options, I thought that I should be able to add a second hardwired reed switch to my setup, allowing me to get rid of the ZigBee sensor.
+At this point, a quick shoutout for the <a href="https://itead.cc/product/sonoff-sv/">Sonoff SV</a>, as well as the <a href="https://tasmota.github.io/docs/">Tasmota firmware project</a> for ESP8266 devices! These little boards are marvellous playthings, not expensive, and provide electronics noobs like myself with an accessible sense of achievement.</p>
+
+<h2 id="second-sensor-setup">Second sensor setup</h2>
+<p>The main part of the install involved preparing and running cables, getting worked up over cheap connectors, and some of the pecularities or our garage door installation.
+The actual sensor setup is pretty straightforward, mirroring the first as described by John (see above):</p>
+<ul>
+  <li>I used IO4, which is located right next to the IO14 pins of the first sensor</li>
+  <li>In the Tasmota config UI, set the GPIO4 to “Switch” “3”</li>
+  <li>(this mirrors the first switch, which is using GPIO14 “Switch” “2”)</li>
+  <li>To make the reed switch work properly, run the console command <code class="language-plaintext highlighter-rouge">SwitchMode3 2</code></li>
+</ul>
+
+<p>That’s it! The sensor status should now show up in the corresponding MQTT channel, in my case that is <code class="language-plaintext highlighter-rouge">cmnd/&lt;boardId&gt;/POWER3</code>. And no, I have no clue why a GPIO input status is mapped onto a ‘cmnd’ topic…</p>
+
+<h2 id="home-assistant-wrapup">Home assistant wrapup</h2>
+<p>The rest is even simpler - a straight copy of the first sensor configuration in the home assistant setup, in my case the sensors for one Sonoff SV board look like this:
+```</p>
+<ul>
+  <li>platform: mqtt
+name: “Tasmota1_Status”
+unique_id: “sensor.tasmota1.status”
+expire_after: 604800
+qos: 1
+state_topic: “tele/<boardId>/LWT"</boardId></li>
+  <li>platform: mqtt
+name: “Tasmota1_Open”
+unique_id: “sensor.tasmota1.open”
+expire_after: 604800
+qos: 1
+state_topic: “cmnd/<boardId>/POWER2"</boardId></li>
+  <li>platform: mqtt
+name: “Tasmota1_Close”
+unique_id: “sensor.tasmota1.close”
+expire_after: 604800
+qos: 1
+state_topic: “cmnd/<boardId>/POWER3"
+´´´</boardId></li>
+</ul>
+
+<p>Voila! In my case, one of the things I’m doing with this is setting the value of a home assistant Dropdown Helper to “closed”, “opening”, “open”, “closing” - depending on the statue changes of the two sensors. And I can actually trust this info now!</p>
+
+<hr />
+<h3 id="waymarks">Waymarks</h3>
+<ul>
+  <li>always verify sensor installation location by observing full movement range of garage doors :-D</li>
+  <li>I should have done this earlier</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>
