@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-11-20T03:53:10-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Apple Mac</title><link href="https://www.danielkrippner.de/apple" rel="alternate" type="text/html" title="Apple Mac" /><published>2021-11-17T00:00:00-06:00</published><updated>2021-11-17T00:00:00-06:00</updated><id>https://www.danielkrippner.de/apple</id><content type="html" xml:base="https://www.danielkrippner.de/apple">&lt;p&gt;After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recend advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden mayself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple. The ordering process was quite smooth, leading me to a mid-range-of-the-high-end M1 Max with 32Gigs of RAM and the smallest disk option. The rationalization for spending this much money on just two devices is still ongoing…&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-11-20T10:21:33-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Apple Mac</title><link href="https://www.danielkrippner.de/apple" rel="alternate" type="text/html" title="Apple Mac" /><published>2021-11-17T00:00:00-06:00</published><updated>2021-11-17T00:00:00-06:00</updated><id>https://www.danielkrippner.de/apple</id><content type="html" xml:base="https://www.danielkrippner.de/apple">&lt;p&gt;After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recend advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden mayself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple. The ordering process was quite smooth, leading me to a mid-range-of-the-high-end M1 Max with 32Gigs of RAM and the smallest disk option. The rationalization for spending this much money on just two devices is still ongoing…&lt;/p&gt;
 
 &lt;h2 id=&quot;what-is-this-then&quot;&gt;What is this, then?&lt;/h2&gt;
 
@@ -17,16 +17,16 @@ What I never touched at all was Apple systems - couldn’t stand the walled-in f
 &lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recend advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden mayself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple. The ordering process was quite smooth, leading me to a mid-range-of-the-high-end M1 Max with 32Gigs of RAM and the smallest disk option. The rationalization for spending this much money on just two devices is still ongoing…</summary></entry><entry><title type="html">Add a second hall sensor to Sonoff SV Garage Door Opener</title><link href="https://www.danielkrippner.de/sonoffsensor" rel="alternate" type="text/html" title="Add a second hall sensor to Sonoff SV Garage Door Opener" /><published>2021-05-30T00:00:00-05:00</published><updated>2021-05-30T00:00:00-05:00</updated><id>https://www.danielkrippner.de/sonoffsensor</id><content type="html" xml:base="https://www.danielkrippner.de/sonoffsensor">&lt;p&gt;Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”.
 During this phase, I came across the excellent &lt;a href=&quot;https://www.hagensieker.com/wordpress/2019/02/18/sonoff-sv-for-garage-door-opener/&quot;&gt;John’s Tech Blog writeup on how to automate garage door openers using Sonoff SV boards&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;This setup uses one reed switch (open/close switch) to sense the garage door state. One sensor is not a lot for a garage door - you can know with certainty whether it’s closed (or opened, wherever you installed your sensor), but other than that the door might be in any position and the home automation wouldn’t have a chance to know. So I wanted to complement this straight away with a second sensor, for sensing both ‘open’ and ‘closed’ positions. Being lazy, I simply added a ZigBee open/close sensor. Which required a ZigBee repeater in the garage. And worked mostly, but wasn’t the morst reliable setup imaginable.&lt;/p&gt;
+&lt;p&gt;This setup uses one reed switch (open/close switch) to sense the garage door state. One sensor is not a lot for a garage door - you can know with certainty whether it’s closed (or opened, wherever you installed your sensor), but other than that the door might be in any position and the home automation wouldn’t have a chance to know. So I wanted to complement this straight away with a second sensor, for sensing both ‘open’ and ‘closed’ positions. Being lazy, I simply added a ZigBee open/close sensor. Which required a ZigBee repeater in the garage. And worked mostly, but wasn’t the most reliable setup imaginable.&lt;/p&gt;
 
 &lt;h2 id=&quot;more-is-better&quot;&gt;More is better&lt;/h2&gt;
 
 &lt;p&gt;Some months later, looking at the Sonoff SV GPIOs and the associated Tasmota firmware config options, I thought that I should be able to add a second hardwired reed switch to my setup, allowing me to get rid of the ZigBee sensor.
-At this point, a quick shoutout for the &lt;a href=&quot;https://itead.cc/product/sonoff-sv/&quot;&gt;Sonoff SV&lt;/a&gt;, as well as the &lt;a href=&quot;https://tasmota.github.io/docs/&quot;&gt;Tasmota firmware project&lt;/a&gt; for ESP8266 devices! These little boards are marvellous playthings, not expensive, and provide electronics noobs like myself with an accessible sense of achievement.&lt;/p&gt;
+At this point, a quick shoutout for the &lt;a href=&quot;https://itead.cc/product/sonoff-sv/&quot;&gt;Sonoff SV&lt;/a&gt;, as well as the &lt;a href=&quot;https://tasmota.github.io/docs/&quot;&gt;Tasmota firmware project&lt;/a&gt; for ESP8266 devices! These little boards are marvelous playthings, not expensive, and provide electronics noobs like myself with an accessible sense of achievement.&lt;/p&gt;
 
 &lt;h2 id=&quot;second-sensor-setup&quot;&gt;Second sensor setup&lt;/h2&gt;
 
-&lt;p&gt;The main part of the install involved preparing and running cables, getting worked up over cheap connectors, and some of the pecularities or our garage door installation.
+&lt;p&gt;The main part of the install involved preparing and running cables, getting worked up over cheap connectors, and some of the peculiarities or our garage door installation.
 The actual sensor setup is pretty straightforward, mirroring the first as described by John (see above):&lt;/p&gt;
 
 &lt;ul&gt;
@@ -42,24 +42,24 @@ The actual sensor setup is pretty straightforward, mirroring the first as descri
 
 &lt;p&gt;The rest is even simpler - a straight copy of the first sensor configuration in the home assistant setup, in my case the sensors for one Sonoff SV board look like this:&lt;/p&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- platform: mqtt
-  name: &quot;Tasmota1_Status&quot;
-  unique_id: &quot;sensor.tasmota1.status&quot;
-  expire_after: 604800
-  qos: 1
-  state_topic: &quot;tele/&amp;lt;boardId&amp;gt;/LWT&quot;
-- platform: mqtt
-  name: &quot;Tasmota1_Open&quot;
-  unique_id: &quot;sensor.tasmota1.open&quot;
-  expire_after: 604800
-  qos: 1
-  state_topic: &quot;cmnd/&amp;lt;boardId&amp;gt;/POWER2&quot;
-- platform: mqtt
-  name: &quot;Tasmota1_Close&quot;
-  unique_id: &quot;sensor.tasmota1.close&quot;
-  expire_after: 604800
-  qos: 1
-  state_topic: &quot;cmnd/&amp;lt;boardId&amp;gt;/POWER3&quot;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;platform&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mqtt&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Tasmota1_Status&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unique_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;sensor.tasmota1.status&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;expire_after&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;604800&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;qos&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;state_topic&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;tele/&amp;lt;boardId&amp;gt;/LWT&quot;&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;platform&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mqtt&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Tasmota1_Open&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unique_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;sensor.tasmota1.open&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;expire_after&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;604800&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;qos&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;state_topic&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;cmnd/&amp;lt;boardId&amp;gt;/POWER2&quot;&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;platform&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mqtt&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Tasmota1_Close&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unique_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;sensor.tasmota1.close&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;expire_after&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;604800&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;qos&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;state_topic&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;cmnd/&amp;lt;boardId&amp;gt;/POWER3&quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Voila! In my case, one of the things I’m doing with this is setting the value of a home assistant Dropdown Helper to “closed”, “opening”, “open”, “closing” - depending on the statue changes of the two sensors. And I can actually trust this info now!&lt;/p&gt;
@@ -140,12 +140,12 @@ curl -is -X POST \
   &lt;li&gt;added an image to this post, first time; figured out how to do sizing in jekyll/markdown&lt;/li&gt;
 &lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</summary></entry><entry><title type="html">Jekyll build via github Actions</title><link href="https://www.danielkrippner.de/jekyllgithub" rel="alternate" type="text/html" title="Jekyll build via github Actions" /><published>2021-05-01T00:00:00-05:00</published><updated>2021-05-01T00:00:00-05:00</updated><id>https://www.danielkrippner.de/jekyllgithub</id><content type="html" xml:base="https://www.danielkrippner.de/jekyllgithub">&lt;p&gt;Not quite ‘professional’ yet - but, another step. We created a &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml&quot;&gt;github Actions configuration&lt;/a&gt; that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.&lt;/p&gt;
 
-&lt;p&gt;Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll/jekyll&lt;/code&gt; docker image is only availeble to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup.
+&lt;p&gt;Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll/jekyll&lt;/code&gt; docker image is only available to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup.
 So it was either re-writing my setup to work with one of the arm64 jekyll images, or re-write my setup directly as a github Actions pipeline (and perhaps set myself up for public hosting on github pages, later).&lt;/p&gt;
 
 &lt;h2 id=&quot;deploying-at-home-still&quot;&gt;Deploying at home, still&lt;/h2&gt;
 
-&lt;p&gt;To complement the new build, I figured out how to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose pull&lt;/code&gt; from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login tokin in the github settins menus. The slightly updated docker-compose.yml looks like this:&lt;/p&gt;
+&lt;p&gt;To complement the new build, I figured out how to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose pull&lt;/code&gt; from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login token in the github settings menus. The slightly updated docker-compose.yml looks like this:&lt;/p&gt;
 
 &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
@@ -164,7 +164,7 @@ So it was either re-writing my setup to work with one of the arm64 jekyll images
 
 &lt;p&gt;Seems to work for now! Only remaining question: how to trigger update on homecentral? Hm…&lt;/p&gt;
 
-&lt;h3 id=&quot;deferred-update-of-docker-contaienr-on-homecentral-raspi&quot;&gt;Deferred update of docker contaienr on homecentral Raspi&lt;/h3&gt;
+&lt;h3 id=&quot;deferred-update-of-docker-container-on-homecentral-raspi&quot;&gt;Deferred update of docker container on homecentral Raspi&lt;/h3&gt;
 
 &lt;p&gt;Ok, this is where things become somewhat awkward, for now. We have a nice github Actions build running, and push our image to the github package registry - but still want to host it on our homecentral Raspi. With auto-updating after we pushed and built new content!
 The way I chose for now involves the git pre-push hook calling an ansible playbook that fire&amp;amp;forgets a script on the Raspi, which waits for a couple of minutes (for the github build to run), then pulls and recreates the nginx/jekyll image. The playbook can be &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/ansible/playbooks/delayedUpgrade.yml&quot;&gt;found here&lt;/a&gt;, and the delayed-upgrade script looks like this:&lt;/p&gt;
@@ -346,7 +346,7 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
       &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Note that I’m mapping the deconz configuration diretory to a location in the host file system, because I like to be able to directly work with some of these files (for backups etc).&lt;/p&gt;
+&lt;p&gt;Note that I’m mapping the deconz configuration directory to a location in the host file system, because I like to be able to directly work with some of these files (for backups etc).&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -356,7 +356,7 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
   &lt;li&gt;
     &lt;p&gt;Ubuntu Server is a great OS for Raspberries!&lt;/p&gt;
   &lt;/li&gt;
-  &lt;li&gt;Running deconz in docker is a huge improvement wrt reproducibility and manageabiliy of your setup&lt;/li&gt;
+  &lt;li&gt;Running deconz in docker is a huge improvement wrt reproducibility and manageability of your setup&lt;/li&gt;
   &lt;li&gt;Took me a while to figure out the dtoverlay settings to make this work - thanks to he guys in the &lt;a href=&quot;https://github.com/dresden-elektronik/deconz-rest-plugin/issues/4778#issuecomment-821871312&quot;&gt;deconz github community for giving me the crucial idea&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Setup-dockerized-deconz-in-Ubuntu,-connecting-to-a-RaspBee-board&quot;&gt;Original post, plus some more info on the dtoverlay settings&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -365,7 +365,7 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
 &lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;deconz is the &lt;a href=&quot;https://www.dresden-elektronik.com/wireless/software/deconz.html&quot;&gt;Zigbee control software provided by Dresden Elektronik&lt;/a&gt;, managing their ZigBee USB and Rapi Shield devices. &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;deconz is the &lt;a href=&quot;https://www.dresden-elektronik.com/wireless/software/deconz.html&quot;&gt;Zigbee control software provided by Dresden Elektronik&lt;/a&gt;, managing their ZigBee USB and Raspi Shield devices. &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
-&lt;/div&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto Ubuntu - and led to the discovery that there aren’t any arm-architecture deconz1 packages available for Ubuntu. I need deconz because I’m running a ZigBee shield with my Pi homeassistant setup. This is where Docker comes to the rescue, with the images provided by marthoc! deconz is the Zigbee control software provided by Dresden Elektronik, managing their ZigBee USB and Rapi Shield devices. &amp;#8617;</summary></entry></feed>
+&lt;/div&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto Ubuntu - and led to the discovery that there aren’t any arm-architecture deconz1 packages available for Ubuntu. I need deconz because I’m running a ZigBee shield with my Pi homeassistant setup. This is where Docker comes to the rescue, with the images provided by marthoc! deconz is the Zigbee control software provided by Dresden Elektronik, managing their ZigBee USB and Raspi Shield devices. &amp;#8617;</summary></entry></feed>

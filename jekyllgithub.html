@@ -133,12 +133,12 @@
 
 		<p>Not quite ‘professional’ yet - but, another step. We created a <a href="https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml">github Actions configuration</a> that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.</p>
 
-<p>Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the <code class="language-plaintext highlighter-rouge">jekyll/jekyll</code> docker image is only availeble to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup.
+<p>Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the <code class="language-plaintext highlighter-rouge">jekyll/jekyll</code> docker image is only available to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup.
 So it was either re-writing my setup to work with one of the arm64 jekyll images, or re-write my setup directly as a github Actions pipeline (and perhaps set myself up for public hosting on github pages, later).</p>
 
 <h2 id="deploying-at-home-still">Deploying at home, still</h2>
 
-<p>To complement the new build, I figured out how to <code class="language-plaintext highlighter-rouge">docker-compose pull</code> from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login tokin in the github settins menus. The slightly updated docker-compose.yml looks like this:</p>
+<p>To complement the new build, I figured out how to <code class="language-plaintext highlighter-rouge">docker-compose pull</code> from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login token in the github settings menus. The slightly updated docker-compose.yml looks like this:</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
 <span class="na">services</span><span class="pi">:</span>
@@ -157,7 +157,7 @@ So it was either re-writing my setup to work with one of the arm64 jekyll images
 
 <p>Seems to work for now! Only remaining question: how to trigger update on homecentral? Hm…</p>
 
-<h3 id="deferred-update-of-docker-contaienr-on-homecentral-raspi">Deferred update of docker contaienr on homecentral Raspi</h3>
+<h3 id="deferred-update-of-docker-container-on-homecentral-raspi">Deferred update of docker container on homecentral Raspi</h3>
 
 <p>Ok, this is where things become somewhat awkward, for now. We have a nice github Actions build running, and push our image to the github package registry - but still want to host it on our homecentral Raspi. With auto-updating after we pushed and built new content!
 The way I chose for now involves the git pre-push hook calling an ansible playbook that fire&amp;forgets a script on the Raspi, which waits for a couple of minutes (for the github build to run), then pulls and recreates the nginx/jekyll image. The playbook can be <a href="https://github.com/AnotherDaniel/messages-env/blob/main/ansible/playbooks/delayedUpgrade.yml">found here</a>, and the delayed-upgrade script looks like this:</p>
