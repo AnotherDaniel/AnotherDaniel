@@ -1,15 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-05-31T16:38:23-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Add a second hall sensor to Sonoff SV Garage Door Opener</title><link href="https://www.danielkrippner.de/sonoffsensor" rel="alternate" type="text/html" title="Add a second hall sensor to Sonoff SV Garage Door Opener" /><published>2021-05-30T00:00:00-05:00</published><updated>2021-05-30T00:00:00-05:00</updated><id>https://www.danielkrippner.de/sonoffsensor</id><content type="html" xml:base="https://www.danielkrippner.de/sonoffsensor">&lt;p&gt;Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”. 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-11-20T03:34:09-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Apple Mac</title><link href="https://www.danielkrippner.de/apple" rel="alternate" type="text/html" title="Apple Mac" /><published>2021-11-17T00:00:00-06:00</published><updated>2021-11-17T00:00:00-06:00</updated><id>https://www.danielkrippner.de/apple</id><content type="html" xml:base="https://www.danielkrippner.de/apple">&lt;p&gt;After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recend advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden mayself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple.&lt;/p&gt;
+
+&lt;h2 id=&quot;home-assistant-wrapup&quot;&gt;Home assistant wrapup&lt;/h2&gt;
+&lt;p&gt;The rest is even simpler - a straight copy of the first sensor configuration in the home assistant setup, in my case the sensors for one Sonof! In my case, one of the things I’m doing with this is setting the value of a home assistant Dropdown Helper to “closed”, “opening”, “open”, “closing” - depending on the statue changes of the two sensors. And I can actually trust this info now!&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;always verify sensor installation location by observing full movement range of garage doors :-D&lt;/li&gt;
+  &lt;li&gt;I should have done this earlier&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recend advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden mayself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple.</summary></entry><entry><title type="html">Add a second hall sensor to Sonoff SV Garage Door Opener</title><link href="https://www.danielkrippner.de/sonoffsensor" rel="alternate" type="text/html" title="Add a second hall sensor to Sonoff SV Garage Door Opener" /><published>2021-05-30T00:00:00-05:00</published><updated>2021-05-30T00:00:00-05:00</updated><id>https://www.danielkrippner.de/sonoffsensor</id><content type="html" xml:base="https://www.danielkrippner.de/sonoffsensor">&lt;p&gt;Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”.
 During this phase, I came across the excellent &lt;a href=&quot;https://www.hagensieker.com/wordpress/2019/02/18/sonoff-sv-for-garage-door-opener/&quot;&gt;John’s Tech Blog writeup on how to automate garage door openers using Sonoff SV boards&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;This setup uses one reed switch (open/close switch) to sense the garage door state. One sensor is not a lot for a garage door - you can know with certainty whether it’s closed (or opened, wherever you installed your sensor), but other than that the door might be in any position and the home automation wouldn’t have a chance to know. So I wanted to complement this straight away with a second sensor, for sensing both ‘open’ and ‘closed’ positions. Being lazy, I simply added a ZigBee open/close sensor. Which required a ZigBee repeater in the garage. And worked mostly, but wasn’t the morst reliable setup imaginable.&lt;/p&gt;
 
 &lt;h2 id=&quot;more-is-better&quot;&gt;More is better&lt;/h2&gt;
+
 &lt;p&gt;Some months later, looking at the Sonoff SV GPIOs and the associated Tasmota firmware config options, I thought that I should be able to add a second hardwired reed switch to my setup, allowing me to get rid of the ZigBee sensor.
 At this point, a quick shoutout for the &lt;a href=&quot;https://itead.cc/product/sonoff-sv/&quot;&gt;Sonoff SV&lt;/a&gt;, as well as the &lt;a href=&quot;https://tasmota.github.io/docs/&quot;&gt;Tasmota firmware project&lt;/a&gt; for ESP8266 devices! These little boards are marvellous playthings, not expensive, and provide electronics noobs like myself with an accessible sense of achievement.&lt;/p&gt;
 
 &lt;h2 id=&quot;second-sensor-setup&quot;&gt;Second sensor setup&lt;/h2&gt;
+
 &lt;p&gt;The main part of the install involved preparing and running cables, getting worked up over cheap connectors, and some of the pecularities or our garage door installation.
 The actual sensor setup is pretty straightforward, mirroring the first as described by John (see above):&lt;/p&gt;
+
 &lt;ul&gt;
   &lt;li&gt;I used IO4, which is located right next to the IO14 pins of the first sensor&lt;/li&gt;
   &lt;li&gt;In the Tasmota config UI, set the GPIO4 to “Switch” “3”&lt;/li&gt;
@@ -20,6 +33,7 @@ The actual sensor setup is pretty straightforward, mirroring the first as descri
 &lt;p&gt;That’s it! The sensor status should now show up in the corresponding MQTT channel, in my case that is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cmnd/&amp;lt;boardId&amp;gt;/POWER3&lt;/code&gt;. And no, I have no clue why a GPIO input status is mapped onto a ‘cmnd’ topic…&lt;/p&gt;
 
 &lt;h2 id=&quot;home-assistant-wrapup&quot;&gt;Home assistant wrapup&lt;/h2&gt;
+
 &lt;p&gt;The rest is even simpler - a straight copy of the first sensor configuration in the home assistant setup, in my case the sensors for one Sonoff SV board look like this:&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- platform: mqtt
@@ -45,7 +59,9 @@ The actual sensor setup is pretty straightforward, mirroring the first as descri
 &lt;p&gt;Voila! In my case, one of the things I’m doing with this is setting the value of a home assistant Dropdown Helper to “closed”, “opening”, “open”, “closing” - depending on the statue changes of the two sensors. And I can actually trust this info now!&lt;/p&gt;
 
 &lt;hr /&gt;
+
 &lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
 &lt;ul&gt;
   &lt;li&gt;always verify sensor installation location by observing full movement range of garage doors :-D&lt;/li&gt;
   &lt;li&gt;I should have done this earlier&lt;/li&gt;
@@ -57,22 +73,27 @@ Tonight, there was an idea I wanted to follow up on: when I cobbled together my 
 &lt;p&gt;With that I can switch the cluster with a physical button, or via the web UI of my home assistant installation (or a widget on my smartphone, etc pp). But I was thinking that I’d also like a way to do this switching from the command line of my computer. When the mood takes me, I’m going to be fooling around in a shell anyways, so a shell command would be much more seamless than going via the HA lovelace dashboard!&lt;/p&gt;
 
 &lt;h2 id=&quot;api-first&quot;&gt;API first&lt;/h2&gt;
-&lt;p&gt;As there’s an integration for homeassistant for anything and everything, I set out to look for an extension to make device switching available via REST API. Immediately I found documentation for various REST integrations of home assistant, for allowing switching of GPIO pins… or integrating other REST-style APIs as sensors/switches into HA. 
+
+&lt;p&gt;As there’s an integration for homeassistant for anything and everything, I set out to look for an extension to make device switching available via REST API. Immediately I found documentation for various REST integrations of home assistant, for allowing switching of GPIO pins… or integrating other REST-style APIs as sensors/switches into HA.
 Hm. I must be missing something fundamental.&lt;/p&gt;
 
 &lt;h2 id=&quot;api-the-second&quot;&gt;API, the second&lt;/h2&gt;
+
 &lt;p&gt;And I was! Turns out the functionality I’m looking for is actually built into home assistant, just requires enabling by putting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;api:&lt;/code&gt; as a top-level entry into the HA configuration.yml.&lt;/p&gt;
 
 &lt;p&gt;Restart home assistant and run curl against a test endpoint: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl 192.168.0.x:8123/api/states&lt;/code&gt;, which gets us a ‘not authorized’ response. Good - there’s something there, then.
 The excellent &lt;a href=&quot;https://developers.home-assistant.io/docs/api/rest/&quot;&gt;home assistant documentation&lt;/a&gt; mentions that we need to use an access token for this, so we do what’s necessary - e’voila.&lt;/p&gt;
 
 &lt;h2 id=&quot;making-the-sights-pretty&quot;&gt;Making the sights pretty&lt;/h2&gt;
+
 &lt;p&gt;The home assistant API is up and accessible, so let’s use it. For now I’m only interested in switching one entity’s state - to get started I want three straightforward shell scripts: get state, switch on, switch off&lt;/p&gt;
 
 &lt;p&gt;Home assistant docs give us all we need for this, and I’m going to use curl to perform the http calls. However, the naked curl command is either very verbose (in case of the GET statement), or too silent (for the POST actions) - I want some friendly feedback!&lt;/p&gt;
 
 &lt;h3 id=&quot;get-switch-state&quot;&gt;GET switch state&lt;/h3&gt;
+
 &lt;p&gt;For the GET state case, there is a very nice command line tool to work with json data for filtering, pretty-printing and more: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt;. Which I didn’t know about until today, so that’s a win right there! Using jq, my get-state script looks like this:&lt;/p&gt;
+
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
 curl -s -X GET \
   -H &quot;Authorization: Bearer `cat api.token`&quot; \
@@ -80,10 +101,13 @@ curl -s -X GET \
   http://192.168.0.10:8123/api/states/switch.power_smartplug_1 \
   | jq '.state?'
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;p&gt;Quite simple I’d say - after some playing around, I settled on a jq filter that reduces the curl output to just the value of the state property returned by the GET call: if the switch is off, the command will simply give us an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;off&quot;&lt;/code&gt;. Nice, works for me!&lt;/p&gt;
 
 &lt;h3 id=&quot;post-to-change-switch-state&quot;&gt;POST to change switch state&lt;/h3&gt;
+
 &lt;p&gt;When POSTing to the home assistant endpoint to switch power on or off, normally curl will just give us the (empty) body returned by the http request. That is not a lot - I want to see the http response code at least. There are many ways to skin this cat - after playing around with some options the internet offered, I decided to go with this:&lt;/p&gt;
+
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
 curl -is -X POST \
   -H &quot;Authorization: Bearer `cat api.token`&quot; \
@@ -92,13 +116,17 @@ curl -is -X POST \
   http://192.168.0.10:8123/api/services/switch/turn_on \
   | head -n1  
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;p&gt;the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-i&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-s&lt;/code&gt; switches tell curl to show http result information, but be silent otherwise. This will get us five lines of info about the http response - the http status code with a nice String representation (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HTTP/1.1 200 OK&lt;/code&gt;), plus content-type, -length, date etc. That is nice but I’d rather just have the first line (the http status code). This can be done by piping the entire thing through the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;head&lt;/code&gt; command, telling it to just return the first line it’s seeing (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-n1&lt;/code&gt;).&lt;/p&gt;
 
 &lt;h2 id=&quot;settling-down-for-the-day&quot;&gt;Settling down for the day&lt;/h2&gt;
+
 &lt;p&gt;That’s it, actually! We have three simple scripts that get us the cluster status, and can turn it on and off (modifying the POST script above to turn the cluster off is left as an exercise to the reader ;-) ). There might be follow-on ideas in the future, but for now I’m at the end of this little detour.&lt;/p&gt;
 
 &lt;hr /&gt;
+
 &lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
 &lt;ul&gt;
   &lt;li&gt;main takeaway from today is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt; tool&lt;/li&gt;
   &lt;li&gt;got some more knowledge about using curl&lt;/li&gt;
@@ -106,42 +134,48 @@ curl -is -X POST \
   &lt;li&gt;added an image to this post, first time; figured out how to do sizing in jekyll/markdown&lt;/li&gt;
 &lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</summary></entry><entry><title type="html">Jekyll build via github Actions</title><link href="https://www.danielkrippner.de/jekyllgithub" rel="alternate" type="text/html" title="Jekyll build via github Actions" /><published>2021-05-01T00:00:00-05:00</published><updated>2021-05-01T00:00:00-05:00</updated><id>https://www.danielkrippner.de/jekyllgithub</id><content type="html" xml:base="https://www.danielkrippner.de/jekyllgithub">&lt;p&gt;Not quite ‘professional’ yet - but, another step. We created a &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml&quot;&gt;github Actions configuration&lt;/a&gt; that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.&lt;/p&gt;
 
-&lt;p&gt;Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll/jekyll&lt;/code&gt; docker image is only availeble to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup. 
+&lt;p&gt;Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll/jekyll&lt;/code&gt; docker image is only availeble to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup.
 So it was either re-writing my setup to work with one of the arm64 jekyll images, or re-write my setup directly as a github Actions pipeline (and perhaps set myself up for public hosting on github pages, later).&lt;/p&gt;
 
 &lt;h2 id=&quot;deploying-at-home-still&quot;&gt;Deploying at home, still&lt;/h2&gt;
+
 &lt;p&gt;To complement the new build, I figured out how to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose pull&lt;/code&gt; from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login tokin in the github settins menus. The slightly updated docker-compose.yml looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: &quot;3&quot;
-services:
-  jekyll:
-    image: docker.pkg.github.com/anotherdaniel/messages-env/messages-env:latest
-    container_name: jekyll
-    ports:
-      - 8000:80
-    restart: unless-stopped
-    healthcheck:
-      test: wget -q --spider http://192.168.0.10:8000 || exit 1
-      interval: 1m43s
-      timeout: 10s
-      retries: 3
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;jekyll&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker.pkg.github.com/anotherdaniel/messages-env/messages-env:latest&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jekyll&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000:80&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;wget -q --spider http://192.168.0.10:8000 || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1m43s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Seems to work for now! Only remaining question: how to trigger update on homecentral? Hm…&lt;/p&gt;
 
 &lt;h3 id=&quot;deferred-update-of-docker-contaienr-on-homecentral-raspi&quot;&gt;Deferred update of docker contaienr on homecentral Raspi&lt;/h3&gt;
+
 &lt;p&gt;Ok, this is where things become somewhat awkward, for now. We have a nice github Actions build running, and push our image to the github package registry - but still want to host it on our homecentral Raspi. With auto-updating after we pushed and built new content!
 The way I chose for now involves the git pre-push hook calling an ansible playbook that fire&amp;amp;forgets a script on the Raspi, which waits for a couple of minutes (for the github build to run), then pulls and recreates the nginx/jekyll image. The playbook can be &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/ansible/playbooks/delayedUpgrade.yml&quot;&gt;found here&lt;/a&gt;, and the delayed-upgrade script looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
 
-sleep 120
-cd /home/ubuntu/dockercompose/jekyll
-cat TOKEN.txt | docker login https://docker.pkg.github.com -u AnotherDaniel --password-stdin
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;120
+&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /home/ubuntu/dockercompose/jekyll
+&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;TOKEN.txt | docker login https://docker.pkg.github.com &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; AnotherDaniel &lt;span class=&quot;nt&quot;&gt;--password-stdin&lt;/span&gt;
 docker-compose pull
-docker-compose up -d --remove-orphans
+docker-compose up &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--remove-orphans&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;hr /&gt;
+
 &lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
 &lt;ul&gt;
   &lt;li&gt;Fix jekyll navigation links for our purposes: DONE&lt;/li&gt;
   &lt;li&gt;Build and update on Raspi? Solution decided on, and DONE (see above)&lt;/li&gt;
@@ -149,8 +183,9 @@ docker-compose up -d --remove-orphans
   &lt;li&gt;Created my first git hook script&lt;/li&gt;
   &lt;li&gt;Learned about ansible - “become” means root, and the working directory of a script exec command is probably user-home (instead of the location of the executed script)&lt;/li&gt;
 &lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Not quite ‘professional’ yet - but, another step. We created a github Actions configuration that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.</summary></entry><entry><title type="html">A jekyll build pipe at home</title><link href="https://www.danielkrippner.de/jekyllbuildpipe" rel="alternate" type="text/html" title="A jekyll build pipe at home" /><published>2021-04-30T00:00:00-05:00</published><updated>2021-04-30T00:00:00-05:00</updated><id>https://www.danielkrippner.de/jekyllbuildpipe</id><content type="html" xml:base="https://www.danielkrippner.de/jekyllbuildpipe">&lt;p&gt;So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt; &lt;strong&gt;-b&lt;/strong&gt; switch. That thing changes the &lt;strong&gt;site.baseurl&lt;/strong&gt;, not the &lt;strong&gt;site.url&lt;/strong&gt;! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.css&lt;/code&gt; stylesheet any longer… oh well.
-Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. 
+Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary.
 The primary takeaway on our jekyll experience is:&lt;/p&gt;
+
 &lt;ul&gt;
   &lt;li&gt;find a decent jekyll theme - not at all easy!&lt;/li&gt;
   &lt;li&gt;I found &lt;a href=&quot;http://jekyllthemes.org/themes/monochrome/&quot;&gt;monochrome&lt;/a&gt;. Very nice, but needs some fixing esp for &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/monochrome/_sass/layout.scss&quot;&gt;keeping the footer at the bottom of the page&lt;/a&gt;.&lt;/li&gt;
@@ -158,43 +193,50 @@ The primary takeaway on our jekyll experience is:&lt;/p&gt;
 
 &lt;p&gt;The code for this is &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env&quot;&gt;up on github&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&quot;also&quot;&gt;Also!&lt;/h2&gt;
-&lt;p&gt;We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/docker&quot;&gt;docker build files&lt;/a&gt;, as well as the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh&quot;&gt;shell script&lt;/a&gt; used to perform build&amp;amp;push to our local container registry. 
+&lt;h2 id=&quot;also&quot;&gt;Also&lt;/h2&gt;
+
+&lt;p&gt;We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/docker&quot;&gt;docker build files&lt;/a&gt;, as well as the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh&quot;&gt;shell script&lt;/a&gt; used to perform build&amp;amp;push to our local container registry.
 To complement this on the hosting side, I’ve created a little &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/ansible&quot;&gt;ansible setup&lt;/a&gt; to remote-control docker-compose on the home-central Raspi. It is an automation for stopping, then pulling and recreating our jekyll container according to this docker-compose definition we have created for our web-based diary:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: &quot;3&quot;
-services:
-  jekyll:
-    image: homecentral:5000/messages-env
-    container_name: jekyll
-    ports:
-      - 8000:80
-    restart: unless-stopped
-    healthcheck:
-      test: wget -q --spider http://192.168.0.10:8000 || exit 1
-      interval: 1m43s
-      timeout: 10s
-      retries: 3
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;jekyll&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;homecentral:5000/messages-env&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jekyll&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000:80&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;wget -q --spider http://192.168.0.10:8000 || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1m43s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;p&gt;Note that homecentral:5000 is our private docker registry, set up for this purpose. Not entirely sure whether we’ll stick with this setup for long, but consider it a stepping stone on the path…&lt;/p&gt;
 
 &lt;h2 id=&quot;wrapping-up-this-leg-one-question-remains&quot;&gt;Wrapping up this leg, one question remains&lt;/h2&gt;
+
 &lt;p&gt;How do I actually operate this? The first naive idea is to use a git commit hook to initiate our build and hosting pipeline. This would work fine, except for when I’m going to shut down my notebook right after committing my last diary update…
 As long as I’m hosting all of this on my own infrastructure, the only real alternative will be running build etc on my Raspi - initiated by the commit command maybe, but otherwise headless. Or go straight for a jenkins setup. But don’t feel like going there just yet…&lt;/p&gt;
 
 &lt;p&gt;Maybe it will be more expedient to just make all of this public via github pages?&lt;/p&gt;
 
 &lt;hr /&gt;
+
 &lt;h2 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h2&gt;
+
 &lt;ul&gt;
   &lt;li&gt;Stupid f*ing css and footers - hiding the bottom of the content pages. Who designs this stuff? (DONE, see commit eb6f3757bd213300f2e2602b2b30c49f5ac9dd6b)&lt;/li&gt;
   &lt;li&gt;css wants some changes to make hyperlinks more visible (DONE, see commit a52040ddbf554a5429601717671daa6db91b68bb)&lt;/li&gt;
   &lt;li&gt;Fix jekyll navigation links for our purposes. Hm, what to put here…?&lt;/li&gt;
   &lt;li&gt;See above - build and update on Raspi?&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the jekyll build -b switch. That thing changes the site.baseurl, not the site.url! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the main.css stylesheet any longer… oh well. Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. The primary takeaway on our jekyll experience is: find a decent jekyll theme - not at all easy! I found monochrome. Very nice, but needs some fixing esp for keeping the footer at the bottom of the page.</summary></entry><entry><title type="html">The Journey</title><link href="https://www.danielkrippner.de/journey" rel="alternate" type="text/html" title="The Journey" /><published>2021-04-21T00:00:00-05:00</published><updated>2021-04-21T00:00:00-05:00</updated><id>https://www.danielkrippner.de/journey</id><content type="html" xml:base="https://www.danielkrippner.de/journey">&lt;p&gt;Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.&lt;/p&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the jekyll build -b switch. That thing changes the site.baseurl, not the site.url! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the main.css stylesheet any longer… oh well. Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. The primary takeaway on our jekyll experience is:</summary></entry><entry><title type="html">The Journey</title><link href="https://www.danielkrippner.de/journey" rel="alternate" type="text/html" title="The Journey" /><published>2021-04-21T00:00:00-05:00</published><updated>2021-04-21T00:00:00-05:00</updated><id>https://www.danielkrippner.de/journey</id><content type="html" xml:base="https://www.danielkrippner.de/journey">&lt;p&gt;Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.&lt;/p&gt;
 
 &lt;p&gt;This blog is going to be my diary on this journey.&lt;/p&gt;
 
 &lt;h2 id=&quot;what-we-have-been-learning-lately&quot;&gt;What we have been learning lately&lt;/h2&gt;
+
 &lt;ul&gt;
   &lt;li&gt;some k8s, by setting up a bare metal cluster on some Raspis&lt;/li&gt;
   &lt;li&gt;ansible basics, for provisioning our cluster&lt;/li&gt;
@@ -207,6 +249,7 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;so-whats-next&quot;&gt;So what’s next?&lt;/h2&gt;
+
 &lt;ul&gt;
   &lt;li&gt;little bit of CSS. But only a little, because CSS is driving me up the wall every time.&lt;/li&gt;
   &lt;li&gt;create a pipeline for jekyll-&amp;gt;docker-&amp;gt;deploy
@@ -229,26 +272,34 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
 &lt;p&gt;So to prepare Ubuntu for running dockerized deconz, these are the configuration steps to follow:&lt;/p&gt;
 
 &lt;h2 id=&quot;turn-off-linux-kernel-serial-console&quot;&gt;Turn off linux kernel serial console&lt;/h2&gt;
+
 &lt;p&gt;Edit &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/boot/firmware/cmdline.txt&lt;/code&gt; and remove these two parameters: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;console=serial0,115200 console=tty1&lt;/code&gt;. My cmdline.txt looks like this afterwards:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dwc_otg.lpm_enable=0 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc quiet splash
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dwc_otg.lpm_enable=0 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc quiet splash
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;tell-the-kernel-device-tree-which-uart-to-use&quot;&gt;Tell the kernel device tree which UART to use&lt;/h2&gt;
+
 &lt;p&gt;We can either map the Raspi’s mini UART device for communication with the RaspBee, or the first PL011 device - &lt;a href=&quot;https://www.raspberrypi.org/documentation/configuration/uart.md&quot;&gt;this page&lt;/a&gt; is a good resource to learn about the Raspberry’s serial interfaces. Configuration happens in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/boot/firmware/config.txt&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;To drive the RaspBee board via mini UART, we add this line to config.txt:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dtoverlay=disable_bt
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dtoverlay=disable_bt
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;p&gt;After a reboot, the RaspBee will be available on /dev/ttyS0&lt;/p&gt;
 
 &lt;p&gt;To make RaspBee available via PL011, we would add this to config.txt:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dtoverlay=miniuart-bt
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dtoverlay=miniuart-bt
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;p&gt;After a reboot, the RaspBee will be available on /dev/ttyAMA0&lt;/p&gt;
 
 &lt;p&gt;Information about the differences between these two UART options can be found on the raspberrypi documentation page referenced above. Once decided on the setup, putting in these configuration changes and rebooting the Raspberry, we are good to go.&lt;/p&gt;
 
 &lt;p&gt;Next steps are to&lt;/p&gt;
+
 &lt;ul&gt;
   &lt;li&gt;install the wiringpi package&lt;/li&gt;
   &lt;li&gt;add the docker-deconz user account to the dialout group&lt;/li&gt;
@@ -256,44 +307,49 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
 &lt;/ul&gt;
 
 &lt;p&gt;My docker-compose file for deconz looks like this:&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: &quot;3&quot;
-services:
-  deconz:
-    image: marthoc/deconz:stable
-    container_name: deconz
-    network_mode: host
-    restart: always
-    volumes:
-      - /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ
-    devices:
-      - /dev/ttyAMA0
-#      - /dev/ttyS0
-    environment:
-      - TZ=Europe/Berlin
-      - DECONZ_DEVICE=/dev/ttyAMA0
-#      - DECONZ_DEVICE=/dev/ttyS0
-      - DECONZ_WEB_PORT=8090
-      - DECONZ_WS_PORT=8443
-      - DECONZ_VNC_PORT=5900
-      - DECONZ_NOVNC_PORT=0
-      - DEBUG_INFO=1
-      - DEBUG_APS=0
-      - DEBUG_ZCL=0
-      - DEBUG_ZDP=0
-      - DEBUG_OTAU=0
-    healthcheck:
-      test: curl --fail http://localhost:8090 &amp;amp;&amp;gt;/dev/null || exit 1
-      interval: 1m01s
-      timeout: 10s
-      retries: 3
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;deconz&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;marthoc/deconz:stable&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;deconz&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;network_mode&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;host&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;always&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/opt/deconz:/root/.local/share/dresden-elektronik/deCONZ&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;devices&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/dev/ttyAMA0&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#      - /dev/ttyS0&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TZ=Europe/Berlin&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_DEVICE=/dev/ttyAMA0&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#      - DECONZ_DEVICE=/dev/ttyS0&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_WEB_PORT=8090&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_WS_PORT=8443&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_VNC_PORT=5900&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_NOVNC_PORT=0&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_INFO=1&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_APS=0&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_ZCL=0&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_ZDP=0&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_OTAU=0&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;curl --fail http://localhost:8090 &amp;amp;&amp;gt;/dev/null || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1m01s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Note that I’m mapping the deconz configuration diretory to a location in the host file system, because I like to be able to directly work with some of these files (for backups etc).&lt;/p&gt;
 
 &lt;hr /&gt;
+
 &lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
 &lt;ul&gt;
-  &lt;li&gt;Ubuntu Server is a great OS for Raspberries!&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Ubuntu Server is a great OS for Raspberries!&lt;/p&gt;
+  &lt;/li&gt;
   &lt;li&gt;Running deconz in docker is a huge improvement wrt reproducibility and manageabiliy of your setup&lt;/li&gt;
   &lt;li&gt;Took me a while to figure out the dtoverlay settings to make this work - thanks to he guys in the &lt;a href=&quot;https://github.com/dresden-elektronik/deconz-rest-plugin/issues/4778#issuecomment-821871312&quot;&gt;deconz github community for giving me the crucial idea&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Setup-dockerized-deconz-in-Ubuntu,-connecting-to-a-RaspBee-board&quot;&gt;Original post, plus some more info on the dtoverlay settings&lt;/a&gt;&lt;/li&gt;

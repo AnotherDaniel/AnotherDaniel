@@ -132,8 +132,9 @@
 	<div class="content">
 
 		<p>So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the <code class="language-plaintext highlighter-rouge">jekyll build</code> <strong>-b</strong> switch. That thing changes the <strong>site.baseurl</strong>, not the <strong>site.url</strong>! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the <code class="language-plaintext highlighter-rouge">main.css</code> stylesheet any longer… oh well.
-Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. 
+Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary.
 The primary takeaway on our jekyll experience is:</p>
+
 <ul>
   <li>find a decent jekyll theme - not at all easy!</li>
   <li>I found <a href="http://jekyllthemes.org/themes/monochrome/">monochrome</a>. Very nice, but needs some fixing esp for <a href="https://github.com/AnotherDaniel/messages-env/blob/main/monochrome/_sass/layout.scss">keeping the footer at the bottom of the page</a>.</li>
@@ -141,40 +142,45 @@ The primary takeaway on our jekyll experience is:</p>
 
 <p>The code for this is <a href="https://github.com/AnotherDaniel/messages-env">up on github</a>.</p>
 
-<h2 id="also">Also!</h2>
-<p>We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the <a href="https://github.com/AnotherDaniel/messages-env/tree/main/docker">docker build files</a>, as well as the <a href="https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh">shell script</a> used to perform build&amp;push to our local container registry. 
+<h2 id="also">Also</h2>
+
+<p>We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the <a href="https://github.com/AnotherDaniel/messages-env/tree/main/docker">docker build files</a>, as well as the <a href="https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh">shell script</a> used to perform build&amp;push to our local container registry.
 To complement this on the hosting side, I’ve created a little <a href="https://github.com/AnotherDaniel/messages-env/tree/main/ansible">ansible setup</a> to remote-control docker-compose on the home-central Raspi. It is an automation for stopping, then pulling and recreating our jekyll container according to this docker-compose definition we have created for our web-based diary:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: "3"
-services:
-  jekyll:
-    image: homecentral:5000/messages-env
-    container_name: jekyll
-    ports:
-      - 8000:80
-    restart: unless-stopped
-    healthcheck:
-      test: wget -q --spider http://192.168.0.10:8000 || exit 1
-      interval: 1m43s
-      timeout: 10s
-      retries: 3
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">jekyll</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">homecentral:5000/messages-env</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">jekyll</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8000:80</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">unless-stopped</span>
+    <span class="na">healthcheck</span><span class="pi">:</span>
+      <span class="na">test</span><span class="pi">:</span> <span class="s">wget -q --spider http://192.168.0.10:8000 || exit </span><span class="m">1</span>
+      <span class="na">interval</span><span class="pi">:</span> <span class="s">1m43s</span>
+      <span class="na">timeout</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">retries</span><span class="pi">:</span> <span class="m">3</span>
 </code></pre></div></div>
+
 <p>Note that homecentral:5000 is our private docker registry, set up for this purpose. Not entirely sure whether we’ll stick with this setup for long, but consider it a stepping stone on the path…</p>
 
 <h2 id="wrapping-up-this-leg-one-question-remains">Wrapping up this leg, one question remains</h2>
+
 <p>How do I actually operate this? The first naive idea is to use a git commit hook to initiate our build and hosting pipeline. This would work fine, except for when I’m going to shut down my notebook right after committing my last diary update…
 As long as I’m hosting all of this on my own infrastructure, the only real alternative will be running build etc on my Raspi - initiated by the commit command maybe, but otherwise headless. Or go straight for a jenkins setup. But don’t feel like going there just yet…</p>
 
 <p>Maybe it will be more expedient to just make all of this public via github pages?</p>
 
 <hr />
+
 <h2 id="waymarks">Waymarks</h2>
+
 <ul>
   <li>Stupid f*ing css and footers - hiding the bottom of the content pages. Who designs this stuff? (DONE, see commit eb6f3757bd213300f2e2602b2b30c49f5ac9dd6b)</li>
   <li>css wants some changes to make hyperlinks more visible (DONE, see commit a52040ddbf554a5429601717671daa6db91b68bb)</li>
   <li>Fix jekyll navigation links for our purposes. Hm, what to put here…?</li>
   <li>See above - build and update on Raspi?</li>
 </ul>
-
 
 		
 	</div>

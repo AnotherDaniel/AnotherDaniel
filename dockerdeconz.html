@@ -138,26 +138,34 @@
 <p>So to prepare Ubuntu for running dockerized deconz, these are the configuration steps to follow:</p>
 
 <h2 id="turn-off-linux-kernel-serial-console">Turn off linux kernel serial console</h2>
+
 <p>Edit <code class="language-plaintext highlighter-rouge">/boot/firmware/cmdline.txt</code> and remove these two parameters: <code class="language-plaintext highlighter-rouge">console=serial0,115200 console=tty1</code>. My cmdline.txt looks like this afterwards:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dwc_otg.lpm_enable=0 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc quiet splash
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dwc_otg.lpm_enable=0 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc quiet splash
 </code></pre></div></div>
 
 <h2 id="tell-the-kernel-device-tree-which-uart-to-use">Tell the kernel device tree which UART to use</h2>
+
 <p>We can either map the Raspi’s mini UART device for communication with the RaspBee, or the first PL011 device - <a href="https://www.raspberrypi.org/documentation/configuration/uart.md">this page</a> is a good resource to learn about the Raspberry’s serial interfaces. Configuration happens in <code class="language-plaintext highlighter-rouge">/boot/firmware/config.txt</code></p>
 
 <p>To drive the RaspBee board via mini UART, we add this line to config.txt:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtoverlay=disable_bt
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtoverlay=disable_bt
 </code></pre></div></div>
+
 <p>After a reboot, the RaspBee will be available on /dev/ttyS0</p>
 
 <p>To make RaspBee available via PL011, we would add this to config.txt:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtoverlay=miniuart-bt
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtoverlay=miniuart-bt
 </code></pre></div></div>
+
 <p>After a reboot, the RaspBee will be available on /dev/ttyAMA0</p>
 
 <p>Information about the differences between these two UART options can be found on the raspberrypi documentation page referenced above. Once decided on the setup, putting in these configuration changes and rebooting the Raspberry, we are good to go.</p>
 
 <p>Next steps are to</p>
+
 <ul>
   <li>install the wiringpi package</li>
   <li>add the docker-deconz user account to the dialout group</li>
@@ -165,44 +173,49 @@
 </ul>
 
 <p>My docker-compose file for deconz looks like this:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: "3"
-services:
-  deconz:
-    image: marthoc/deconz:stable
-    container_name: deconz
-    network_mode: host
-    restart: always
-    volumes:
-      - /opt/deconz:/root/.local/share/dresden-elektronik/deCONZ
-    devices:
-      - /dev/ttyAMA0
-#      - /dev/ttyS0
-    environment:
-      - TZ=Europe/Berlin
-      - DECONZ_DEVICE=/dev/ttyAMA0
-#      - DECONZ_DEVICE=/dev/ttyS0
-      - DECONZ_WEB_PORT=8090
-      - DECONZ_WS_PORT=8443
-      - DECONZ_VNC_PORT=5900
-      - DECONZ_NOVNC_PORT=0
-      - DEBUG_INFO=1
-      - DEBUG_APS=0
-      - DEBUG_ZCL=0
-      - DEBUG_ZDP=0
-      - DEBUG_OTAU=0
-    healthcheck:
-      test: curl --fail http://localhost:8090 &amp;&gt;/dev/null || exit 1
-      interval: 1m01s
-      timeout: 10s
-      retries: 3
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">deconz</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">marthoc/deconz:stable</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">deconz</span>
+    <span class="na">network_mode</span><span class="pi">:</span> <span class="s">host</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">/opt/deconz:/root/.local/share/dresden-elektronik/deCONZ</span>
+    <span class="na">devices</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">/dev/ttyAMA0</span>
+<span class="c1">#      - /dev/ttyS0</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">TZ=Europe/Berlin</span>
+      <span class="pi">-</span> <span class="s">DECONZ_DEVICE=/dev/ttyAMA0</span>
+<span class="c1">#      - DECONZ_DEVICE=/dev/ttyS0</span>
+      <span class="pi">-</span> <span class="s">DECONZ_WEB_PORT=8090</span>
+      <span class="pi">-</span> <span class="s">DECONZ_WS_PORT=8443</span>
+      <span class="pi">-</span> <span class="s">DECONZ_VNC_PORT=5900</span>
+      <span class="pi">-</span> <span class="s">DECONZ_NOVNC_PORT=0</span>
+      <span class="pi">-</span> <span class="s">DEBUG_INFO=1</span>
+      <span class="pi">-</span> <span class="s">DEBUG_APS=0</span>
+      <span class="pi">-</span> <span class="s">DEBUG_ZCL=0</span>
+      <span class="pi">-</span> <span class="s">DEBUG_ZDP=0</span>
+      <span class="pi">-</span> <span class="s">DEBUG_OTAU=0</span>
+    <span class="na">healthcheck</span><span class="pi">:</span>
+      <span class="na">test</span><span class="pi">:</span> <span class="s">curl --fail http://localhost:8090 &amp;&gt;/dev/null || exit </span><span class="m">1</span>
+      <span class="na">interval</span><span class="pi">:</span> <span class="s">1m01s</span>
+      <span class="na">timeout</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">retries</span><span class="pi">:</span> <span class="m">3</span>
 </code></pre></div></div>
 
 <p>Note that I’m mapping the deconz configuration diretory to a location in the host file system, because I like to be able to directly work with some of these files (for backups etc).</p>
 
 <hr />
+
 <h3 id="waymarks">Waymarks</h3>
+
 <ul>
-  <li>Ubuntu Server is a great OS for Raspberries!</li>
+  <li>
+    <p>Ubuntu Server is a great OS for Raspberries!</p>
+  </li>
   <li>Running deconz in docker is a huge improvement wrt reproducibility and manageabiliy of your setup</li>
   <li>Took me a while to figure out the dtoverlay settings to make this work - thanks to he guys in the <a href="https://github.com/dresden-elektronik/deconz-rest-plugin/issues/4778#issuecomment-821871312">deconz github community for giving me the crucial idea</a></li>
   <li><a href="https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Setup-dockerized-deconz-in-Ubuntu,-connecting-to-a-RaspBee-board">Original post, plus some more info on the dtoverlay settings</a></li>
