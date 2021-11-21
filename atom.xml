@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2021-11-20T12:29:46-06:00</updated>
+ <updated>2021-11-21T06:12:20-06:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>MacOS Application Switcher</title>
+   <link href="https://www.danielkrippner.de/appswitcher"/>
+   <id>https://www.danielkrippner.de/appswitcher</id>
+   <updated>2021-11-21T00:00:00-06:00</updated>
+   <content type="html">&lt;p&gt;The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).&lt;/p&gt; &lt;h2...</content>
+ </entry>
 
  
 
