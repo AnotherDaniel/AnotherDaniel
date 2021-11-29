@@ -7,8 +7,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 	<meta name="generator" content="Jekyll">
 
-	<title>The Journey</title>
-  <meta name="description" content="This is about what we learn, and where it takes us.">
+	<title>messages from ENV</title>
+  <meta name="description" content="Musings, thoughts, documentation about things that I'm doing to amuse myself">
 
 	<!-- CSS & fonts -->
 	<link rel="stylesheet" href="/css/main.css">
@@ -36,6 +36,8 @@
 	  
 	    
 	      <a href="/about" title="About">About</a>
+	    
+	  
 	    
 	  
 	    
@@ -111,6 +113,8 @@
 	    
 	      
 	    
+	      
+	    
       
       <!-- Nav links -->
 	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
@@ -130,57 +134,46 @@
 		  
 		<main>
 
-			<article id="post-page">
-	<h2>The Journey</h2>		
-	<time datetime="2021-04-21T00:00:00-05:00" class="by-line">21 Apr 2021</time>
-	<div class="content">
+			<!-- Posts -->
+<ul id="posts">
 
-		<p>Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.</p>
+	
 
-<p>This blog is going to be my diary on this journey.</p>
+	  <li class="post">
+	  	<h2><a href="/dockerdeconz">Deploy Deconz zigbee control software via docker</a></h2>
+      <time datetime="2021-04-18T00:00:00-05:00" class="by-line"> <i>18 Apr 2021</i> </time>
+	  	<p>Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto...</p>
+	  </li>
 
-<h2 id="what-we-have-been-learning-lately">What we have been learning lately</h2>
+    
 
-<ul>
-  <li>some k8s, by setting up a bare metal cluster on some Raspis</li>
-  <li>ansible basics, for provisioning our cluster</li>
-  <li>playing around with helm</li>
-  <li>dockerizing a Rust web service</li>
-  <li>homer, for a home-network utility web page</li>
-  <li>jekyll, aka this diary</li>
-  <li>too little nginx so far</li>
-  <li>docker-compose and linux boot params, running dockerized deconz</li>
 </ul>
-
-<h2 id="so-whats-next">So what’s next?</h2>
-
-<ul>
-  <li>little bit of CSS. But only a little, because CSS is driving me up the wall every time.</li>
-  <li>create a pipeline for jekyll-&gt;docker-&gt;deploy
-    <ul>
-      <li>use git post-commit hook (?) to</li>
-      <li>run ansible playbook that</li>
-      <li>on homecentral, git pulls, docker-jekyll-builds, serves via nginx</li>
-    </ul>
-  </li>
-  <li>some real k8s work(load), but need ideas
-    <ul>
-      <li>gitea looks interesting</li>
-      <li>minecraft? …</li>
-    </ul>
-  </li>
-</ul>
-
-		
-	</div>
-</article>
-
 
 
 	  </main>
 		
 		  <!-- Pagination links -->
       
+        <div class="pagination">
+          
+            <a href="/" class="page-item">&laquo;</a>
+          
+        
+          
+            
+              <a href="/" class="page-item">1</a>
+            
+          
+            
+              <span class="page-item">2</span>
+            
+          
+        
+          
+            <span class="page-item">&raquo;</span>
+          
+        </div>
+        
 
 	  </div>
     <div class="clear"></div>
