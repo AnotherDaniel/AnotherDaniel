@@ -1,4 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-11-21T06:12:20-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">MacOS Application Switcher</title><link href="https://www.danielkrippner.de/appswitcher" rel="alternate" type="text/html" title="MacOS Application Switcher" /><published>2021-11-21T00:00:00-06:00</published><updated>2021-11-21T00:00:00-06:00</updated><id>https://www.danielkrippner.de/appswitcher</id><content type="html" xml:base="https://www.danielkrippner.de/appswitcher">&lt;p&gt;The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-11-29T14:16:00-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Two weeks of Apple</title><link href="https://www.danielkrippner.de/after-two-weeks" rel="alternate" type="text/html" title="Two weeks of Apple" /><published>2021-11-29T00:00:00-06:00</published><updated>2021-11-29T00:00:00-06:00</updated><id>https://www.danielkrippner.de/after-two-weeks</id><content type="html" xml:base="https://www.danielkrippner.de/after-two-weeks">&lt;p&gt;It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;keyboard layout&lt;/a&gt;, and the &lt;a href=&quot;https://www.danielkrippner.de/appswitcher&quot;&gt;Application Switcher&lt;/a&gt;.
+Since then I’ve been playing with the system, getting used to things. This is an update and comment on some of the things I’ve been thinking.&lt;/p&gt;
+
+&lt;h2 id=&quot;keyboard-revisited&quot;&gt;Keyboard revisited&lt;/h2&gt;
+
+&lt;p&gt;After about a week I’m actually getting used to this layout, and (mostly) don’t need to look up the locations of special characters any more. I’m still not enthusiastic about the modifier key proliferation, but I get by… to the point where the keyboard on my work machine is beginning to throw me off :-)
+There is one thing that I’m really not happy with, on a professional machine in this price range: the ridiculous half-size up-down cursor keys.&lt;/p&gt;
+
+&lt;h2 id=&quot;app-switcher&quot;&gt;App Switcher&lt;/h2&gt;
+
+&lt;p&gt;I’m not really using the App Switcher, thus avoiding being annoyed by it. Funnily, the one App that I actually don’t want to re-appear when minimized apparently is buggy, and does. Sigh.
+I still think that having minimized Apps appear in the switcher without being able to do anything with them is the stupidest UX ever.&lt;/p&gt;
+
+&lt;h2 id=&quot;browser-trials&quot;&gt;Browser trials&lt;/h2&gt;
+
+&lt;p&gt;An advanced symptom of my Appleification process might be the fact that I’m trying to switch to Safari as my main browser. It is clean and fast, that I like. Beyond bookmarks, there’s no sync options to any other browsers, which is not nice for poly-system users. One thing that Safari makes very visible is the monetization of almost everything within the Apple ecosystem.&lt;/p&gt;
+
+&lt;h2 id=&quot;everything-costs-almost&quot;&gt;Everything costs (almost)&lt;/h2&gt;
+
+&lt;p&gt;Coming from Linux and Android, I am not too thrilled about the state of OSS software in the Apple ecosystem. The main applications exist, that is fine. But there seems to be little room/motivation for high-quality smaller projects that are abundant in Linux, and still quite present in an Android context.
+And: almost everything costs money, especially via the App Store(s). With an unhealthy tendency towards subscription models, which I simply don’t like very much. Little surprise I guess, but it can be off-putting.&lt;/p&gt;
+
+&lt;h2 id=&quot;there-is-something&quot;&gt;There is something&lt;/h2&gt;
+
+&lt;p&gt;All of the niggly things aside, there is something about this line of products, how different devices feel like part of a family, how things normally just work. Except for the stock Mac Photos app, but that’s a story in itself.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Not entirely surprising, I’m getting used to Apple. It certainly still is intriguing enough to keep playing and learning.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the keyboard layout, and the Application Switcher. Since then I’ve been playing with the system, getting used to things. This is an update and comment on some of the things I’ve been thinking.</summary></entry><entry><title type="html">MacOS Application Switcher</title><link href="https://www.danielkrippner.de/appswitcher" rel="alternate" type="text/html" title="MacOS Application Switcher" /><published>2021-11-21T00:00:00-06:00</published><updated>2021-11-21T00:00:00-06:00</updated><id>https://www.danielkrippner.de/appswitcher</id><content type="html" xml:base="https://www.danielkrippner.de/appswitcher">&lt;p&gt;The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).&lt;/p&gt;
 
 &lt;h2 id=&quot;minimizing-hiding-obscuring&quot;&gt;Minimizing, Hiding, Obscuring&lt;/h2&gt;
 
