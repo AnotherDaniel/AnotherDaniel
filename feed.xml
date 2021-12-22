@@ -1,4 +1,74 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-11-29T14:16:00-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Two weeks of Apple</title><link href="https://www.danielkrippner.de/after-two-weeks" rel="alternate" type="text/html" title="Two weeks of Apple" /><published>2021-11-29T00:00:00-06:00</published><updated>2021-11-29T00:00:00-06:00</updated><id>https://www.danielkrippner.de/after-two-weeks</id><content type="html" xml:base="https://www.danielkrippner.de/after-two-weeks">&lt;p&gt;It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;keyboard layout&lt;/a&gt;, and the &lt;a href=&quot;https://www.danielkrippner.de/appswitcher&quot;&gt;Application Switcher&lt;/a&gt;.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-12-22T12:09:17-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Of course we only do AirPrint!</title><link href="https://www.danielkrippner.de/airprint" rel="alternate" type="text/html" title="Of course we only do AirPrint!" /><published>2021-12-21T00:00:00-06:00</published><updated>2021-12-21T00:00:00-06:00</updated><id>https://www.danielkrippner.de/airprint</id><content type="html" xml:base="https://www.danielkrippner.de/airprint">&lt;p&gt;After approximately one month, the Apple journey is going well. Even picking up speed one could say, as I’m beginning to feel comfortable, or even at home a lot of the time. Still not closer to appreciating how the application switcher works, though ;-)&lt;/p&gt;
+
+&lt;p&gt;As I’ve done a full ecosystem switch, including mobile phone and tablet, also for these devices there is a need to interoperate with things like printers that exist in our household. This writeup is about how that worked out for me.&lt;/p&gt;
+
+&lt;h2 id=&quot;cups-is-an-apple-project-so-how-hard-can-it-be&quot;&gt;CUPS is an Apple project, so how hard can it be?&lt;/h2&gt;
+
+&lt;p&gt;Although I did not realize this before, the venerable &lt;a href=&quot;https://www.cups.org&quot;&gt;CUPS printing system&lt;/a&gt; is an Apple-driven project. That is good. Especially because Apple products (iOS devices, specifically) don’t do anything with IPP, nor could I find a manufacturer ‘driver app’ to connect with our little oldish Samsung color laser printer. Instead, Apple products are looking for AirPrint devices…&lt;/p&gt;
+
+&lt;p&gt;As I have a Raspberry Pi running our home automation, DNS filter and a bunch of other around-the-house services, there should be something we can do with that. Open source to the rescue: of course there is! A combination of CUPS and &lt;a href=&quot;https://avahi.org&quot;&gt;Avahi&lt;/a&gt; will act as a relay, making CUPS-driven printers available in the local network via Avahi service discovery.&lt;/p&gt;
+
+&lt;p&gt;A first quick trial, installing CUPS and Avahi directly in the Pi’s Ubuntu host system, proves that this works quite painlessly. But all other workloads on my Pi are containerized and designed to make the overall setup as reproducible and modular as possible…&lt;/p&gt;
+
+&lt;h2 id=&quot;is-there-anything-out-there&quot;&gt;Is there anything out there?&lt;/h2&gt;
+
+&lt;p&gt;Yes and no. What we want is a ready-made docker image that acts as our AirPrint relay, with minimal configuration and fuss needed. There are some Docker recipes, many of which seem to be descendants of &lt;a href=&quot;https://github.com/quadportnick/docker-cups-airprint&quot;&gt;quadportnicks docker-cups-avahi project&lt;/a&gt;, with associated images on dockerhub. I couldn’t find one that worked for me though - I was looking for a combination of arm64 support, included drivers for my Samsung printer, and maybe not being abandoned years ago.
+So after looking around a bit, I decided to hit that fork button and adapt something for my needs.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-do-we-want&quot;&gt;What do we want?&lt;/h2&gt;
+
+&lt;p&gt;My AirPrint relay image should have the following properties:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Include drivers for my printer, of course. Maybe even be a generic thing that comes with all available drivers, to become more widely useful?&lt;/li&gt;
+  &lt;li&gt;Allow persistent storage of printer-related configuration outside of the container image, while stuff like cups configuration should ‘just work’ and stay out of the way otherwise.&lt;/li&gt;
+  &lt;li&gt;Size is a concern too, within limits - generic usefulness means we won’t optimize for size, but no need to be wasteful either.&lt;/li&gt;
+  &lt;li&gt;Support for 64bit arm architectures. Maybe even go multi-arch?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The aforementioned cups-avahi-airprint project does cover a lot of these bases already, so let’s fork that. Actually, I forked &lt;a href=&quot;https://github.com/chuckcharlie/cups-avahi-airprint&quot;&gt;a fork&lt;/a&gt; of that project, for no good reason other than that I’ve been looking at it at the time.&lt;/p&gt;
+
+&lt;h2 id=&quot;building-an-airprint-relay&quot;&gt;Building an &lt;a href=&quot;https://github.com/AnotherDaniel/airprint-relay&quot;&gt;AirPrint Relay&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;There was actually a reason for basing off chuckcharlies version of cups-avahi-airprint: I liked the idea of using Alpine as base image. However, after spending too much time trying to find out whether my old Samsung CLP-365 was supported by any package on that distro and not finding anything useful, I reverted the build back to Ubuntu (my printer is supported by ubuntu package &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;printer-driver-foo2zjs&lt;/code&gt;). Ubuntu does provide a quite minimal base image for docker stuff, and while it is not as small as Alpine, I was willing to take the size hit to just get my printer supported and move on with things.&lt;/p&gt;
+
+&lt;p&gt;The switch to Ubuntu brought one problem: during build, the systems wants manual input for configuring the tzdata package. Luckily the internet has a solution for that (&lt;a href=&quot;https://github.com/AnotherDaniel/airprint-relay/blob/master/Dockerfile&quot;&gt;see the Dockerfile&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Next step: add all printer drivers to the image build that I could find. I’ll thank myself in the future should I ever switch hardware, plus maybe this way the image becomes useful for other people too.&lt;/p&gt;
+
+&lt;p&gt;That’s most of the visible changes already. I spent a lot of time learning how to get this image to correctly register with my Traefik router, so that the CUPS dashboard becomes reachable via a nice name instead of IP and port. The problem was that CUPS refuses requests that come with a wrong host entry in the header (wrong as far as CUPS is concerned). The fix for that is a combination of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cupsd.conf&lt;/code&gt; and Traefik settings:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cupsd.conf&lt;/code&gt; should contain the following lines&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;Port&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;*:631&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;# this replaces the default 'Listen ...' directive
+&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;ServerAlias&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;*&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This Traefik label is needed in the AirPrint Relay docker-compose.yml:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;traefik.http.services.airprint-relay.loadbalancer.passhostheader=false&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The latter took me quite some digging to figure out - but with these, Traefik routing works for me.&lt;/p&gt;
+
+&lt;p&gt;The original project came with some scripting- and Python magic for handling CUPS startup and Avahi service file creation from CUPS-configured printers, which I didn’t change much beyond minor naming convention alignments and adaptions around current Ubuntu versions of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;adduser&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;addgroup&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The final steps were brushing up the project README, and adding a multi-arch build action following the regular &lt;a href=&quot;https://www.docker.com/blog/multi-arch-build-and-images-the-simple-way/&quot;&gt;docker documentation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-result&quot;&gt;The Result&lt;/h2&gt;
+
+&lt;p&gt;The result of all of this is available for easy consumption from &lt;a href=&quot;https://hub.docker.com/r/agoodcontainer/airprint-relay&quot;&gt;dockerhub&lt;/a&gt; - a one-click solution for deploying an AirPrint relay service into your home network.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;AirPrint is a sweet user experience, once it works&lt;/li&gt;
+  &lt;li&gt;I came across the &lt;a href=&quot;https://ohmyz.sh&quot;&gt;oh-my-zsh project&lt;/a&gt;, which boosts working with a shell to a new level&lt;/li&gt;
+  &lt;li&gt;If you’re feeling festive, &lt;a href=&quot;https://github.com/chockenberry/Notchmeister&quot;&gt;Notchmeister will deliver&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">After approximately one month, the Apple journey is going well. Even picking up speed one could say, as I’m beginning to feel comfortable, or even at home a lot of the time. Still not closer to appreciating how the application switcher works, though ;-)</summary></entry><entry><title type="html">Two weeks of Apple</title><link href="https://www.danielkrippner.de/after-two-weeks" rel="alternate" type="text/html" title="Two weeks of Apple" /><published>2021-11-29T00:00:00-06:00</published><updated>2021-11-29T00:00:00-06:00</updated><id>https://www.danielkrippner.de/after-two-weeks</id><content type="html" xml:base="https://www.danielkrippner.de/after-two-weeks">&lt;p&gt;It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;keyboard layout&lt;/a&gt;, and the &lt;a href=&quot;https://www.danielkrippner.de/appswitcher&quot;&gt;Application Switcher&lt;/a&gt;.
 Since then I’ve been playing with the system, getting used to things. This is an update and comment on some of the things I’ve been thinking.&lt;/p&gt;
 
 &lt;h2 id=&quot;keyboard-revisited&quot;&gt;Keyboard revisited&lt;/h2&gt;
@@ -359,101 +429,4 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
       &lt;li&gt;minecraft? …&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.</summary></entry><entry><title type="html">Deploy Deconz zigbee control software via docker</title><link href="https://www.danielkrippner.de/dockerdeconz" rel="alternate" type="text/html" title="Deploy Deconz zigbee control software via docker" /><published>2021-04-18T00:00:00-05:00</published><updated>2021-04-18T00:00:00-05:00</updated><id>https://www.danielkrippner.de/dockerdeconz</id><content type="html" xml:base="https://www.danielkrippner.de/dockerdeconz">&lt;p&gt;Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto Ubuntu - and led to the discovery that there aren’t any arm-architecture deconz&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; packages available for Ubuntu. I need deconz because I’m running a ZigBee shield with my Pi homeassistant setup. This is where Docker comes to the rescue, with the &lt;a href=&quot;https://hub.docker.com/r/marthoc/deconz&quot;&gt;images provided by marthoc&lt;/a&gt;!&lt;/p&gt;
-
-&lt;p&gt;To get dockerized deconz running, we need to prevent the kernel from allocating a serial console on the Raspis’s GPIO ports - because we need that serial port to connect to the RaspBee shield. Running Ubuntu, we do not have the raspi-config tool available to perform this configuration (as described in &lt;a href=&quot;https://github.com/marthoc/docker-deconz/blob/a2e273cb5f6da8c95f283db51816652afd57e21b/README.md&quot;&gt;marthoc’s Readme&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;So to prepare Ubuntu for running dockerized deconz, these are the configuration steps to follow:&lt;/p&gt;
-
-&lt;h2 id=&quot;turn-off-linux-kernel-serial-console&quot;&gt;Turn off linux kernel serial console&lt;/h2&gt;
-
-&lt;p&gt;Edit &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/boot/firmware/cmdline.txt&lt;/code&gt; and remove these two parameters: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;console=serial0,115200 console=tty1&lt;/code&gt;. My cmdline.txt looks like this afterwards:&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dwc_otg.lpm_enable=0 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc quiet splash
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;tell-the-kernel-device-tree-which-uart-to-use&quot;&gt;Tell the kernel device tree which UART to use&lt;/h2&gt;
-
-&lt;p&gt;We can either map the Raspi’s mini UART device for communication with the RaspBee, or the first PL011 device - &lt;a href=&quot;https://www.raspberrypi.org/documentation/configuration/uart.md&quot;&gt;this page&lt;/a&gt; is a good resource to learn about the Raspberry’s serial interfaces. Configuration happens in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/boot/firmware/config.txt&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;To drive the RaspBee board via mini UART, we add this line to config.txt:&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dtoverlay=disable_bt
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;After a reboot, the RaspBee will be available on /dev/ttyS0&lt;/p&gt;
-
-&lt;p&gt;To make RaspBee available via PL011, we would add this to config.txt:&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dtoverlay=miniuart-bt
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;After a reboot, the RaspBee will be available on /dev/ttyAMA0&lt;/p&gt;
-
-&lt;p&gt;Information about the differences between these two UART options can be found on the raspberrypi documentation page referenced above. Once decided on the setup, putting in these configuration changes and rebooting the Raspberry, we are good to go.&lt;/p&gt;
-
-&lt;p&gt;Next steps are to&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;install the wiringpi package&lt;/li&gt;
-  &lt;li&gt;add the docker-deconz user account to the dialout group&lt;/li&gt;
-  &lt;li&gt;set the docker cmdline (or docker-compose file) to use /dev/ttyS0 or /dev/ttyAMA0, depending on which option you chose above (these steps are also described in marthoc’s documentation).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;My docker-compose file for deconz looks like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;deconz&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;marthoc/deconz:stable&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;deconz&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;network_mode&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;host&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;always&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/opt/deconz:/root/.local/share/dresden-elektronik/deCONZ&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;devices&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/dev/ttyAMA0&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#      - /dev/ttyS0&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TZ=Europe/Berlin&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_DEVICE=/dev/ttyAMA0&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#      - DECONZ_DEVICE=/dev/ttyS0&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_WEB_PORT=8090&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_WS_PORT=8443&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_VNC_PORT=5900&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DECONZ_NOVNC_PORT=0&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_INFO=1&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_APS=0&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_ZCL=0&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_ZDP=0&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DEBUG_OTAU=0&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;curl --fail http://localhost:8090 &amp;amp;&amp;gt;/dev/null || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1m01s&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Note that I’m mapping the deconz configuration directory to a location in the host file system, because I like to be able to directly work with some of these files (for backups etc).&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Ubuntu Server is a great OS for Raspberries!&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Running deconz in docker is a huge improvement wrt reproducibility and manageability of your setup&lt;/li&gt;
-  &lt;li&gt;Took me a while to figure out the dtoverlay settings to make this work - thanks to he guys in the &lt;a href=&quot;https://github.com/dresden-elektronik/deconz-rest-plugin/issues/4778#issuecomment-821871312&quot;&gt;deconz github community for giving me the crucial idea&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Setup-dockerized-deconz-in-Ubuntu,-connecting-to-a-RaspBee-board&quot;&gt;Original post, plus some more info on the dtoverlay settings&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;deconz is the &lt;a href=&quot;https://www.dresden-elektronik.com/wireless/software/deconz.html&quot;&gt;Zigbee control software provided by Dresden Elektronik&lt;/a&gt;, managing their ZigBee USB and Raspi Shield devices. &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Ubuntu provides a server (headless) version that also is available for ARM devices - this is a great option if you want a 64bit OS on your Raspberry 3 (of course it works equally well on 4th-gen Raspberry boards). This motivated me to move my home automation Raspi over onto Ubuntu - and led to the discovery that there aren’t any arm-architecture deconz1 packages available for Ubuntu. I need deconz because I’m running a ZigBee shield with my Pi homeassistant setup. This is where Docker comes to the rescue, with the images provided by marthoc! deconz is the Zigbee control software provided by Dresden Elektronik, managing their ZigBee USB and Raspi Shield devices. &amp;#8617;</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.</summary></entry></feed>

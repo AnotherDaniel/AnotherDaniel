@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Of course we only do AirPrint!</title>
+  <meta name="description" content="Apple, iOS, Mac, iPhone, iPad, CUPS, Avahi, AirPrint, docker, docker-compose">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Of course we only do AirPrint!</h2>		
+	<time datetime="2021-12-21T00:00:00-06:00" class="by-line">21 Dec 2021</time>
+	<div class="content">
+
+		<p>After approximately one month, the Apple journey is going well. Even picking up speed one could say, as I’m beginning to feel comfortable, or even at home a lot of the time. Still not closer to appreciating how the application switcher works, though ;-)</p>
+
+<p>As I’ve done a full ecosystem switch, including mobile phone and tablet, also for these devices there is a need to interoperate with things like printers that exist in our household. This writeup is about how that worked out for me.</p>
+
+<h2 id="cups-is-an-apple-project-so-how-hard-can-it-be">CUPS is an Apple project, so how hard can it be?</h2>
+
+<p>Although I did not realize this before, the venerable <a href="https://www.cups.org">CUPS printing system</a> is an Apple-driven project. That is good. Especially because Apple products (iOS devices, specifically) don’t do anything with IPP, nor could I find a manufacturer ‘driver app’ to connect with our little oldish Samsung color laser printer. Instead, Apple products are looking for AirPrint devices…</p>
+
+<p>As I have a Raspberry Pi running our home automation, DNS filter and a bunch of other around-the-house services, there should be something we can do with that. Open source to the rescue: of course there is! A combination of CUPS and <a href="https://avahi.org">Avahi</a> will act as a relay, making CUPS-driven printers available in the local network via Avahi service discovery.</p>
+
+<p>A first quick trial, installing CUPS and Avahi directly in the Pi’s Ubuntu host system, proves that this works quite painlessly. But all other workloads on my Pi are containerized and designed to make the overall setup as reproducible and modular as possible…</p>
+
+<h2 id="is-there-anything-out-there">Is there anything out there?</h2>
+
+<p>Yes and no. What we want is a ready-made docker image that acts as our AirPrint relay, with minimal configuration and fuss needed. There are some Docker recipes, many of which seem to be descendants of <a href="https://github.com/quadportnick/docker-cups-airprint">quadportnicks docker-cups-avahi project</a>, with associated images on dockerhub. I couldn’t find one that worked for me though - I was looking for a combination of arm64 support, included drivers for my Samsung printer, and maybe not being abandoned years ago.
+So after looking around a bit, I decided to hit that fork button and adapt something for my needs.</p>
+
+<h2 id="what-do-we-want">What do we want?</h2>
+
+<p>My AirPrint relay image should have the following properties:</p>
+
+<ul>
+  <li>Include drivers for my printer, of course. Maybe even be a generic thing that comes with all available drivers, to become more widely useful?</li>
+  <li>Allow persistent storage of printer-related configuration outside of the container image, while stuff like cups configuration should ‘just work’ and stay out of the way otherwise.</li>
+  <li>Size is a concern too, within limits - generic usefulness means we won’t optimize for size, but no need to be wasteful either.</li>
+  <li>Support for 64bit arm architectures. Maybe even go multi-arch?</li>
+</ul>
+
+<p>The aforementioned cups-avahi-airprint project does cover a lot of these bases already, so let’s fork that. Actually, I forked <a href="https://github.com/chuckcharlie/cups-avahi-airprint">a fork</a> of that project, for no good reason other than that I’ve been looking at it at the time.</p>
+
+<h2 id="building-an-airprint-relay">Building an <a href="https://github.com/AnotherDaniel/airprint-relay">AirPrint Relay</a></h2>
+
+<p>There was actually a reason for basing off chuckcharlies version of cups-avahi-airprint: I liked the idea of using Alpine as base image. However, after spending too much time trying to find out whether my old Samsung CLP-365 was supported by any package on that distro and not finding anything useful, I reverted the build back to Ubuntu (my printer is supported by ubuntu package <code class="language-plaintext highlighter-rouge">printer-driver-foo2zjs</code>). Ubuntu does provide a quite minimal base image for docker stuff, and while it is not as small as Alpine, I was willing to take the size hit to just get my printer supported and move on with things.</p>
+
+<p>The switch to Ubuntu brought one problem: during build, the systems wants manual input for configuring the tzdata package. Luckily the internet has a solution for that (<a href="https://github.com/AnotherDaniel/airprint-relay/blob/master/Dockerfile">see the Dockerfile</a>).</p>
+
+<p>Next step: add all printer drivers to the image build that I could find. I’ll thank myself in the future should I ever switch hardware, plus maybe this way the image becomes useful for other people too.</p>
+
+<p>That’s most of the visible changes already. I spent a lot of time learning how to get this image to correctly register with my Traefik router, so that the CUPS dashboard becomes reachable via a nice name instead of IP and port. The problem was that CUPS refuses requests that come with a wrong host entry in the header (wrong as far as CUPS is concerned). The fix for that is a combination of <code class="language-plaintext highlighter-rouge">cupsd.conf</code> and Traefik settings:</p>
+
+<p><code class="language-plaintext highlighter-rouge">cupsd.conf</code> should contain the following lines</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">Port</span> <span class="err">*:631</span>      <span class="c"># this replaces the default 'Listen ...' directive
+</span><span class="err">ServerAlias</span> <span class="err">*</span>
+</code></pre></div></div>
+
+<p>This Traefik label is needed in the AirPrint Relay docker-compose.yml:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">labels</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">traefik.http.services.airprint-relay.loadbalancer.passhostheader=false"</span>
+</code></pre></div></div>
+
+<p>The latter took me quite some digging to figure out - but with these, Traefik routing works for me.</p>
+
+<p>The original project came with some scripting- and Python magic for handling CUPS startup and Avahi service file creation from CUPS-configured printers, which I didn’t change much beyond minor naming convention alignments and adaptions around current Ubuntu versions of <code class="language-plaintext highlighter-rouge">adduser</code> and <code class="language-plaintext highlighter-rouge">addgroup</code>.</p>
+
+<p>The final steps were brushing up the project README, and adding a multi-arch build action following the regular <a href="https://www.docker.com/blog/multi-arch-build-and-images-the-simple-way/">docker documentation</a>.</p>
+
+<h2 id="the-result">The Result</h2>
+
+<p>The result of all of this is available for easy consumption from <a href="https://hub.docker.com/r/agoodcontainer/airprint-relay">dockerhub</a> - a one-click solution for deploying an AirPrint relay service into your home network.</p>
+
+<hr />
+
+<h3 id="waymarks">Waymarks</h3>
+
+<ul>
+  <li>AirPrint is a sweet user experience, once it works</li>
+  <li>I came across the <a href="https://ohmyz.sh">oh-my-zsh project</a>, which boosts working with a shell to a new level</li>
+  <li>If you’re feeling festive, <a href="https://github.com/chockenberry/Notchmeister">Notchmeister will deliver</a></li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>
