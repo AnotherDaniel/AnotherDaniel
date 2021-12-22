@@ -4,7 +4,7 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2021-12-22T12:09:17-06:00</updated>
+ <updated>2021-12-22T12:32:32-06:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
@@ -14,7 +14,7 @@
  
 
  <entry>
-   <title>Of course we only do AirPrint!</title>
+   <title>Of course we (only) do AirPrint!</title>
    <link href="https://www.danielkrippner.de/airprint"/>
    <id>https://www.danielkrippner.de/airprint</id>
    <updated>2021-12-21T00:00:00-06:00</updated>
