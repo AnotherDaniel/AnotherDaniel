@@ -189,7 +189,7 @@ So after looking around a bit, I decided to hit that fork button and adapt somet
 
 <p>The latter took me quite some digging to figure out - but with these, Traefik routing works for me.</p>
 
-<p>The original project came with some scripting- and Python magic for handling CUPS startup and Avahi service file creation from CUPS-configured printers, which I didn’t change much beyond minor naming convention alignments and adaptions around current Ubuntu versions of <code class="language-plaintext highlighter-rouge">adduser</code> and <code class="language-plaintext highlighter-rouge">addgroup</code>.</p>
+<p>The original project came with some scripting- and Python magic for handling CUPS startup and Avahi service file creation from CUPS-configured printers, which I didn’t change much beyond minor naming convention alignments and adaptions around current Ubuntu versions of <code class="language-plaintext highlighter-rouge">adduser</code> and <code class="language-plaintext highlighter-rouge">addgroup</code>. Oh, and I fixed one of the Python-generated Avahi service fields to provide printer location (as it’s used by MacOS), instead of printer info.</p>
 
 <p>The final steps were brushing up the project README, and adding a multi-arch build action following the regular <a href="https://www.docker.com/blog/multi-arch-build-and-images-the-simple-way/">docker documentation</a>.</p>
 
