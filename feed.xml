@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2021-12-22T12:40:53-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Of course we (only) do AirPrint!</title><link href="https://www.danielkrippner.de/airprint" rel="alternate" type="text/html" title="Of course we (only) do AirPrint!" /><published>2021-12-21T00:00:00-06:00</published><updated>2021-12-21T00:00:00-06:00</updated><id>https://www.danielkrippner.de/airprint</id><content type="html" xml:base="https://www.danielkrippner.de/airprint">&lt;p&gt;After approximately one month, the Apple journey is going well. Even picking up speed one could say, as I’m beginning to feel comfortable, or even at home a lot of the time. Still not closer to appreciating how the application switcher works, though ;-)&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-11T12:28:04-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">3 Mac keyboards</title><link href="https://www.danielkrippner.de/mackeyboard" rel="alternate" type="text/html" title="3 Mac keyboards" /><published>2022-02-11T00:00:00-06:00</published><updated>2022-02-11T00:00:00-06:00</updated><id>https://www.danielkrippner.de/mackeyboard</id><content type="html" xml:base="https://www.danielkrippner.de/mackeyboard">&lt;p&gt;Quick interlude: the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;Apple keyboard love&lt;/a&gt; seems to go both ways. A couple of weeks ago, the keyboard of the barely 2 months old M1 Macbook Pro died. Just like that - no keypresses registered any more, backlight off, rebooting etc didn’t to anything. The touchpad continued to funtion normally, however.&lt;/p&gt;
+
+&lt;h2 id=&quot;clever-boot-options-ux-choices&quot;&gt;Clever boot options UX choices&lt;/h2&gt;
+
+&lt;p&gt;The only thing that still operated was the power button/key - enough to turn the machine off and on, and to enter the boot options menu. There is an option for booting into Safe Mode - that requires the shift key to be pressed when clicking the corresponding option. Duh.
+I do have a external USB keyboard available of course - but no 30 bucks Apple USB-A Adapter. Just a ‘regular’ one that of course didn’t do anything when connected to the Mac.&lt;/p&gt;
+
+&lt;h2 id=&quot;repair-1&quot;&gt;Repair #1&lt;/h2&gt;
+
+&lt;p&gt;Allright - so let’s test Apple customer service. Called the hotline (looong wait time!), which ended in the Apple support engineer setting up a Genius Bar appointment at the closes Apple Store. Or trying to, because the reservation system was acting funky… Having been pointed at that though, I registered an appointment on my own some hours later.
+Had to wait a couple of days for that session, because of course the keyboard died on a Saturday and the next time slot I could make available for the Store visit was Tuesday. Anyways, went there and sat with the nice support guy who did diagnostics and took my computer in for repair.
+Two days later I was texted to collect my machine again, which I did. They replaced the top-cover-cum-keyboard, plus some other stuff - got to keep the disk and data though.&lt;/p&gt;
+
+&lt;h2 id=&quot;repair-2&quot;&gt;Repair #2&lt;/h2&gt;
+
+&lt;p&gt;… and was able to work with the computer until the next day. Because the next day, the keyboard died again. Did I mention that this is by far the most expensive piece of hardware I ever bought? First Apple computer I ever bought? Going splendidly, so far.
+Being wise to the Genius Bar thing, I did the moves again and brought the computer in again. This time they sent it off to a repair center one country over, to be gone about a week. I didn’t have to drive to the Store and back again to pick it up, but the machine was sent to my home address one week later as promised. They replaced “more” - mainboard, disk, topcase, etc. Probably the only thing untouched is the serial number.&lt;/p&gt;
+
+&lt;h2 id=&quot;backup-restore---what&quot;&gt;Backup restore - what?&lt;/h2&gt;
+
+&lt;p&gt;With the Mac back with an new disk, I wanted to make use of my time machine backup to get back up and running. That turned out to be another strange experience: starting up I was given the option to restore from backup - nice! Selected that, it went and copied files for a couple of hours. When that was done I was asked to create a new user. Wait - if my user hasn’t been (re)created with the restore, where the heck did it just copy all that data to?! Turns out that this is indeed a good question, one without an answer. Because when logging in with the newly created user the disk was “empty”, as in “the 200GB that should have been taken up with restored data are nowhere to be found”.
+Oh well, ok then. I know how I’ll be spending the evening.&lt;/p&gt;
+
+&lt;h2 id=&quot;mixed-bag&quot;&gt;Mixed bag&lt;/h2&gt;
+
+&lt;p&gt;This episode left me with mixed feelings. The definive downer is the obvious fact that a very expensive piece of supposedly high-end kit breaks after just 2 months of light use. I’ve never had this kind of issue with any notebook, in 20 years of continually working with many different makes&amp;amp;models (never Apple, though). So to experience this with the first Apple computer I’m using in my life is a bummer, and hopefully a definitive outlier. This also better not happen after warranty - the repair bills (that I didn’t have to pay but have seen nonetheless) are no joke.&lt;/p&gt;
+
+&lt;p&gt;Also irritating are the strange design choices Apple has made especially around how backup-restore onto a fresh machine works. I stronly suspect that this was a case of PEBKAC - but if Apple UX is so great then this sort of user error just should not happen. That it is not possible to use either mouse/trackpad &lt;em&gt;OR&lt;/em&gt; keyboard to boot into safe mode is a niche issue, but an avoidable one - if you’d prioritize robustness over design aesthetics.&lt;/p&gt;
+
+&lt;p&gt;The upshot is that in those two weeks I missed the Mac quite a bit. I wanted to do stuff, and while this machine for me is pure private plaything and there’s no deadlines or anything, I really was looking forward to getting it back.
+Finally I believe there is a strong case of buy-in-bias at work here. I’ve now invested emotions and quite some extra time into this thing (3 trips to the Apple Store and back at 30 mins each…), I’m growing attached.&lt;/p&gt;
+
+&lt;p&gt;So please, just work now!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Apple Support is good - not surprising considering the cost of the products, but good people there.&lt;/li&gt;
+  &lt;li&gt;I now own an Apple USB-A adapter - I guess there’s no turning back after this point.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Quick interlude: the Apple keyboard love seems to go both ways. A couple of weeks ago, the keyboard of the barely 2 months old M1 Macbook Pro died. Just like that - no keypresses registered any more, backlight off, rebooting etc didn’t to anything. The touchpad continued to funtion normally, however.</summary></entry><entry><title type="html">Of course we (only) do AirPrint!</title><link href="https://www.danielkrippner.de/airprint" rel="alternate" type="text/html" title="Of course we (only) do AirPrint!" /><published>2021-12-21T00:00:00-06:00</published><updated>2021-12-21T00:00:00-06:00</updated><id>https://www.danielkrippner.de/airprint</id><content type="html" xml:base="https://www.danielkrippner.de/airprint">&lt;p&gt;After approximately one month, the Apple journey is going well. Even picking up speed one could say, as I’m beginning to feel comfortable, or even at home a lot of the time. Still not closer to appreciating how the application switcher works, though ;-)&lt;/p&gt;
 
 &lt;p&gt;As I’ve done a full ecosystem switch, including mobile phone and tablet, also for these devices there is a need to interoperate with things like printers that exist in our household. This writeup is about how that worked out for me.&lt;/p&gt;
 
@@ -395,38 +436,4 @@ As long as I’m hosting all of this on my own infrastructure, the only real alt
   &lt;li&gt;css wants some changes to make hyperlinks more visible (DONE, see commit a52040ddbf554a5429601717671daa6db91b68bb)&lt;/li&gt;
   &lt;li&gt;Fix jekyll navigation links for our purposes. Hm, what to put here…?&lt;/li&gt;
   &lt;li&gt;See above - build and update on Raspi?&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the jekyll build -b switch. That thing changes the site.baseurl, not the site.url! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the main.css stylesheet any longer… oh well. Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. The primary takeaway on our jekyll experience is:</summary></entry><entry><title type="html">The Journey</title><link href="https://www.danielkrippner.de/journey" rel="alternate" type="text/html" title="The Journey" /><published>2021-04-21T00:00:00-05:00</published><updated>2021-04-21T00:00:00-05:00</updated><id>https://www.danielkrippner.de/journey</id><content type="html" xml:base="https://www.danielkrippner.de/journey">&lt;p&gt;Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.&lt;/p&gt;
-
-&lt;p&gt;This blog is going to be my diary on this journey.&lt;/p&gt;
-
-&lt;h2 id=&quot;what-we-have-been-learning-lately&quot;&gt;What we have been learning lately&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;some k8s, by setting up a bare metal cluster on some Raspis&lt;/li&gt;
-  &lt;li&gt;ansible basics, for provisioning our cluster&lt;/li&gt;
-  &lt;li&gt;playing around with helm&lt;/li&gt;
-  &lt;li&gt;dockerizing a Rust web service&lt;/li&gt;
-  &lt;li&gt;homer, for a home-network utility web page&lt;/li&gt;
-  &lt;li&gt;jekyll, aka this diary&lt;/li&gt;
-  &lt;li&gt;too little nginx so far&lt;/li&gt;
-  &lt;li&gt;docker-compose and linux boot params, running dockerized deconz&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;so-whats-next&quot;&gt;So what’s next?&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;little bit of CSS. But only a little, because CSS is driving me up the wall every time.&lt;/li&gt;
-  &lt;li&gt;create a pipeline for jekyll-&amp;gt;docker-&amp;gt;deploy
-    &lt;ul&gt;
-      &lt;li&gt;use git post-commit hook (?) to&lt;/li&gt;
-      &lt;li&gt;run ansible playbook that&lt;/li&gt;
-      &lt;li&gt;on homecentral, git pulls, docker-jekyll-builds, serves via nginx&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;some real k8s work(load), but need ideas
-    &lt;ul&gt;
-      &lt;li&gt;gitea looks interesting&lt;/li&gt;
-      &lt;li&gt;minecraft? …&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Due to an interesting constellation at work - a new project, with new partners and space for arbitrary ideas - I have found new motivation to spend evening time for learning and playing. I always wanted to get hands-on with this “cloud stuff”, dockerizing things, working with k8s, ansible, maybe use a new programming language, set up a github Actions pipeline, and so on.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the jekyll build -b switch. That thing changes the site.baseurl, not the site.url! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the main.css stylesheet any longer… oh well. Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. The primary takeaway on our jekyll experience is:</summary></entry></feed>
