@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-02-11T12:28:04-06:00</updated>
+ <updated>2022-02-12T15:17:54-06:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>Simple Scanning Station</title>
+   <link href="https://www.danielkrippner.de/scanningstation"/>
+   <id>https://www.danielkrippner.de/scanningstation</id>
+   <updated>2022-02-12T00:00:00-06:00</updated>
+   <content type="html">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry...</content>
+ </entry>
 
  
 
@@ -99,16 +109,6 @@
    <id>https://www.danielkrippner.de/jekyllgithub</id>
    <updated>2021-05-01T00:00:00-05:00</updated>
    <content type="html">&lt;p&gt;Not quite ‘professional’ yet - but, another step. We created a &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml&quot;&gt;github Actions configuration&lt;/a&gt; that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.&lt;/p&gt; &lt;p&gt;Why we did this, instead of continuing running the build pipe on our...</content>
- </entry>
-
- 
-
- <entry>
-   <title>A jekyll build pipe at home</title>
-   <link href="https://www.danielkrippner.de/jekyllbuildpipe"/>
-   <id>https://www.danielkrippner.de/jekyllbuildpipe</id>
-   <updated>2021-04-30T00:00:00-05:00</updated>
-   <content type="html">&lt;p&gt;So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt; &lt;strong&gt;-b&lt;/strong&gt; switch. That thing changes the &lt;strong&gt;site.baseurl&lt;/strong&gt;, not the &lt;strong&gt;site.url&lt;/strong&gt;! Which took some thinking/experimenting to find out from the fact that this switch caused the site to...</content>
  </entry>
 
  

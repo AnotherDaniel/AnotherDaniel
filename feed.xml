@@ -1,4 +1,147 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-11T12:28:04-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">3 Mac keyboards</title><link href="https://www.danielkrippner.de/mackeyboard" rel="alternate" type="text/html" title="3 Mac keyboards" /><published>2022-02-11T00:00:00-06:00</published><updated>2022-02-11T00:00:00-06:00</updated><id>https://www.danielkrippner.de/mackeyboard</id><content type="html" xml:base="https://www.danielkrippner.de/mackeyboard">&lt;p&gt;Quick interlude: the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;Apple keyboard love&lt;/a&gt; seems to go both ways. A couple of weeks ago, the keyboard of the barely 2 months old M1 Macbook Pro died. Just like that - no keypresses registered any more, backlight off, rebooting etc didn’t to anything. The touchpad continued to funtion normally, however.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-12T15:17:54-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
+The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;turn on scanner (by opening the front and top covers)&lt;/li&gt;
+  &lt;li&gt;feed in the document to be scanned; this will start the scan and result in a pdf version of the document file appearing in the output folder&lt;/li&gt;
+  &lt;li&gt;the single button of the S1100 is used to implement a multi-page document mode:
+    &lt;ul&gt;
+      &lt;li&gt;push the button to start multi-page mode&lt;/li&gt;
+      &lt;li&gt;feed in document pages&lt;/li&gt;
+      &lt;li&gt;push button again to end multi-page mode, resulting in a single pdf file with all scanned pages placed in output folder&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;close the scanner covers - done&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This article gives a quick rundown of the configuration steps necessary to (re)create this setup. It is intended to work with a document management system like &lt;a href=&quot;https://docspell.org&quot;&gt;docspell&lt;/a&gt;, which consumes the generated scans and makes them available in a document database.&lt;/p&gt;
+
+&lt;h2 id=&quot;saned&quot;&gt;saned&lt;/h2&gt;
+
+&lt;p&gt;The fundamental building block for our scanner pipeline is of course &lt;a href=&quot;http://www.sane-project.org&quot;&gt;sane&lt;/a&gt;. Basic setup for the Fujitsu S1100 is quite simple and the device works out of the box - after adding the &lt;em&gt;.nal&lt;/em&gt; driver files from either the Windows driver CABs or the internet to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/share/sane/epjitsu/&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This should be enough to fire up the scanner:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;start &lt;em&gt;saned&lt;/em&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo systemctl start saned.socket&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;try &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sane-find-scanner -q&lt;/code&gt;, make sure the device is listed&lt;/li&gt;
+  &lt;li&gt;then try &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanimage -L&lt;/code&gt;, which should result in the scanner buzzing a bit and a message that sane has identified and set up the device&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If this results in permission errors, make sure the user you’re running this with is a mamber of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanner&lt;/code&gt; group (Ubuntu default setup), or prefix a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; to these commands.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;scanservjs&quot;&gt;scanservjs&lt;/h2&gt;
+
+&lt;p&gt;At this point it is possible to go ahead with a UI frontend for sane-scanning like &lt;a href=&quot;https://github.com/sbs20/scanservjs&quot;&gt;scanservjs&lt;/a&gt;.
+I like to put things into containers as much as possible, for ease of deployment (especially, easy of re-creating deployments). &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanservjs&lt;/code&gt; is available as a docker image of course - below I include a simple docker-compose file to facilitate the deployment.&lt;/p&gt;
+
+&lt;p&gt;There is one thing needed to make this work seamlessly from a docker container: while it is possible to map (usb) device inodes into the docker container, this only works as long as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/bus/usb/...&lt;/code&gt; entry for our scanner doesn’t change. Which it will as soon as we close/open the device cover flaps in between scanning sessions.&lt;/p&gt;
+
+&lt;p&gt;To get around that, we can tell the natively running &lt;em&gt;saned&lt;/em&gt; to expose device access via a network port. To do this, add the container’s IP address range to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/saned.conf&lt;/code&gt; file in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Access List&lt;/code&gt; section. To find out what IP address the scanserv container is running with, use this command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker container inspect scanservjs | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;IPAddress
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In my case I’m adding the following address block to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;saned.conf&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;## Access List&lt;/span&gt;
+172.21.0.1/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Inside scanservjs’ docker container the sane service now needs to use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net&lt;/code&gt; driver, and connect to the saned instance running on the host system. A rudimentary docker-compose file to make all of this happen looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;scanservjs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;scanservjs&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;masterokhan/pi-scanservjs:latest&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;extra_hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;host.docker.internal:host-gateway&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;SANED_NET_HOSTS=&amp;lt;host-address&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/opt/scanserv/output:/app/data/output'&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/opt/scanserv/config:/app/config'&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;scanbd-and-scanbm&quot;&gt;scanbd and scanbm&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/sbs20/scanservjs&quot;&gt;scanservjs&lt;/a&gt; is a smooth frontend for interactive scanning, and if that’s what is needed you’re done at this point.
+However I want to build an automated scanning pipeline with as little user interaction needed as possible. So we are not looking for an interactive UI, but rather want to streamline the entire process.&lt;/p&gt;
+
+&lt;p&gt;To do this we need a service that continuously polls the scanner for events like “button pressed” or “paper detected”, and directly initiates the scanning process.
+As usual people have been there before, and have created the &lt;a href=&quot;https://manpages.debian.org/bullseye/scanbd/scanbd.8.en.html&quot;&gt;scanbd&lt;/a&gt; service to do just that. A quick &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt install scanbd&lt;/code&gt; gets the necessary things in place, however our setup for scanbd is slightly more involved. I am not going to rehash all of the scanbd setup basics here, there are multiple &lt;a href=&quot;https://sodocumentation.net/raspberry-pi/topic/6701/create-a-scan-station-with-scanbd--raspbian-&quot;&gt;articles&lt;/a&gt; out there describing the steps.&lt;/p&gt;
+
+&lt;p&gt;What is important:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;really copy &lt;strong&gt;all&lt;/strong&gt; files from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/sane.d/&lt;/code&gt; to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/scanbd/&lt;/code&gt; configuration; I initially forgot to include &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sane.conf&lt;/code&gt;, which results in scanbm not working as expected&lt;/li&gt;
+  &lt;li&gt;… &lt;em&gt;scanbm&lt;/em&gt; is a management-proxy in front of &lt;em&gt;scanbd&lt;/em&gt;, which monitors client interactions on the &lt;em&gt;saned&lt;/em&gt; port, and stops scanbd polling to allow other clients access to the scanner&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;More interesting is setting up the script actions for &lt;em&gt;scanbd&lt;/em&gt; to execute on various scanner events. To enable the workflow described above, my configuration reacts to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;paperload&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scan&lt;/code&gt; events, which represent paper being fed and the button being pressed, respectively.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;I wanted to use the powersave event as well, to clean up the multipage environment (see below), thinking that &lt;em&gt;powersafe&lt;/em&gt; would only occur when the scanner covers are being closed. Turns out the device enters powersave after a few seconds of inactivity, so I had to dismiss that idea.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd.conf&lt;/code&gt; file, plus the scripts in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts&lt;/code&gt;, contain the logic to implement our hands-off scanning station workflow. In principle there are two parts to make things work:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;on &lt;em&gt;paperload&lt;/em&gt; the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts/scan.script&lt;/code&gt; is started, which tells the scanner to
+    &lt;ul&gt;
+      &lt;li&gt;grab a tiff from the inserted document, into a tmp directory&lt;/li&gt;
+      &lt;li&gt;convert that into a pdf file&lt;/li&gt;
+      &lt;li&gt;move the pdf to the final output folder and clean up, &lt;strong&gt;unless&lt;/strong&gt; we are in multipage mode (see below)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;on &lt;em&gt;scan&lt;/em&gt; button press we initiate multi-page mode, which
+    &lt;ul&gt;
+      &lt;li&gt;creates a multipage-flag file on first press&lt;/li&gt;
+      &lt;li&gt;if that flag is set during page scan, created documents are not moved to the final output folder but stay in the tmp folder, until&lt;/li&gt;
+      &lt;li&gt;the &lt;em&gt;scan&lt;/em&gt; button is pressed a second time,&lt;/li&gt;
+      &lt;li&gt;which collates all the collected single-page documents into one multipage pdf,&lt;/li&gt;
+      &lt;li&gt;moves that into the output folder&lt;/li&gt;
+      &lt;li&gt;and cleans everything up including the multipage-flag file&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Look at the scripts for details on how things work. The main thing to be mindful of is setting up the scripts and folders with the necessary permissions so that everything can work as desired. I am doing the following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd.conf&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts/*&lt;/code&gt; are managed in a gitlab repository, and checked out locally into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scanserv/scanbd&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/scanbd/scanbd.conf&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/scanbd/scripts/&lt;/code&gt; are links to that local repo&lt;/li&gt;
+  &lt;li&gt;the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tmp&lt;/code&gt; folders are also located in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scanserv/&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;saned&lt;/em&gt; and &lt;em&gt;scanbd&lt;/em&gt; deamons run as user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;saned&lt;/code&gt;, group &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanner&lt;/code&gt; by default, so we allow the required access to these folders:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;chmgrp &lt;span class=&quot;nt&quot;&gt;-R&lt;/span&gt; scanner /opt/scanserv/output /opt/scanserv/temp
+&lt;span class=&quot;nb&quot;&gt;sudo chmod&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-R&lt;/span&gt; g+w /opt/scanserv/output /opt/scanserv/tmp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Testing all of this can be done by running the scripts individually - just keep in mind that you’re likely going to do that with a different user than what &lt;em&gt;saned&lt;/em&gt; will be using. The scripts contain syslog output that can he observed using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail -f /var/log/syslog&lt;/code&gt;.
+Once everything appears to work, start the &lt;em&gt;scanbd&lt;/em&gt; and &lt;em&gt;scanbm&lt;/em&gt; deamons using&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start scanbd.service
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start scanbm.socket
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once all of this is running, instruct the document management system to pick up files from the output folder defined in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/vars.scripts&lt;/code&gt; - this is also where other relevant directories and properties for the scanning setup are defined.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Apple Support is good - not surprising considering the cost of the products, but good people there.&lt;/li&gt;
+  &lt;li&gt;I now own an Apple USB-A adapter - I guess there’s no turning back after this point.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components. The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:</summary></entry><entry><title type="html">3 Mac keyboards</title><link href="https://www.danielkrippner.de/mackeyboard" rel="alternate" type="text/html" title="3 Mac keyboards" /><published>2022-02-11T00:00:00-06:00</published><updated>2022-02-11T00:00:00-06:00</updated><id>https://www.danielkrippner.de/mackeyboard</id><content type="html" xml:base="https://www.danielkrippner.de/mackeyboard">&lt;p&gt;Quick interlude: the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;Apple keyboard love&lt;/a&gt; seems to go both ways. A couple of weeks ago, the keyboard of the barely 2 months old M1 Macbook Pro died. Just like that - no keypresses registered any more, backlight off, rebooting etc didn’t to anything. The touchpad continued to funtion normally, however.&lt;/p&gt;
 
 &lt;h2 id=&quot;clever-boot-options-ux-choices&quot;&gt;Clever boot options UX choices&lt;/h2&gt;
 
@@ -387,53 +530,4 @@ docker-compose up &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span clas
   &lt;li&gt;This is brittle and non-elegant. Probably move to github pages hosting soon.&lt;/li&gt;
   &lt;li&gt;Created my first git hook script&lt;/li&gt;
   &lt;li&gt;Learned about ansible - “become” means root, and the working directory of a script exec command is probably user-home (instead of the location of the executed script)&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Not quite ‘professional’ yet - but, another step. We created a github Actions configuration that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.</summary></entry><entry><title type="html">A jekyll build pipe at home</title><link href="https://www.danielkrippner.de/jekyllbuildpipe" rel="alternate" type="text/html" title="A jekyll build pipe at home" /><published>2021-04-30T00:00:00-05:00</published><updated>2021-04-30T00:00:00-05:00</updated><id>https://www.danielkrippner.de/jekyllbuildpipe</id><content type="html" xml:base="https://www.danielkrippner.de/jekyllbuildpipe">&lt;p&gt;So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll build&lt;/code&gt; &lt;strong&gt;-b&lt;/strong&gt; switch. That thing changes the &lt;strong&gt;site.baseurl&lt;/strong&gt;, not the &lt;strong&gt;site.url&lt;/strong&gt;! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.css&lt;/code&gt; stylesheet any longer… oh well.
-Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary.
-The primary takeaway on our jekyll experience is:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;find a decent jekyll theme - not at all easy!&lt;/li&gt;
-  &lt;li&gt;I found &lt;a href=&quot;http://jekyllthemes.org/themes/monochrome/&quot;&gt;monochrome&lt;/a&gt;. Very nice, but needs some fixing esp for &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/monochrome/_sass/layout.scss&quot;&gt;keeping the footer at the bottom of the page&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The code for this is &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env&quot;&gt;up on github&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;also&quot;&gt;Also&lt;/h2&gt;
-
-&lt;p&gt;We need to find the best way to automate our build and hosting pipeline for the diary. Currently, there’s a build script that uses dockerized jekyll for site build, and then packages all of it up into an docker image. Have a look at the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/docker&quot;&gt;docker build files&lt;/a&gt;, as well as the &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/docker-build.sh&quot;&gt;shell script&lt;/a&gt; used to perform build&amp;amp;push to our local container registry.
-To complement this on the hosting side, I’ve created a little &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/tree/main/ansible&quot;&gt;ansible setup&lt;/a&gt; to remote-control docker-compose on the home-central Raspi. It is an automation for stopping, then pulling and recreating our jekyll container according to this docker-compose definition we have created for our web-based diary:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;jekyll&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;homecentral:5000/messages-env&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jekyll&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000:80&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;wget -q --spider http://192.168.0.10:8000 || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1m43s&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Note that homecentral:5000 is our private docker registry, set up for this purpose. Not entirely sure whether we’ll stick with this setup for long, but consider it a stepping stone on the path…&lt;/p&gt;
-
-&lt;h2 id=&quot;wrapping-up-this-leg-one-question-remains&quot;&gt;Wrapping up this leg, one question remains&lt;/h2&gt;
-
-&lt;p&gt;How do I actually operate this? The first naive idea is to use a git commit hook to initiate our build and hosting pipeline. This would work fine, except for when I’m going to shut down my notebook right after committing my last diary update…
-As long as I’m hosting all of this on my own infrastructure, the only real alternative will be running build etc on my Raspi - initiated by the commit command maybe, but otherwise headless. Or go straight for a jenkins setup. But don’t feel like going there just yet…&lt;/p&gt;
-
-&lt;p&gt;Maybe it will be more expedient to just make all of this public via github pages?&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Stupid f*ing css and footers - hiding the bottom of the content pages. Who designs this stuff? (DONE, see commit eb6f3757bd213300f2e2602b2b30c49f5ac9dd6b)&lt;/li&gt;
-  &lt;li&gt;css wants some changes to make hyperlinks more visible (DONE, see commit a52040ddbf554a5429601717671daa6db91b68bb)&lt;/li&gt;
-  &lt;li&gt;Fix jekyll navigation links for our purposes. Hm, what to put here…?&lt;/li&gt;
-  &lt;li&gt;See above - build and update on Raspi?&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">So what’s down? Well. Working on a jekyll publication pipeline, we had a bit of hindsight-stupid puzzling-fun with the jekyll build -b switch. That thing changes the site.baseurl, not the site.url! Which took some thinking/experimenting to find out from the fact that this switch caused the site to not find the main.css stylesheet any longer… oh well. Anyhow, something learned, something gained, as in this case we’re looking at the coming-together of our first online diary. The primary takeaway on our jekyll experience is:</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Not quite ‘professional’ yet - but, another step. We created a github Actions configuration that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.</summary></entry></feed>
