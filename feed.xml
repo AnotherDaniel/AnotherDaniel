@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-12T15:17:54-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-12T15:41:53-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
 The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -112,7 +112,7 @@ As usual people have been there before, and have created the &lt;a href=&quot;ht
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Look at the scripts for details on how things work. The main thing to be mindful of is setting up the scripts and folders with the necessary permissions so that everything can work as desired. I am doing the following:&lt;/p&gt;
+&lt;p&gt;Look at the scripts below for details on how things work. The main thing to be mindful of is setting up the scripts and folders with the necessary permissions so that everything can work as desired. I am doing the following:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd.conf&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts/*&lt;/code&gt; are managed in a gitlab repository, and checked out locally into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/scanserv/scanbd&lt;/code&gt;&lt;/li&gt;
@@ -139,9 +139,152 @@ Once everything appears to work, start the &lt;em&gt;scanbd&lt;/em&gt; and &lt;e
 &lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Apple Support is good - not surprising considering the cost of the products, but good people there.&lt;/li&gt;
-  &lt;li&gt;I now own an Apple USB-A adapter - I guess there’s no turning back after this point.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components. The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:</summary></entry><entry><title type="html">3 Mac keyboards</title><link href="https://www.danielkrippner.de/mackeyboard" rel="alternate" type="text/html" title="3 Mac keyboards" /><published>2022-02-11T00:00:00-06:00</published><updated>2022-02-11T00:00:00-06:00</updated><id>https://www.danielkrippner.de/mackeyboard</id><content type="html" xml:base="https://www.danielkrippner.de/mackeyboard">&lt;p&gt;Quick interlude: the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;Apple keyboard love&lt;/a&gt; seems to go both ways. A couple of weeks ago, the keyboard of the barely 2 months old M1 Macbook Pro died. Just like that - no keypresses registered any more, backlight off, rebooting etc didn’t to anything. The touchpad continued to funtion normally, however.&lt;/p&gt;
+  &lt;li&gt;What is missing from the setup is some user feedback when multipage mode is active - I’ve no good ideas how to do that, as there is not way to get the scanner to make noises or change the LED settings.&lt;/li&gt;
+  &lt;li&gt;Otherwise this is a nifty setup, works well even with a cheap simplex scanner.&lt;/li&gt;
+  &lt;li&gt;Setting up docspell on a 4B Raspi requires tuning down language processing settings, and docspell in general hasbn’t been the most robust experience for me. Might write a dedicated post about that setup.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;appendix&quot;&gt;Appendix&lt;/h1&gt;
+
+&lt;h3 id=&quot;scanbdscriptsvarsscript&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/vars.script&lt;/code&gt;&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;BASEDIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/opt/scanserv
+&lt;span class=&quot;nv&quot;&gt;TMPDIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BASEDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/scanbd/tmp
+&lt;span class=&quot;nv&quot;&gt;OUTPUTDIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BASEDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/output/krippner
+&lt;span class=&quot;nv&quot;&gt;MULTIPAGE_MODE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BASEDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/scanbd/multimode.flag
+
+&lt;span class=&quot;nv&quot;&gt;MODE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Gray
+&lt;span class=&quot;nv&quot;&gt;RESOLUTION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;300
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;scanbdscriptsscanscript&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/scan.script&lt;/code&gt;&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; /etc/scanbd/scripts/vars.script
+
+&lt;span class=&quot;c&quot;&gt;# We need tiff2pdf installed&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;command&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; tiff2pdf &amp;amp;&amp;gt; /dev/null
+&lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ERROR scanning on &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: missing tiff2pdf executable!&quot;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;exit
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi
+
+
+&lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Begin of &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_ACTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Scan_&quot;&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{ print $1 strftime(&quot;%Y%m%d_%H%M%S&quot;) }'&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+scanimage &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.tiff &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;tiff &lt;span class=&quot;nt&quot;&gt;--mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MODE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--resolution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$RESOLUTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; epjitsu
+tiff2pdf &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; A4 &lt;span class=&quot;nt&quot;&gt;-F&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.pdf &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.tiff
+
+
+&lt;span class=&quot;c&quot;&gt;# If we're not in MULTIPAGE_MODE move file to OUTPUT and clean up&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MULTIPAGE_MODE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.pdf &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$OUTPUTDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-fr&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;else
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.tiff
+  logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;MULTIPAGE scan on device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;, leaving scan in place in &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;End of &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_ACTION&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;scanbdscriptsmultipagescript&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/multipage.script&lt;/code&gt;&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; /etc/scanbd/scripts/vars.script
+
+
+&lt;span class=&quot;c&quot;&gt;# We need tiff2pdf installed&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# (gs is also used below, but should be available by default in most Linux environments)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;command&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; tiff2pdf &amp;amp;&amp;gt; /dev/null
+&lt;span class=&quot;k&quot;&gt;then
+  &lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ERROR entering MULTIPAGE mode for &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: missing tiff2pdf executable!&quot;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;exit
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;# are we already in multipage mode?&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MULTIPAGE_MODE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+  if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ERROR finalizing multipage session for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: TMPDIR not available (&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;)&quot;&lt;/span&gt;
+    /etc/scanbd/scripts/multipage_cleanup.script
+    &lt;span class=&quot;nb&quot;&gt;exit
+  &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;# wrap up multipage session - collate scanned documents, move to downstream processing, clean up&lt;/span&gt;
+  logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Finalize multipage session for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;nv&quot;&gt;COUNT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;find &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-maxdepth&lt;/span&gt; 1 &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'*.pdf'&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$COUNT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-gt&lt;/span&gt; 0 &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Concatenating &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$COUNT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; files for multipage session on device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# collate all pdfs into one file and move that to output folder&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;MultiScan_&quot;&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{ print $1 strftime(&quot;%Y%m%d_%H%M%S&quot;) }'&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+    gs &lt;span class=&quot;nt&quot;&gt;-dBATCH&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-dNOPAUSE&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-q&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sDEVICE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;pdfwrite &lt;span class=&quot;nt&quot;&gt;-dAutoRotatePages&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/None &lt;span class=&quot;nt&quot;&gt;-sOutputFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.pdf &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.pdf
+    &lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;.pdf &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$OUTPUTDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;else
+      &lt;/span&gt;logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;No scanned files found for session for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+
+  /etc/scanbd/scripts/multipage_cleanup.script
+  logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Multipage session for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; wrapped up&quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# prepare multipage session&lt;/span&gt;
+  logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Enter multipage session for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;# create tmp dir for our multi-page scans, set MULTIPAGE flag to true&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MULTIPAGE_MODE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+  logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Multipage session for device &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SCANBD_DEVICE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; set up&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;scanbdscriptsmultipage_cleanupscript&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/multipage_cleanup.script&lt;/code&gt;&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; /etc/scanbd/scripts/vars.script
+
+logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scanbd: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Cleaning up multipage-mode residuals&quot;&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-fr&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TMPDIR&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MULTIPAGE_MODE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;excerpt-from-scanbdscanbdconf&quot;&gt;excerpt from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scanbd.conf&lt;/code&gt;`&lt;/h3&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;action scan &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    filter &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;^scan.*&quot;&lt;/span&gt;
+        numerical-trigger &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            from-value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+            to-value   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    desc   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Trigger multipage mode&quot;&lt;/span&gt; 
+    script &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;multipage.script&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+action paperload &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    filter &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;^page-loaded.*&quot;&lt;/span&gt;
+        numerical-trigger &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            from-value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+            to-value   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    desc   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Scan to file&quot;&lt;/span&gt;
+    script &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;scan.script&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components. The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:</summary></entry><entry><title type="html">3 Mac keyboards</title><link href="https://www.danielkrippner.de/mackeyboard" rel="alternate" type="text/html" title="3 Mac keyboards" /><published>2022-02-11T00:00:00-06:00</published><updated>2022-02-11T00:00:00-06:00</updated><id>https://www.danielkrippner.de/mackeyboard</id><content type="html" xml:base="https://www.danielkrippner.de/mackeyboard">&lt;p&gt;Quick interlude: the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;Apple keyboard love&lt;/a&gt; seems to go both ways. A couple of weeks ago, the keyboard of the barely 2 months old M1 Macbook Pro died. Just like that - no keypresses registered any more, backlight off, rebooting etc didn’t to anything. The touchpad continued to funtion normally, however.&lt;/p&gt;
 
 &lt;h2 id=&quot;clever-boot-options-ux-choices&quot;&gt;Clever boot options UX choices&lt;/h2&gt;
 

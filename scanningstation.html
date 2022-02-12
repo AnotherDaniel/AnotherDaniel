@@ -249,7 +249,7 @@ As usual people have been there before, and have created the <a href="https://ma
   </li>
 </ul>
 
-<p>Look at the scripts for details on how things work. The main thing to be mindful of is setting up the scripts and folders with the necessary permissions so that everything can work as desired. I am doing the following:</p>
+<p>Look at the scripts below for details on how things work. The main thing to be mindful of is setting up the scripts and folders with the necessary permissions so that everything can work as desired. I am doing the following:</p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">scanbd.conf</code> and <code class="language-plaintext highlighter-rouge">scripts/*</code> are managed in a gitlab repository, and checked out locally into <code class="language-plaintext highlighter-rouge">/opt/scanserv/scanbd</code></li>
@@ -276,9 +276,152 @@ Once everything appears to work, start the <em>scanbd</em> and <em>scanbm</em> d
 <h3 id="waymarks">Waymarks</h3>
 
 <ul>
-  <li>Apple Support is good - not surprising considering the cost of the products, but good people there.</li>
-  <li>I now own an Apple USB-A adapter - I guess there’s no turning back after this point.</li>
+  <li>What is missing from the setup is some user feedback when multipage mode is active - I’ve no good ideas how to do that, as there is not way to get the scanner to make noises or change the LED settings.</li>
+  <li>Otherwise this is a nifty setup, works well even with a cheap simplex scanner.</li>
+  <li>Setting up docspell on a 4B Raspi requires tuning down language processing settings, and docspell in general hasbn’t been the most robust experience for me. Might write a dedicated post about that setup.</li>
 </ul>
+
+<h1 id="appendix">Appendix</h1>
+
+<h3 id="scanbdscriptsvarsscript"><code class="language-plaintext highlighter-rouge">scanbd/scripts/vars.script</code></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nv">BASEDIR</span><span class="o">=</span>/opt/scanserv
+<span class="nv">TMPDIR</span><span class="o">=</span><span class="s2">"</span><span class="nv">$BASEDIR</span><span class="s2">"</span>/scanbd/tmp
+<span class="nv">OUTPUTDIR</span><span class="o">=</span><span class="s2">"</span><span class="nv">$BASEDIR</span><span class="s2">"</span>/output/krippner
+<span class="nv">MULTIPAGE_MODE</span><span class="o">=</span><span class="s2">"</span><span class="nv">$BASEDIR</span><span class="s2">"</span>/scanbd/multimode.flag
+
+<span class="nv">MODE</span><span class="o">=</span>Gray
+<span class="nv">RESOLUTION</span><span class="o">=</span>300
+</code></pre></div></div>
+
+<h3 id="scanbdscriptsscanscript"><code class="language-plaintext highlighter-rouge">scanbd/scripts/scan.script</code></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">source</span> /etc/scanbd/scripts/vars.script
+
+<span class="c"># We need tiff2pdf installed</span>
+<span class="k">if</span> <span class="o">!</span> <span class="nb">command</span> <span class="nt">-v</span> tiff2pdf &amp;&gt; /dev/null
+<span class="k">then
+  </span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"ERROR scanning on </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">: missing tiff2pdf executable!"</span>
+  <span class="nb">exit
+</span><span class="k">fi
+
+
+</span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Begin of </span><span class="nv">$SCANBD_ACTION</span><span class="s2"> for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">"</span>
+
+<span class="k">if</span> <span class="o">[[</span> <span class="o">!</span> <span class="nt">-d</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">mkdir</span> <span class="nt">-p</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span>
+<span class="k">fi
+
+</span><span class="nv">filename</span><span class="o">=</span><span class="si">$(</span><span class="nb">echo</span> <span class="s2">"Scan_"</span> | <span class="nb">awk</span> <span class="s1">'{ print $1 strftime("%Y%m%d_%H%M%S") }'</span><span class="si">)</span>
+scanimage <span class="nt">-o</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">/</span><span class="nv">$filename</span><span class="s2">"</span>.tiff <span class="nt">--format</span><span class="o">=</span>tiff <span class="nt">--mode</span><span class="o">=</span><span class="s2">"</span><span class="nv">$MODE</span><span class="s2">"</span> <span class="nt">--resolution</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RESOLUTION</span><span class="s2">"</span> <span class="nt">-d</span> epjitsu
+tiff2pdf <span class="nt">-p</span> A4 <span class="nt">-F</span> <span class="nt">-d</span> <span class="nt">-o</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">/</span><span class="nv">$filename</span><span class="s2">"</span>.pdf <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">/</span><span class="nv">$filename</span><span class="s2">"</span>.tiff
+
+
+<span class="c"># If we're not in MULTIPAGE_MODE move file to OUTPUT and clean up</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="o">!</span> <span class="nt">-f</span> <span class="s2">"</span><span class="nv">$MULTIPAGE_MODE</span><span class="s2">"</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">mv</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">/</span><span class="nv">$filename</span><span class="s2">"</span>.pdf <span class="s2">"</span><span class="nv">$OUTPUTDIR</span><span class="s2">"</span>
+  <span class="nb">rm</span> <span class="nt">-fr</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span>/<span class="k">*</span>
+
+<span class="k">else
+  </span><span class="nb">rm</span> <span class="nt">-f</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">/</span><span class="nv">$filename</span><span class="s2">"</span>.tiff
+  logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"MULTIPAGE scan on device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">, leaving scan in place in </span><span class="nv">$TMPDIR</span><span class="s2">"</span>
+
+<span class="k">fi
+
+</span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"End of </span><span class="nv">$SCANBD_ACTION</span><span class="s2"> for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<h3 id="scanbdscriptsmultipagescript"><code class="language-plaintext highlighter-rouge">scanbd/scripts/multipage.script</code></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">source</span> /etc/scanbd/scripts/vars.script
+
+
+<span class="c"># We need tiff2pdf installed</span>
+<span class="c"># (gs is also used below, but should be available by default in most Linux environments)</span>
+<span class="k">if</span> <span class="o">!</span> <span class="nb">command</span> <span class="nt">-v</span> tiff2pdf &amp;&gt; /dev/null
+<span class="k">then
+  </span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"ERROR entering MULTIPAGE mode for </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">: missing tiff2pdf executable!"</span>
+  <span class="nb">exit
+</span><span class="k">fi</span>
+
+
+<span class="c"># are we already in multipage mode?</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="nt">-f</span> <span class="s2">"</span><span class="nv">$MULTIPAGE_MODE</span><span class="s2">"</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+  if</span> <span class="o">[[</span> <span class="o">!</span> <span class="nt">-d</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"ERROR finalizing multipage session for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">: TMPDIR not available (</span><span class="nv">$TMPDIR</span><span class="s2">)"</span>
+    /etc/scanbd/scripts/multipage_cleanup.script
+    <span class="nb">exit
+  </span><span class="k">fi</span>
+
+  <span class="c"># wrap up multipage session - collate scanned documents, move to downstream processing, clean up</span>
+  logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Finalize multipage session for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">"</span>
+
+  <span class="nv">COUNT</span><span class="o">=</span><span class="si">$(</span>find <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span> <span class="nt">-maxdepth</span> 1 <span class="nt">-name</span> <span class="s1">'*.pdf'</span> | <span class="nb">wc</span> <span class="nt">-l</span><span class="si">)</span>
+  <span class="k">if</span> <span class="o">[[</span> <span class="s2">"</span><span class="nv">$COUNT</span><span class="s2">"</span> <span class="nt">-gt</span> 0 <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Concatenating </span><span class="nv">$COUNT</span><span class="s2"> files for multipage session on device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">"</span>
+
+    <span class="c"># collate all pdfs into one file and move that to output folder</span>
+    <span class="nv">filename</span><span class="o">=</span><span class="si">$(</span><span class="nb">echo</span> <span class="s2">"MultiScan_"</span> | <span class="nb">awk</span> <span class="s1">'{ print $1 strftime("%Y%m%d_%H%M%S") }'</span><span class="si">)</span>
+    gs <span class="nt">-dBATCH</span> <span class="nt">-dNOPAUSE</span> <span class="nt">-q</span> <span class="nt">-sDEVICE</span><span class="o">=</span>pdfwrite <span class="nt">-dAutoRotatePages</span><span class="o">=</span>/None <span class="nt">-sOutputFile</span><span class="o">=</span><span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span>/<span class="s2">"</span><span class="nv">$filename</span><span class="s2">"</span>.pdf <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span>/<span class="k">*</span>.pdf
+    <span class="nb">mv</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">/</span><span class="nv">$filename</span><span class="s2">"</span>.pdf <span class="s2">"</span><span class="nv">$OUTPUTDIR</span><span class="s2">"</span>
+
+  <span class="k">else
+      </span>logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"No scanned files found for session for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">"</span>
+
+  <span class="k">fi</span>
+
+  /etc/scanbd/scripts/multipage_cleanup.script
+  logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Multipage session for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2"> wrapped up"</span>
+
+<span class="k">else</span>
+  <span class="c"># prepare multipage session</span>
+  logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Enter multipage session for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2">"</span>
+
+  <span class="c"># create tmp dir for our multi-page scans, set MULTIPAGE flag to true</span>
+  <span class="nb">mkdir</span> <span class="nt">-p</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span>
+  <span class="nb">touch</span> <span class="s2">"</span><span class="nv">$MULTIPAGE_MODE</span><span class="s2">"</span>
+
+  logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Multipage session for device </span><span class="nv">$SCANBD_DEVICE</span><span class="s2"> set up"</span>
+<span class="k">fi</span>
+</code></pre></div></div>
+
+<h3 id="scanbdscriptsmultipage_cleanupscript"><code class="language-plaintext highlighter-rouge">scanbd/scripts/multipage_cleanup.script</code></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">source</span> /etc/scanbd/scripts/vars.script
+
+logger <span class="nt">-t</span> <span class="s2">"scanbd: </span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"Cleaning up multipage-mode residuals"</span>
+
+<span class="nb">rm</span> <span class="nt">-fr</span> <span class="s2">"</span><span class="nv">$TMPDIR</span><span class="s2">"</span>/<span class="k">*</span>
+<span class="nb">rm</span> <span class="nt">-f</span> <span class="s2">"</span><span class="nv">$MULTIPAGE_MODE</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<h3 id="excerpt-from-scanbdscanbdconf">excerpt from <code class="language-plaintext highlighter-rouge">scanbd/scanbd.conf</code>`</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>action scan <span class="o">{</span>
+    filter <span class="o">=</span> <span class="s2">"^scan.*"</span>
+        numerical-trigger <span class="o">{</span>
+            from-value <span class="o">=</span> 1
+            to-value   <span class="o">=</span> 0
+        <span class="o">}</span>
+    desc   <span class="o">=</span> <span class="s2">"Trigger multipage mode"</span> 
+    script <span class="o">=</span> <span class="s2">"multipage.script"</span>
+<span class="o">}</span>
+
+action paperload <span class="o">{</span>
+    filter <span class="o">=</span> <span class="s2">"^page-loaded.*"</span>
+        numerical-trigger <span class="o">{</span>
+            from-value <span class="o">=</span> 0
+            to-value   <span class="o">=</span> 1
+        <span class="o">}</span>
+    desc   <span class="o">=</span> <span class="s2">"Scan to file"</span>
+    script <span class="o">=</span> <span class="s2">"scan.script"</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
 		
 	</div>
