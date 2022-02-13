@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-12T15:55:27-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-13T03:51:58-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
 The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;turn on scanner (by opening the front and top covers)&lt;/li&gt;
-  &lt;li&gt;feed in the document to be scanned; this will start the scan and result in a pdf version of the document file appearing in the output folder (to be ingested by docspell)&lt;/li&gt;
+  &lt;li&gt;feed in the document to be scanned; this will start the scan and result in a pdf version of the document file appearing in the output folder (to be ingested by &lt;em&gt;docspell&lt;/em&gt;)&lt;/li&gt;
   &lt;li&gt;the single button of the S1100 is used to implement a multi-page document mode:
     &lt;ul&gt;
       &lt;li&gt;push the button to start multi-page mode&lt;/li&gt;
@@ -14,11 +14,11 @@ The scanning station works with a Fujitsu S1100 portable scanner, and implements
   &lt;li&gt;close the scanner covers - done&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;This article gives a quick rundown of the configuration steps necessary to (re)create this setup. It is intended to work with a document management system like &lt;a href=&quot;https://docspell.org&quot;&gt;docspell&lt;/a&gt;, which consumes the generated scans and makes them available in a document database.&lt;/p&gt;
+&lt;p&gt;This article gives a quick rundown of the configuration steps necessary to (re)create this setup. It is intended to work with a document management system like &lt;a href=&quot;https://docspell.org&quot;&gt;&lt;em&gt;docspell&lt;/em&gt;&lt;/a&gt;, which consumes the generated scans and makes them available in a document database.&lt;/p&gt;
 
 &lt;h2 id=&quot;saned&quot;&gt;saned&lt;/h2&gt;
 
-&lt;p&gt;The fundamental building block for our scanner pipeline is of course &lt;a href=&quot;http://www.sane-project.org&quot;&gt;sane&lt;/a&gt;. Basic setup for the Fujitsu S1100 is quite simple and the device works out of the box - after adding the &lt;em&gt;.nal&lt;/em&gt; driver files from either the Windows driver CABs or the internet to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/share/sane/epjitsu/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The fundamental building block for our scanner pipeline is of course &lt;a href=&quot;http://www.sane-project.org&quot;&gt;&lt;em&gt;sane&lt;/em&gt;&lt;/a&gt;. Basic setup for the Fujitsu S1100 is quite simple and the device works out of the box - after adding the &lt;em&gt;.nal&lt;/em&gt; driver files from either the Windows driver CABs or the internet to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/share/sane/epjitsu/&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;This should be enough to fire up the scanner:&lt;/p&gt;
 
@@ -34,12 +34,12 @@ The scanning station works with a Fujitsu S1100 portable scanner, and implements
 
 &lt;h2 id=&quot;scanservjs&quot;&gt;scanservjs&lt;/h2&gt;
 
-&lt;p&gt;At this point it is possible to go ahead with a UI frontend for sane-scanning like &lt;a href=&quot;https://github.com/sbs20/scanservjs&quot;&gt;scanservjs&lt;/a&gt;.
-I like to put things into containers as much as possible, for ease of deployment (especially, easy of re-creating deployments). &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanservjs&lt;/code&gt; is available as a docker image of course - below I include a simple docker-compose file to facilitate the deployment.&lt;/p&gt;
+&lt;p&gt;At this point it is possible to go ahead with a UI frontend for sane-scanning like &lt;a href=&quot;https://github.com/sbs20/scanservjs&quot;&gt;&lt;em&gt;scanservjs&lt;/em&gt;&lt;/a&gt;.
+I like to put things into containers as much as possible, for ease of deployment (especially, easy of re-creating deployments). &lt;em&gt;scanservjs&lt;/em&gt; is available as a docker image of course - below I include a simple docker-compose file that pulls up &lt;em&gt;scanservjs&lt;/em&gt; to work with &lt;em&gt;saned&lt;/em&gt; as configured above.&lt;/p&gt;
 
-&lt;p&gt;There is one thing needed to make this work seamlessly from a docker container: while it is possible to map (usb) device inodes into the docker container, this only works as long as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/bus/usb/...&lt;/code&gt; entry for our scanner doesn’t change. Which it will as soon as we close/open the device cover flaps in between scanning sessions.&lt;/p&gt;
+&lt;p&gt;There is one thing needed to make this play seamlessly from inside a docker container: while it is possible to map (usb) device inodes into the container, this only works as long as the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/bus/usb/...&lt;/code&gt; entry for our scanner doesn’t change. Which it will as soon as we close/open the device cover flaps in between scanning sessions.&lt;/p&gt;
 
-&lt;p&gt;To get around that, we can tell the natively running &lt;em&gt;saned&lt;/em&gt; to expose device access via a network port. To do this, add the container’s IP address range to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/saned.conf&lt;/code&gt; file in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Access List&lt;/code&gt; section. To find out what IP address the scanserv container is running with, use this command:&lt;/p&gt;
+&lt;p&gt;To get around that, we can tell the natively running &lt;em&gt;saned&lt;/em&gt; to expose device access via a network port. To do this, add the container’s IP address range to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/saned.conf&lt;/code&gt; file in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Access List&lt;/code&gt; section. To find out what IP address the &lt;em&gt;scanserv&lt;/em&gt; container is running with, use this command:&lt;/p&gt;
 
 &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker container inspect scanservjs | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;IPAddress
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -50,7 +50,7 @@ I like to put things into containers as much as possible, for ease of deployment
 172.21.0.1/24
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Inside scanservjs’ docker container the sane service now needs to use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net&lt;/code&gt; driver, and connect to the saned instance running on the host system. A rudimentary docker-compose file to make all of this happen looks like this:&lt;/p&gt;
+&lt;p&gt;Inside &lt;em&gt;scanservjs&lt;/em&gt;’ docker container the sane service now needs to use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net&lt;/code&gt; driver, and connect to the saned instance running on the host system. A rudimentary docker-compose file to make all of this happen looks like this:&lt;/p&gt;
 
 &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
@@ -71,11 +71,11 @@ I like to put things into containers as much as possible, for ease of deployment
 
 &lt;h2 id=&quot;scanbd-and-scanbm&quot;&gt;scanbd and scanbm&lt;/h2&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://github.com/sbs20/scanservjs&quot;&gt;scanservjs&lt;/a&gt; is a smooth frontend for interactive scanning, and if that’s what is needed you’re done at this point.
+&lt;p&gt;&lt;em&gt;scanservjs&lt;/em&gt; is a smooth frontend for interactive scanning, and if that’s what is needed you’re done at this point.
 However I want to build an automated scanning pipeline with as little user interaction needed as possible. So we are not looking for an interactive UI, but rather want to streamline the entire process.&lt;/p&gt;
 
-&lt;p&gt;To do this we need a service that continuously polls the scanner for events like “button pressed” or “paper detected”, and directly initiates the scanning process.
-As usual people have been there before, and have created the &lt;a href=&quot;https://manpages.debian.org/bullseye/scanbd/scanbd.8.en.html&quot;&gt;scanbd&lt;/a&gt; service to do just that. A quick &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt install scanbd&lt;/code&gt; gets the necessary things in place, however our setup for scanbd is slightly more involved. I am not going to rehash all of the scanbd setup basics here, there are multiple &lt;a href=&quot;https://sodocumentation.net/raspberry-pi/topic/6701/create-a-scan-station-with-scanbd--raspbian-&quot;&gt;articles&lt;/a&gt; out there describing the steps.&lt;/p&gt;
+&lt;p&gt;To do this we need a service that continuously polls the scanner for events like “button pressed” or “paper detected”, and immediately initiates the scanning process.
+As usual people have been there before, and have created the &lt;a href=&quot;https://manpages.debian.org/bullseye/scanbd/scanbd.8.en.html&quot;&gt;&lt;em&gt;scanbd&lt;/em&gt;&lt;/a&gt; service to do just that. A quick &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt install scanbd&lt;/code&gt; gets the necessary things in place, however our setup for scanbd is slightly more involved. I am not going to rehash the scanbd setup here, there are &lt;a href=&quot;https://wiki.archlinux.org/title/Scanner_Button_Daemon&quot;&gt;multiple&lt;/a&gt; &lt;a href=&quot;https://sodocumentation.net/raspberry-pi/topic/6701/create-a-scan-station-with-scanbd--raspbian-&quot;&gt;articles&lt;/a&gt; out there describing the steps.&lt;/p&gt;
 
 &lt;p&gt;What is important:&lt;/p&gt;
 
@@ -87,24 +87,28 @@ As usual people have been there before, and have created the &lt;a href=&quot;ht
 &lt;p&gt;More interesting is setting up the script actions for &lt;em&gt;scanbd&lt;/em&gt; to execute on various scanner events. To enable the workflow described above, my configuration reacts to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;paperload&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scan&lt;/code&gt; events, which represent paper being fed and the button being pressed, respectively.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;I wanted to use the powersave event as well, to clean up the multipage environment (see below), thinking that &lt;em&gt;powersafe&lt;/em&gt; would only occur when the scanner covers are being closed. Turns out the device enters powersave after a few seconds of inactivity, so I had to dismiss that idea.&lt;/p&gt;
+  &lt;p&gt;I wanted to use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;powersave&lt;/code&gt; event as well, to clean up the multipage environment (see below), thinking that it would occur when the scanner covers are being closed. Turns out the device enters powersave after a few seconds of inactivity, so I had to dismiss that idea.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd.conf&lt;/code&gt; file, plus the scripts in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts&lt;/code&gt;, contain the logic to implement our hands-off scanning station workflow. In principle there are two parts to make things work:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;If you want to know what events your scanner supports, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanimage -A&lt;/code&gt; can give you an overview. Also have a look at the files in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/scanbd/scanner.d&lt;/code&gt;, maybe there is something in there that works with your device.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd.conf&lt;/code&gt; file, plus the scripts in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts&lt;/code&gt;, contain the logic to implement our hands-off scanning station workflow. In principle there are two parts to make this work:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;on &lt;em&gt;paperload&lt;/em&gt; the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts/scan.script&lt;/code&gt; is started, which tells the scanner to
+  &lt;li&gt;on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;paperload&lt;/code&gt; the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts/scan.script&lt;/code&gt; is started, which tells the scanner to
     &lt;ul&gt;
       &lt;li&gt;grab a tiff from the inserted document, into a tmp directory&lt;/li&gt;
       &lt;li&gt;convert that into a pdf file&lt;/li&gt;
       &lt;li&gt;move the pdf to the final output folder and clean up, &lt;strong&gt;unless&lt;/strong&gt; we are in multipage mode (see below)&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;on &lt;em&gt;scan&lt;/em&gt; button press we initiate multi-page mode, which
+  &lt;li&gt;on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scan&lt;/code&gt; button press we initiate multi-page mode, which
     &lt;ul&gt;
       &lt;li&gt;creates a multipage-flag file on first press&lt;/li&gt;
       &lt;li&gt;if that flag is set during page scan, created documents are not moved to the final output folder but stay in the tmp folder, until&lt;/li&gt;
-      &lt;li&gt;the &lt;em&gt;scan&lt;/em&gt; button is pressed a second time,&lt;/li&gt;
+      &lt;li&gt;the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scan&lt;/code&gt; button is pressed a second time,&lt;/li&gt;
       &lt;li&gt;which collates all the collected single-page documents into one multipage pdf,&lt;/li&gt;
       &lt;li&gt;moves that into the output folder&lt;/li&gt;
       &lt;li&gt;and cleans everything up including the multipage-flag file&lt;/li&gt;
@@ -132,7 +136,7 @@ Once everything appears to work, start the &lt;em&gt;scanbd&lt;/em&gt; and &lt;e
 &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start scanbm.socket
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Once all of this is running, instruct the document management system to pick up files from the output folder defined in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/vars.scripts&lt;/code&gt; - this is also where other relevant directories and properties for the scanning setup are defined.&lt;/p&gt;
+&lt;p&gt;Once all of this is running, instruct the document management system to pick up files from the output folder defined in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scanbd/scripts/vars.scripts&lt;/code&gt; - this is also where other relevant directories and properties like scanning mode and resolution are defined.&lt;/p&gt;
 
 &lt;hr /&gt;
 
