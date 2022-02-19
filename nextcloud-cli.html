@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Nextcloud CLI shell script</title>
+  <meta name="description" content="nextcloud, shell, cli">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Nextcloud CLI shell script</h2>		
+	<time datetime="2022-02-19T00:00:00-06:00" class="by-line">19 Feb 2022</time>
+	<div class="content">
+
+		<p>With the recent instantiation of my <a href="https://www.danielkrippner.de/scanningstation">simple scanning station</a>, there is now another data sink in my home network that wants backup. And in the case of the docspell database, we’re looking at quite relevant data, so a backup definitely is called for.
+Where backups are concerned I am partial to the dandelion strategy: spread your data around often, and to all kinds of places. One of the locations that I like to use is the <a href="https://nextcloud.com">Nextcloud</a> instance that is covering all our “Cloud data” needs.</p>
+
+<h2 id="nextcloud-interaction-options">Nextcloud interaction options</h2>
+
+<p>Nextcloud offers a sync client for most platforms, of course including Linux (my scanning station is running on Ubuntu, on a Raspberry Pi). However, that default client is a GUI application. My Raspi is running headless, and I don’t want to pull in dozens of additional packages to run a desktop that I’ll never use. Also, for the use case at hand I simply want to push some files into Nextcloud, no fancy syncing required.</p>
+
+<p>What I need is a simply command-line interface for file upload, that I can use from a cron script that will periodically push backup files to the Nextcloud server. Nextcloud offers a <a href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/basic.html">WebDAV interface for basic file functions</a>, and that means that some scripting around <a href="https://curl.se">curl</a> should be enough.</p>
+
+<h2 id="that-escalated-quickly">That escalated quickly</h2>
+
+<p>Ok then - a while ago I already wrote a simple script to just push a file to a specified location on a Nextcloud file server. I also had a second script that could delete a file/folder. Wouldn’t it be nice if there was a full command-line interface (CLI) client that could do it all? File upload and download, deletion, directory creation, useful error handling?</p>
+
+<p>Of course it would!</p>
+
+<p>So that’s what I build the last couple of evenings - the result can be found <a href="https://github.com/AnotherDaniel/nx_client">here</a>.
+It is a reasonably complete nextcloud files cli, including some ‘fancy’ options like checking whether a file already exists before uploading.</p>
+
+<h2 id="nx_client-usage">nx_client usage</h2>
+
+<p>Nextcloud cli for downloading/uploading/deleting files</p>
+
+<p>Usage: <code class="language-plaintext highlighter-rouge">nx_client.sh [-h] [-c &lt;configfile&gt;] [-u &lt;file&gt; -f | -p | -d | -o] &lt;destination&gt;</code></p>
+
+<p>&lt;<code class="language-plaintext highlighter-rouge">destination</code>&gt; is the location on your nextcloud file server instance, starting from the root folder.
+Nextcloud credentials and settings are sourced from ~/.nx_client</p>
+
+<pre><code class="language-man">Options:
+                no option will download the file at &lt;destination&gt; to the current directory
+ -o &lt;file&gt;      download file at &lt;destination&gt; to local &lt;file&gt;
+ -u &lt;file&gt;      upload &lt;file&gt; to &lt;destionation&gt;, if it doesn't already exist
+ -f             force re-upload of &lt;file&gt; even if it already exists
+ -d             delete file or directory at &lt;destionation&gt;
+ -p             create &lt;destination&gt; directory
+ -c             nextcloud configuration file to use, defaults to ~/.nx_client
+ -h             display this help
+
+The configuration file (default: ~/.nx_client) needs to define the variables BASEURL and CREDS - for example:
+ BASEURL="https://example.nextcloud.host/remote.php/webdav"
+ CREDS="example@user.account:examplePassword"
+</code></pre>
+
+<h2 id="skipping-the-boring-bits">Skipping the boring bits</h2>
+
+<p>It took me a lot of fiddling to get <code class="language-plaintext highlighter-rouge">nx_client</code> to this point - none of which is interesting enough to write about. It’s a nifty little tool I think, way beyond what’s needed for the initial backup use case. Which now is as simple as putting together something like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+logger <span class="nt">-t</span> <span class="s2">"</span><span class="nv">$0</span><span class="s2">"</span> <span class="s2">"uploading &lt;APP&gt; backup"</span>
+<span class="k">for </span>file <span class="k">in</span> /path/to/backup/files/<span class="k">*</span><span class="p">;</span> <span class="k">do
+    </span>nx_client.sh <span class="nt">-c</span> /home/user/.nx_client <span class="nt">-u</span> <span class="s2">"</span><span class="nv">$file</span><span class="s2">"</span> /Backup/APP/
+<span class="k">done</span>
+</code></pre></div></div>
+
+<p>Call that from your crontab, and you’ll have a simple pipeline that takes a bunch of files you want off-site and pushes them to a Nextcloud instance.</p>
+
+<h2 id="so-whats-with-docspell">So what’s with docspell?</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">nx_client</code> and backup scripts above work for anthing that’s a file, of course - so what’s with the docspell data (docspell is using <em>postgresql</em>)? As usual, people have been here before, in this case there is this nice <a href="https://github.com/prodrigestivill/docker-postgres-backup-local">dockerized pgbackup-to-local-filesystem</a> solution, courtesy of <a href="https://github.com/prodrigestivill">PauRE</a>. With that, the backup chain to Nextcloud looks like this:</p>
+
+<ul>
+  <li>dockspell/postgresql</li>
+  <li>docker-postgres-backup-local</li>
+  <li>cronjob calling a simple backup script (see previous section)</li>
+  <li>nx_client for performing the uploads</li>
+</ul>
+
+<p>Works like a charm - one more dandelion seed taken care of!</p>
+
+<hr />
+
+<h3 id="waymarks">Waymarks</h3>
+
+<ul>
+  <li>Nothing much - the profusion of different styles of statements { and brackets! <code class="language-plaintext highlighter-rouge">[] [[]] () (())</code> } in the context of bash <code class="language-plaintext highlighter-rouge">if</code> statements is not pretty</li>
+  <li>Nextcloud rocks, as usual</li>
+  <li>The most complicated part of all this is: which files to push off-site, how often? (compare with what pgbackup exports)</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>

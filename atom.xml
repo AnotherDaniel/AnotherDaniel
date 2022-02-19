@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-02-13T04:27:32-06:00</updated>
+ <updated>2022-02-19T15:52:12-06:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>Nextcloud CLI shell script</title>
+   <link href="https://www.danielkrippner.de/nextcloud-cli"/>
+   <id>https://www.danielkrippner.de/nextcloud-cli</id>
+   <updated>2022-02-19T00:00:00-06:00</updated>
+   <content type="html">&lt;p&gt;With the recent instantiation of my &lt;a href=&quot;https://www.danielkrippner.de/scanningstation&quot;&gt;simple scanning station&lt;/a&gt;, there is now another data sink in my home network that wants backup. And in the case of the docspell database, we’re looking at quite relevant data, so a backup definitely is called for. Where backups are concerned I am...</content>
+ </entry>
 
  
 
@@ -99,16 +109,6 @@
    <id>https://www.danielkrippner.de/hassapi</id>
    <updated>2021-05-07T00:00:00-05:00</updated>
    <content type="html">&lt;p&gt;The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able...</content>
- </entry>
-
- 
-
- <entry>
-   <title>Jekyll build via github Actions</title>
-   <link href="https://www.danielkrippner.de/jekyllgithub"/>
-   <id>https://www.danielkrippner.de/jekyllgithub</id>
-   <updated>2021-05-01T00:00:00-05:00</updated>
-   <content type="html">&lt;p&gt;Not quite ‘professional’ yet - but, another step. We created a &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml&quot;&gt;github Actions configuration&lt;/a&gt; that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.&lt;/p&gt; &lt;p&gt;Why we did this, instead of continuing running the build pipe on our...</content>
  </entry>
 
  

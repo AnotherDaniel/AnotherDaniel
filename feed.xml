@@ -1,4 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-13T04:27:32-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-19T15:52:12-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Nextcloud CLI shell script</title><link href="https://www.danielkrippner.de/nextcloud-cli" rel="alternate" type="text/html" title="Nextcloud CLI shell script" /><published>2022-02-19T00:00:00-06:00</published><updated>2022-02-19T00:00:00-06:00</updated><id>https://www.danielkrippner.de/nextcloud-cli</id><content type="html" xml:base="https://www.danielkrippner.de/nextcloud-cli">&lt;p&gt;With the recent instantiation of my &lt;a href=&quot;https://www.danielkrippner.de/scanningstation&quot;&gt;simple scanning station&lt;/a&gt;, there is now another data sink in my home network that wants backup. And in the case of the docspell database, we’re looking at quite relevant data, so a backup definitely is called for.
+Where backups are concerned I am partial to the dandelion strategy: spread your data around often, and to all kinds of places. One of the locations that I like to use is the &lt;a href=&quot;https://nextcloud.com&quot;&gt;Nextcloud&lt;/a&gt; instance that is covering all our “Cloud data” needs.&lt;/p&gt;
+
+&lt;h2 id=&quot;nextcloud-interaction-options&quot;&gt;Nextcloud interaction options&lt;/h2&gt;
+
+&lt;p&gt;Nextcloud offers a sync client for most platforms, of course including Linux (my scanning station is running on Ubuntu, on a Raspberry Pi). However, that default client is a GUI application. My Raspi is running headless, and I don’t want to pull in dozens of additional packages to run a desktop that I’ll never use. Also, for the use case at hand I simply want to push some files into Nextcloud, no fancy syncing required.&lt;/p&gt;
+
+&lt;p&gt;What I need is a simply command-line interface for file upload, that I can use from a cron script that will periodically push backup files to the Nextcloud server. Nextcloud offers a &lt;a href=&quot;https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/basic.html&quot;&gt;WebDAV interface for basic file functions&lt;/a&gt;, and that means that some scripting around &lt;a href=&quot;https://curl.se&quot;&gt;curl&lt;/a&gt; should be enough.&lt;/p&gt;
+
+&lt;h2 id=&quot;that-escalated-quickly&quot;&gt;That escalated quickly&lt;/h2&gt;
+
+&lt;p&gt;Ok then - a while ago I already wrote a simple script to just push a file to a specified location on a Nextcloud file server. I also had a second script that could delete a file/folder. Wouldn’t it be nice if there was a full command-line interface (CLI) client that could do it all? File upload and download, deletion, directory creation, useful error handling?&lt;/p&gt;
+
+&lt;p&gt;Of course it would!&lt;/p&gt;
+
+&lt;p&gt;So that’s what I build the last couple of evenings - the result can be found &lt;a href=&quot;https://github.com/AnotherDaniel/nx_client&quot;&gt;here&lt;/a&gt;.
+It is a reasonably complete nextcloud files cli, including some ‘fancy’ options like checking whether a file already exists before uploading.&lt;/p&gt;
+
+&lt;h2 id=&quot;nx_client-usage&quot;&gt;nx_client usage&lt;/h2&gt;
+
+&lt;p&gt;Nextcloud cli for downloading/uploading/deleting files&lt;/p&gt;
+
+&lt;p&gt;Usage: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nx_client.sh [-h] [-c &amp;lt;configfile&amp;gt;] [-u &amp;lt;file&amp;gt; -f | -p | -d | -o] &amp;lt;destination&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&amp;lt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;destination&lt;/code&gt;&amp;gt; is the location on your nextcloud file server instance, starting from the root folder.
+Nextcloud credentials and settings are sourced from ~/.nx_client&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-man&quot;&gt;Options:
+                no option will download the file at &amp;lt;destination&amp;gt; to the current directory
+ -o &amp;lt;file&amp;gt;      download file at &amp;lt;destination&amp;gt; to local &amp;lt;file&amp;gt;
+ -u &amp;lt;file&amp;gt;      upload &amp;lt;file&amp;gt; to &amp;lt;destionation&amp;gt;, if it doesn't already exist
+ -f             force re-upload of &amp;lt;file&amp;gt; even if it already exists
+ -d             delete file or directory at &amp;lt;destionation&amp;gt;
+ -p             create &amp;lt;destination&amp;gt; directory
+ -c             nextcloud configuration file to use, defaults to ~/.nx_client
+ -h             display this help
+
+The configuration file (default: ~/.nx_client) needs to define the variables BASEURL and CREDS - for example:
+ BASEURL=&quot;https://example.nextcloud.host/remote.php/webdav&quot;
+ CREDS=&quot;example@user.account:examplePassword&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;skipping-the-boring-bits&quot;&gt;Skipping the boring bits&lt;/h2&gt;
+
+&lt;p&gt;It took me a lot of fiddling to get &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nx_client&lt;/code&gt; to this point - none of which is interesting enough to write about. It’s a nifty little tool I think, way beyond what’s needed for the initial backup use case. Which now is as simple as putting together something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+logger &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;uploading &amp;lt;APP&amp;gt; backup&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;file &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; /path/to/backup/files/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;nx_client.sh &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; /home/user/.nx_client &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$file&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; /Backup/APP/
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Call that from your crontab, and you’ll have a simple pipeline that takes a bunch of files you want off-site and pushes them to a Nextcloud instance.&lt;/p&gt;
+
+&lt;h2 id=&quot;so-whats-with-docspell&quot;&gt;So what’s with docspell?&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nx_client&lt;/code&gt; and backup scripts above work for anthing that’s a file, of course - so what’s with the docspell data (docspell is using &lt;em&gt;postgresql&lt;/em&gt;)? As usual, people have been here before, in this case there is this nice &lt;a href=&quot;https://github.com/prodrigestivill/docker-postgres-backup-local&quot;&gt;dockerized pgbackup-to-local-filesystem&lt;/a&gt; solution, courtesy of &lt;a href=&quot;https://github.com/prodrigestivill&quot;&gt;PauRE&lt;/a&gt;. With that, the backup chain to Nextcloud looks like this:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;dockspell/postgresql&lt;/li&gt;
+  &lt;li&gt;docker-postgres-backup-local&lt;/li&gt;
+  &lt;li&gt;cronjob calling a simple backup script (see previous section)&lt;/li&gt;
+  &lt;li&gt;nx_client for performing the uploads&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Works like a charm - one more dandelion seed taken care of!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Nothing much - the profusion of different styles of statements { and brackets! &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[] [[]] () (())&lt;/code&gt; } in the context of bash &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if&lt;/code&gt; statements is not pretty&lt;/li&gt;
+  &lt;li&gt;Nextcloud rocks, as usual&lt;/li&gt;
+  &lt;li&gt;The most complicated part of all this is: which files to push off-site, how often? (compare with what pgbackup exports)&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">With the recent instantiation of my simple scanning station, there is now another data sink in my home network that wants backup. And in the case of the docspell database, we’re looking at quite relevant data, so a backup definitely is called for. Where backups are concerned I am partial to the dandelion strategy: spread your data around often, and to all kinds of places. One of the locations that I like to use is the Nextcloud instance that is covering all our “Cloud data” needs.</summary></entry><entry><title type="html">Simple Scanning Station</title><link href="https://www.danielkrippner.de/scanningstation" rel="alternate" type="text/html" title="Simple Scanning Station" /><published>2022-02-12T00:00:00-06:00</published><updated>2022-02-12T00:00:00-06:00</updated><id>https://www.danielkrippner.de/scanningstation</id><content type="html" xml:base="https://www.danielkrippner.de/scanningstation">&lt;p&gt;Mostly out of Corona-induced boredom I decided I wanted a document scanning pipeline to get any relevant paperwork into a document management system like doscpell, with as little effort (both cost-wise and from a UX perspective) as possible. So I built a simple and hands-off scanning station with my raspberry home automation system, running on 64bit Ubuntu and with mostly standard packages / components.
 The scanning station works with a Fujitsu S1100 portable scanner, and implements a very simple workflow:&lt;/p&gt;
 
 &lt;ol&gt;
@@ -629,54 +706,4 @@ curl -is -X POST \
   &lt;li&gt;got some more knowledge about using curl&lt;/li&gt;
   &lt;li&gt;much happiness with home assistant! I love that system more each time I add something to it&lt;/li&gt;
   &lt;li&gt;added an image to this post, first time; figured out how to do sizing in jekyll/markdown&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</summary></entry><entry><title type="html">Jekyll build via github Actions</title><link href="https://www.danielkrippner.de/jekyllgithub" rel="alternate" type="text/html" title="Jekyll build via github Actions" /><published>2021-05-01T00:00:00-05:00</published><updated>2021-05-01T00:00:00-05:00</updated><id>https://www.danielkrippner.de/jekyllgithub</id><content type="html" xml:base="https://www.danielkrippner.de/jekyllgithub">&lt;p&gt;Not quite ‘professional’ yet - but, another step. We created a &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/.github/workflows/build_package.yml&quot;&gt;github Actions configuration&lt;/a&gt; that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.&lt;/p&gt;
-
-&lt;p&gt;Why we did this, instead of continuing running the build pipe on our own infrastructure? I’m looking to a way to shut down my notebook right after committing a diary update, and to be able to do that the Cx pipeline would need to run on my homecentral Raspi. So I tried to set that up, and found that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll/jekyll&lt;/code&gt; docker image is only available to x86/amd64 architectures. I followed this finding up with some fooling around with other jekyll-related docker images that are available for arm64, but… nothing that just worked as a drop-in replacement with my setup.
-So it was either re-writing my setup to work with one of the arm64 jekyll images, or re-write my setup directly as a github Actions pipeline (and perhaps set myself up for public hosting on github pages, later).&lt;/p&gt;
-
-&lt;h2 id=&quot;deploying-at-home-still&quot;&gt;Deploying at home, still&lt;/h2&gt;
-
-&lt;p&gt;To complement the new build, I figured out how to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose pull&lt;/code&gt; from there, to get the site image running on homecentral. No huge deal - once I figured out how to create a login token in the github settings menus. The slightly updated docker-compose.yml looks like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&quot;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;jekyll&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker.pkg.github.com/anotherdaniel/messages-env/messages-env:latest&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jekyll&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000:80&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;wget -q --spider http://192.168.0.10:8000 || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1m43s&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Seems to work for now! Only remaining question: how to trigger update on homecentral? Hm…&lt;/p&gt;
-
-&lt;h3 id=&quot;deferred-update-of-docker-container-on-homecentral-raspi&quot;&gt;Deferred update of docker container on homecentral Raspi&lt;/h3&gt;
-
-&lt;p&gt;Ok, this is where things become somewhat awkward, for now. We have a nice github Actions build running, and push our image to the github package registry - but still want to host it on our homecentral Raspi. With auto-updating after we pushed and built new content!
-The way I chose for now involves the git pre-push hook calling an ansible playbook that fire&amp;amp;forgets a script on the Raspi, which waits for a couple of minutes (for the github build to run), then pulls and recreates the nginx/jekyll image. The playbook can be &lt;a href=&quot;https://github.com/AnotherDaniel/messages-env/blob/main/ansible/playbooks/delayedUpgrade.yml&quot;&gt;found here&lt;/a&gt;, and the delayed-upgrade script looks like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-
-&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;120
-&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /home/ubuntu/dockercompose/jekyll
-&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;TOKEN.txt | docker login https://docker.pkg.github.com &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; AnotherDaniel &lt;span class=&quot;nt&quot;&gt;--password-stdin&lt;/span&gt;
-docker-compose pull
-docker-compose up &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--remove-orphans&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Fix jekyll navigation links for our purposes: DONE&lt;/li&gt;
-  &lt;li&gt;Build and update on Raspi? Solution decided on, and DONE (see above)&lt;/li&gt;
-  &lt;li&gt;This is brittle and non-elegant. Probably move to github pages hosting soon.&lt;/li&gt;
-  &lt;li&gt;Created my first git hook script&lt;/li&gt;
-  &lt;li&gt;Learned about ansible - “become” means root, and the working directory of a script exec command is probably user-home (instead of the location of the executed script)&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Not quite ‘professional’ yet - but, another step. We created a github Actions configuration that builds our jekyll site on commit, then packages the nginx container (from arm64) and pushes it to the github package registry.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</summary></entry></feed>
