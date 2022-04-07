@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-02-19T15:52:12-06:00</updated>
+ <updated>2022-04-07T13:59:46-05:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>Migrating a Raspi setup to USB/SATA</title>
+   <link href="https://www.danielkrippner.de/M2-for-raspi"/>
+   <id>https://www.danielkrippner.de/M2-for-raspi</id>
+   <updated>2022-04-07T00:00:00-05:00</updated>
+   <content type="html">&lt;p&gt;My home IT infrastructure currently runs off a single trusty Raspberry Pi 4B - that’s around 30 containerized apps from DNS filter/proxy, Home Assistant et al for home automation, document management system, to printer proxy, vehicle data logger, and more. The Pi is an amazingly good fit for this purpose,...</content>
+ </entry>
 
  
 
@@ -99,16 +109,6 @@
    <id>https://www.danielkrippner.de/sonoffsensor</id>
    <updated>2021-05-30T00:00:00-05:00</updated>
    <content type="html">&lt;p&gt;Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”. During this phase, I came across the excellent &lt;a href=&quot;https://www.hagensieker.com/wordpress/2019/02/18/sonoff-sv-for-garage-door-opener/&quot;&gt;John’s Tech Blog writeup on how to automate garage door openers...</content>
- </entry>
-
- 
-
- <entry>
-   <title>Switch home assistant entity via command-line</title>
-   <link href="https://www.danielkrippner.de/hassapi"/>
-   <id>https://www.danielkrippner.de/hassapi</id>
-   <updated>2021-05-07T00:00:00-05:00</updated>
-   <content type="html">&lt;p&gt;The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able...</content>
  </entry>
 
  

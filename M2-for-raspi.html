@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Migrating a Raspi setup to USB/SATA</title>
+  <meta name="description" content="raspberrypi, linux, M2, usb, sata, ubuntu">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Migrating a Raspi setup to USB/SATA</h2>		
+	<time datetime="2022-04-07T00:00:00-05:00" class="by-line">07 Apr 2022</time>
+	<div class="content">
+
+		<p>My home IT infrastructure currently runs off a single trusty Raspberry Pi 4B - that’s around 30 containerized apps from DNS filter/proxy, Home Assistant et al for home automation, document management system, to printer proxy, vehicle data logger, and more. The Pi is an amazingly good fit for this purpose, especially since I’ve put it into the fantastic <a href="https://www.argon40.com/products/argon-one-v2-case-for-raspberry-pi-4">Argon One case</a> for decent cooling, robustness and visual appeal. It’s been chugging away silently and reliably for some years now, but there were two things that nagged me: disk IO with the SD card is workable but far from snappy, plus the questionable long-term reliability of that SD card.</p>
+
+<p>Turns out there is a solution for that! Argon has introduced a <a href="https://www.argon40.com/products/argon-one-m-2-expansion-board">M.2 disk ‘shelf’</a> that simply replaces&amp;extends the original Argon One case, and connects to one of the Raspi’s USB3 ports! (They probably introduced that quite some time ago, but I only now stumbled across it while trying to purchase their new <a href="https://www.argon40.com/products/argon-eon-pi-nas">Raspi-based NAS case</a>. Enough with the product placement now, though!)</p>
+
+<h2 id="phyiscal-installation---boring">Phyiscal installation - boring</h2>
+
+<p>Ordered the M.2 shelf plus a matching M.2 SATA SSD drive a couple of days back, arrived yesterday. And because I cannot resist tinkering for long, I went ahead and put things together the same day. The physical side of the installation is completely boring, as expected: unscrew original case bottom, place M.2 disk in new shelf, screw back in place, connect USB plug - done. As might have become apparent in the intro, I like Argon 40 products - well designed, good fit, high quality build.</p>
+
+<h2 id="system-migration">System migration</h2>
+
+<p>More interesting than the physical install was moving my entire system from the SD card over to the SSD. Well in actuality it was completely painless and only took 10 minutes - had I confidently known all the really necessary steps from the beginning :-)
+The issue I had was to figure out - from dozens of articles and blog posts, written over the course of the last 1-3 years - which steps were actually really necessary in my setup. Not very many, it turned out - but I definitely took a lot longer than 10 minutes to get there.</p>
+
+<h3 id="context-prerequisites">Context, prerequisites</h3>
+
+<p>Up front the context stuff: my Raspi is running 21.10 Ubuntu 64bit server edition. The Raspi’s bootloader was already updated to the latest version. I’m running some minor modifications to the boot/kernel-related things (see <a href="https://www.danielkrippner.de/dockerdeconz">Deploy Deconz zigbee control software via docker</a>), but nothing that has any impact on disk migration.</p>
+
+<h3 id="raspi-boot-order">Raspi boot order</h3>
+
+<p>The Raspberry Pi 4B can boot from SD card or USB drive - and there is a bootloader option to tell it which to try first. Ultimately this is not really important other than maybe shaving of a little bit of time from your boot process - I set it to try USB first, like this (<a href="https://www.raspberrystreet.com/learn/how-to-boot-raspberrypi-from-usb-ssd">original source</a>):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>rpi-eeprom-config
+
+<span class="c"># Take note of the BOOT_ORDER code. The defualt code is 0xf41 and is read right to left to determine the boot order. </span>
+<span class="c"># 1 = Check SD card</span>
+<span class="c"># 4 = Check USB drive</span>
+<span class="c"># f = Start again</span>
+<span class="c"># This boot order is exactly what we want. If the boot order code is anything other than 0xf41, you can change the boot configuration using this command. </span>
+<span class="nb">sudo</span> <span class="nt">-E</span> rpi-eeprom-config <span class="nt">--edit</span>
+</code></pre></div></div>
+
+<p>Notes:</p>
+
+<ul>
+  <li>the rpi-eeprom-config command comes with the rpi-eeprom package</li>
+  <li>there are other ways to set boot order, e.g. by <a href="https://www.tomshardware.com/how-to/boot-raspberry-pi-4-usb">running a raspian image configured for this purpose</a> - whatever rocks your boat, I guess</li>
+</ul>
+
+<h3 id="disk-cloning">Disk cloning</h3>
+
+<p>This part I expected to be the most daunting - but as usual, someone has been here before and <a href="https://github.com/billw2/rpi-clone">hewn a path</a>. With Bill Wilson’s <code class="language-plaintext highlighter-rouge">rpi-clone</code> script disk cloning is completely anticlimatic - again, especially once you know what you’re doing. In my case the relevant learnings include:</p>
+
+<ul>
+  <li>when cloning to an empty disk, the tool asks for a label for that disk (the big/root partition): if you plan to migrate to that disk, put <code class="language-plaintext highlighter-rouge">writable</code> as the label (more on that in the next section)</li>
+  <li>other than that, none of the more elaborate tool options are required - simply do <code class="language-plaintext highlighter-rouge">sudo rpi-clone sda</code> (sda being the device name of the disk to clone to)</li>
+</ul>
+
+<p>There might have been a couple of questions asked during the process, but nothing surprising or difficult (otherwise I would have remembered).</p>
+
+<h3 id="boot-configuration">Boot configuration</h3>
+
+<p>Now this is where the largest part of my research and trial went - entirely uncalled for in hindsight, as is normal. The key thing I wanted: boot from the new disk, mount all partitions from the new disk, do not use the SD card anymore.
+With the Ubuntu installation I’m using this is a complete no-brainer, as in:</p>
+
+<ul>
+  <li>boot config (<code class="language-plaintext highlighter-rouge">/boot/firmware/cmdline.txt</code>) and mount config (<code class="language-plaintext highlighter-rouge">/etc/fstab</code>) use disk labels</li>
+  <li>the identification label for the main (<code class="language-plaintext highlighter-rouge">/</code>) partition is <code class="language-plaintext highlighter-rouge">writable</code>, the firmare (<code class="language-plaintext highlighter-rouge">/boot/firmware</code>) partition label is <code class="language-plaintext highlighter-rouge">system-boot</code></li>
+</ul>
+
+<p>So the two corresponding partitions created on the cloned SATA disk by <code class="language-plaintext highlighter-rouge">rpi-clone</code> need to be labelled accordingly, and we’re done. The main partition is of type ext4, so to set the label/name to <code class="language-plaintext highlighter-rouge">writable</code> we use the <code class="language-plaintext highlighter-rouge">e2label</code> tool, like this: <code class="language-plaintext highlighter-rouge">sudo e2label /dev/sda2 writable</code>. (If you pay attention during the <code class="language-plaintext highlighter-rouge">rpi-clone</code> process for a fresh disk, you can directly assign that label then.)</p>
+
+<p>The other partition (<code class="language-plaintext highlighter-rouge">/dev/sda1</code>) contains firmware and boot-related stuff, and for some reason is of type vfat. There exists a tool called <code class="language-plaintext highlighter-rouge">mlabel</code> (from the <code class="language-plaintext highlighter-rouge">mtools</code>) package. However, this utility is too much in line with Windows conventions, and only assigns uppercase-letter labels - so whatever you put in, the disk label ends up being <code class="language-plaintext highlighter-rouge">SYSTEM-BOOT</code>. The standard installation (<code class="language-plaintext highlighter-rouge">/etc/fstab</code>) is looking for a lowercase <code class="language-plaintext highlighter-rouge">system-boot</code>, however. So either modify the fstab entry to uppercase letters, or there is another little utility to the rescue: <code class="language-plaintext highlighter-rouge">sudo fatlabel /dev/sda1 system-boot</code> will do what we want and expect.</p>
+
+<p>To get a nice list of the block devices in your system, and their fs-types, mountpoints and <strong>labels</strong>, you can use this command: <code class="language-plaintext highlighter-rouge">sudo blkid -o list</code></p>
+
+<h2 id="thats-it-were-done">That’s it, we’re done</h2>
+
+<p>And this is all - with those changes the raspberry boots entirely off the USB/SATA drive, the SD card is no longer needed! It can still be used though - for example as a fallback option. Because <code class="language-plaintext highlighter-rouge">sudo rpi-clone mmcblk0</code> will now clone the contents of the main drive to the sd card, and thus provide an excellent, build-in safety net for disk failures.</p>
+
+<p>Running on the M.2 disk makes the Raspi feel like a new machine - it feels an order of magnitude more responsive even in simple ssh sessions. For that alone the upgrade is worth it. Of course all the hosted applications benefit from the massive speed increase, especially disk-heavy solutions like docspell.</p>
+
+<p>With regards to reliability there is a lot left to chance (I’ve never had disk problems in my life so far, no matter what technology) - the M.2 disk might fail tomorrow while the SD card soldiers on forever, or the other way around. However the chances should be a lot better with the M.2 version, and having the SD card still in the system as a backup option is a definitive upside.</p>
+
+<p>Side note: while the Argon 40 hardware products are beautiful, their software tools (eg for case fan control) are on the ‘meh’ side (as in, not really working on my vanilla Ubuntu setup). And again someone has fixed that for us and provided a more robust, elegant solution - more than one person, actually. I am running <a href="https://gitlab.com/DarkElvenAngel/argononed">argononed from DarkElvenAngel</a>.</p>
+
+<hr />
+
+<h3 id="waymarks">Waymarks</h3>
+
+<ul>
+  <li>The gen4 Raspi is a very capable platform for running a bunch of home IT concerns - even with the modest 4GB version,</li>
+  <li>… but a USB/SATA disk upgrade <strong>massively</strong> boosts disk IO performance, and is worth it for that alone.</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>

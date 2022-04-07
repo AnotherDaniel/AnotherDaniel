@@ -1,4 +1,86 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-02-19T15:52:12-06:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Nextcloud CLI shell script</title><link href="https://www.danielkrippner.de/nextcloud-cli" rel="alternate" type="text/html" title="Nextcloud CLI shell script" /><published>2022-02-19T00:00:00-06:00</published><updated>2022-02-19T00:00:00-06:00</updated><id>https://www.danielkrippner.de/nextcloud-cli</id><content type="html" xml:base="https://www.danielkrippner.de/nextcloud-cli">&lt;p&gt;With the recent instantiation of my &lt;a href=&quot;https://www.danielkrippner.de/scanningstation&quot;&gt;simple scanning station&lt;/a&gt;, there is now another data sink in my home network that wants backup. And in the case of the docspell database, we’re looking at quite relevant data, so a backup definitely is called for.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-04-07T13:59:46-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I'm doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Migrating a Raspi setup to USB/SATA</title><link href="https://www.danielkrippner.de/M2-for-raspi" rel="alternate" type="text/html" title="Migrating a Raspi setup to USB/SATA" /><published>2022-04-07T00:00:00-05:00</published><updated>2022-04-07T00:00:00-05:00</updated><id>https://www.danielkrippner.de/M2-for-raspi</id><content type="html" xml:base="https://www.danielkrippner.de/M2-for-raspi">&lt;p&gt;My home IT infrastructure currently runs off a single trusty Raspberry Pi 4B - that’s around 30 containerized apps from DNS filter/proxy, Home Assistant et al for home automation, document management system, to printer proxy, vehicle data logger, and more. The Pi is an amazingly good fit for this purpose, especially since I’ve put it into the fantastic &lt;a href=&quot;https://www.argon40.com/products/argon-one-v2-case-for-raspberry-pi-4&quot;&gt;Argon One case&lt;/a&gt; for decent cooling, robustness and visual appeal. It’s been chugging away silently and reliably for some years now, but there were two things that nagged me: disk IO with the SD card is workable but far from snappy, plus the questionable long-term reliability of that SD card.&lt;/p&gt;
+
+&lt;p&gt;Turns out there is a solution for that! Argon has introduced a &lt;a href=&quot;https://www.argon40.com/products/argon-one-m-2-expansion-board&quot;&gt;M.2 disk ‘shelf’&lt;/a&gt; that simply replaces&amp;amp;extends the original Argon One case, and connects to one of the Raspi’s USB3 ports! (They probably introduced that quite some time ago, but I only now stumbled across it while trying to purchase their new &lt;a href=&quot;https://www.argon40.com/products/argon-eon-pi-nas&quot;&gt;Raspi-based NAS case&lt;/a&gt;. Enough with the product placement now, though!)&lt;/p&gt;
+
+&lt;h2 id=&quot;phyiscal-installation---boring&quot;&gt;Phyiscal installation - boring&lt;/h2&gt;
+
+&lt;p&gt;Ordered the M.2 shelf plus a matching M.2 SATA SSD drive a couple of days back, arrived yesterday. And because I cannot resist tinkering for long, I went ahead and put things together the same day. The physical side of the installation is completely boring, as expected: unscrew original case bottom, place M.2 disk in new shelf, screw back in place, connect USB plug - done. As might have become apparent in the intro, I like Argon 40 products - well designed, good fit, high quality build.&lt;/p&gt;
+
+&lt;h2 id=&quot;system-migration&quot;&gt;System migration&lt;/h2&gt;
+
+&lt;p&gt;More interesting than the physical install was moving my entire system from the SD card over to the SSD. Well in actuality it was completely painless and only took 10 minutes - had I confidently known all the really necessary steps from the beginning :-)
+The issue I had was to figure out - from dozens of articles and blog posts, written over the course of the last 1-3 years - which steps were actually really necessary in my setup. Not very many, it turned out - but I definitely took a lot longer than 10 minutes to get there.&lt;/p&gt;
+
+&lt;h3 id=&quot;context-prerequisites&quot;&gt;Context, prerequisites&lt;/h3&gt;
+
+&lt;p&gt;Up front the context stuff: my Raspi is running 21.10 Ubuntu 64bit server edition. The Raspi’s bootloader was already updated to the latest version. I’m running some minor modifications to the boot/kernel-related things (see &lt;a href=&quot;https://www.danielkrippner.de/dockerdeconz&quot;&gt;Deploy Deconz zigbee control software via docker&lt;/a&gt;), but nothing that has any impact on disk migration.&lt;/p&gt;
+
+&lt;h3 id=&quot;raspi-boot-order&quot;&gt;Raspi boot order&lt;/h3&gt;
+
+&lt;p&gt;The Raspberry Pi 4B can boot from SD card or USB drive - and there is a bootloader option to tell it which to try first. Ultimately this is not really important other than maybe shaving of a little bit of time from your boot process - I set it to try USB first, like this (&lt;a href=&quot;https://www.raspberrystreet.com/learn/how-to-boot-raspberrypi-from-usb-ssd&quot;&gt;original source&lt;/a&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;rpi-eeprom-config
+
+&lt;span class=&quot;c&quot;&gt;# Take note of the BOOT_ORDER code. The defualt code is 0xf41 and is read right to left to determine the boot order. &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 1 = Check SD card&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 4 = Check USB drive&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# f = Start again&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# This boot order is exactly what we want. If the boot order code is anything other than 0xf41, you can change the boot configuration using this command. &lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-E&lt;/span&gt; rpi-eeprom-config &lt;span class=&quot;nt&quot;&gt;--edit&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Notes:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the rpi-eeprom-config command comes with the rpi-eeprom package&lt;/li&gt;
+  &lt;li&gt;there are other ways to set boot order, e.g. by &lt;a href=&quot;https://www.tomshardware.com/how-to/boot-raspberry-pi-4-usb&quot;&gt;running a raspian image configured for this purpose&lt;/a&gt; - whatever rocks your boat, I guess&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;disk-cloning&quot;&gt;Disk cloning&lt;/h3&gt;
+
+&lt;p&gt;This part I expected to be the most daunting - but as usual, someone has been here before and &lt;a href=&quot;https://github.com/billw2/rpi-clone&quot;&gt;hewn a path&lt;/a&gt;. With Bill Wilson’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rpi-clone&lt;/code&gt; script disk cloning is completely anticlimatic - again, especially once you know what you’re doing. In my case the relevant learnings include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;when cloning to an empty disk, the tool asks for a label for that disk (the big/root partition): if you plan to migrate to that disk, put &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;writable&lt;/code&gt; as the label (more on that in the next section)&lt;/li&gt;
+  &lt;li&gt;other than that, none of the more elaborate tool options are required - simply do &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo rpi-clone sda&lt;/code&gt; (sda being the device name of the disk to clone to)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There might have been a couple of questions asked during the process, but nothing surprising or difficult (otherwise I would have remembered).&lt;/p&gt;
+
+&lt;h3 id=&quot;boot-configuration&quot;&gt;Boot configuration&lt;/h3&gt;
+
+&lt;p&gt;Now this is where the largest part of my research and trial went - entirely uncalled for in hindsight, as is normal. The key thing I wanted: boot from the new disk, mount all partitions from the new disk, do not use the SD card anymore.
+With the Ubuntu installation I’m using this is a complete no-brainer, as in:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;boot config (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/boot/firmware/cmdline.txt&lt;/code&gt;) and mount config (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/fstab&lt;/code&gt;) use disk labels&lt;/li&gt;
+  &lt;li&gt;the identification label for the main (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/&lt;/code&gt;) partition is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;writable&lt;/code&gt;, the firmare (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/boot/firmware&lt;/code&gt;) partition label is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;system-boot&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So the two corresponding partitions created on the cloned SATA disk by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rpi-clone&lt;/code&gt; need to be labelled accordingly, and we’re done. The main partition is of type ext4, so to set the label/name to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;writable&lt;/code&gt; we use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;e2label&lt;/code&gt; tool, like this: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo e2label /dev/sda2 writable&lt;/code&gt;. (If you pay attention during the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rpi-clone&lt;/code&gt; process for a fresh disk, you can directly assign that label then.)&lt;/p&gt;
+
+&lt;p&gt;The other partition (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;) contains firmware and boot-related stuff, and for some reason is of type vfat. There exists a tool called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mlabel&lt;/code&gt; (from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mtools&lt;/code&gt;) package. However, this utility is too much in line with Windows conventions, and only assigns uppercase-letter labels - so whatever you put in, the disk label ends up being &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SYSTEM-BOOT&lt;/code&gt;. The standard installation (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/fstab&lt;/code&gt;) is looking for a lowercase &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;system-boot&lt;/code&gt;, however. So either modify the fstab entry to uppercase letters, or there is another little utility to the rescue: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo fatlabel /dev/sda1 system-boot&lt;/code&gt; will do what we want and expect.&lt;/p&gt;
+
+&lt;p&gt;To get a nice list of the block devices in your system, and their fs-types, mountpoints and &lt;strong&gt;labels&lt;/strong&gt;, you can use this command: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo blkid -o list&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;thats-it-were-done&quot;&gt;That’s it, we’re done&lt;/h2&gt;
+
+&lt;p&gt;And this is all - with those changes the raspberry boots entirely off the USB/SATA drive, the SD card is no longer needed! It can still be used though - for example as a fallback option. Because &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo rpi-clone mmcblk0&lt;/code&gt; will now clone the contents of the main drive to the sd card, and thus provide an excellent, build-in safety net for disk failures.&lt;/p&gt;
+
+&lt;p&gt;Running on the M.2 disk makes the Raspi feel like a new machine - it feels an order of magnitude more responsive even in simple ssh sessions. For that alone the upgrade is worth it. Of course all the hosted applications benefit from the massive speed increase, especially disk-heavy solutions like docspell.&lt;/p&gt;
+
+&lt;p&gt;With regards to reliability there is a lot left to chance (I’ve never had disk problems in my life so far, no matter what technology) - the M.2 disk might fail tomorrow while the SD card soldiers on forever, or the other way around. However the chances should be a lot better with the M.2 version, and having the SD card still in the system as a backup option is a definitive upside.&lt;/p&gt;
+
+&lt;p&gt;Side note: while the Argon 40 hardware products are beautiful, their software tools (eg for case fan control) are on the ‘meh’ side (as in, not really working on my vanilla Ubuntu setup). And again someone has fixed that for us and provided a more robust, elegant solution - more than one person, actually. I am running &lt;a href=&quot;https://gitlab.com/DarkElvenAngel/argononed&quot;&gt;argononed from DarkElvenAngel&lt;/a&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The gen4 Raspi is a very capable platform for running a bunch of home IT concerns - even with the modest 4GB version,&lt;/li&gt;
+  &lt;li&gt;… but a USB/SATA disk upgrade &lt;strong&gt;massively&lt;/strong&gt; boosts disk IO performance, and is worth it for that alone.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">My home IT infrastructure currently runs off a single trusty Raspberry Pi 4B - that’s around 30 containerized apps from DNS filter/proxy, Home Assistant et al for home automation, document management system, to printer proxy, vehicle data logger, and more. The Pi is an amazingly good fit for this purpose, especially since I’ve put it into the fantastic Argon One case for decent cooling, robustness and visual appeal. It’s been chugging away silently and reliably for some years now, but there were two things that nagged me: disk IO with the SD card is workable but far from snappy, plus the questionable long-term reliability of that SD card.</summary></entry><entry><title type="html">Nextcloud CLI shell script</title><link href="https://www.danielkrippner.de/nextcloud-cli" rel="alternate" type="text/html" title="Nextcloud CLI shell script" /><published>2022-02-19T00:00:00-06:00</published><updated>2022-02-19T00:00:00-06:00</updated><id>https://www.danielkrippner.de/nextcloud-cli</id><content type="html" xml:base="https://www.danielkrippner.de/nextcloud-cli">&lt;p&gt;With the recent instantiation of my &lt;a href=&quot;https://www.danielkrippner.de/scanningstation&quot;&gt;simple scanning station&lt;/a&gt;, there is now another data sink in my home network that wants backup. And in the case of the docspell database, we’re looking at quite relevant data, so a backup definitely is called for.
 Where backups are concerned I am partial to the dandelion strategy: spread your data around often, and to all kinds of places. One of the locations that I like to use is the &lt;a href=&quot;https://nextcloud.com&quot;&gt;Nextcloud&lt;/a&gt; instance that is covering all our “Cloud data” needs.&lt;/p&gt;
 
 &lt;h2 id=&quot;nextcloud-interaction-options&quot;&gt;Nextcloud interaction options&lt;/h2&gt;
@@ -639,71 +721,4 @@ The actual sensor setup is pretty straightforward, mirroring the first as descri
 &lt;ul&gt;
   &lt;li&gt;always verify sensor installation location by observing full movement range of garage doors :-D&lt;/li&gt;
   &lt;li&gt;I should have done this earlier&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”. During this phase, I came across the excellent John’s Tech Blog writeup on how to automate garage door openers using Sonoff SV boards.</summary></entry><entry><title type="html">Switch home assistant entity via command-line</title><link href="https://www.danielkrippner.de/hassapi" rel="alternate" type="text/html" title="Switch home assistant entity via command-line" /><published>2021-05-07T00:00:00-05:00</published><updated>2021-05-07T00:00:00-05:00</updated><id>https://www.danielkrippner.de/hassapi</id><content type="html" xml:base="https://www.danielkrippner.de/hassapi">&lt;p&gt;The last few days we paused on the journey, doing real-world things involving a guitar and some frustration.
-Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;img/RaspiCluster.png&quot; alt=&quot;Stack of Raspberry Pis and a zigbee power switch&quot; width=&quot;60%&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;With that I can switch the cluster with a physical button, or via the web UI of my home assistant installation (or a widget on my smartphone, etc pp). But I was thinking that I’d also like a way to do this switching from the command line of my computer. When the mood takes me, I’m going to be fooling around in a shell anyways, so a shell command would be much more seamless than going via the HA lovelace dashboard!&lt;/p&gt;
-
-&lt;h2 id=&quot;api-first&quot;&gt;API first&lt;/h2&gt;
-
-&lt;p&gt;As there’s an integration for homeassistant for anything and everything, I set out to look for an extension to make device switching available via REST API. Immediately I found documentation for various REST integrations of home assistant, for allowing switching of GPIO pins… or integrating other REST-style APIs as sensors/switches into HA.
-Hm. I must be missing something fundamental.&lt;/p&gt;
-
-&lt;h2 id=&quot;api-the-second&quot;&gt;API, the second&lt;/h2&gt;
-
-&lt;p&gt;And I was! Turns out the functionality I’m looking for is actually built into home assistant, just requires enabling by putting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;api:&lt;/code&gt; as a top-level entry into the HA configuration.yml.&lt;/p&gt;
-
-&lt;p&gt;Restart home assistant and run curl against a test endpoint: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl 192.168.0.x:8123/api/states&lt;/code&gt;, which gets us a ‘not authorized’ response. Good - there’s something there, then.
-The excellent &lt;a href=&quot;https://developers.home-assistant.io/docs/api/rest/&quot;&gt;home assistant documentation&lt;/a&gt; mentions that we need to use an access token for this, so we do what’s necessary - e’voila.&lt;/p&gt;
-
-&lt;h2 id=&quot;making-the-sights-pretty&quot;&gt;Making the sights pretty&lt;/h2&gt;
-
-&lt;p&gt;The home assistant API is up and accessible, so let’s use it. For now I’m only interested in switching one entity’s state - to get started I want three straightforward shell scripts: get state, switch on, switch off&lt;/p&gt;
-
-&lt;p&gt;Home assistant docs give us all we need for this, and I’m going to use curl to perform the http calls. However, the naked curl command is either very verbose (in case of the GET statement), or too silent (for the POST actions) - I want some friendly feedback!&lt;/p&gt;
-
-&lt;h3 id=&quot;get-switch-state&quot;&gt;GET switch state&lt;/h3&gt;
-
-&lt;p&gt;For the GET state case, there is a very nice command line tool to work with json data for filtering, pretty-printing and more: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt;. Which I didn’t know about until today, so that’s a win right there! Using jq, my get-state script looks like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
-curl -s -X GET \
-  -H &quot;Authorization: Bearer `cat api.token`&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  http://192.168.0.10:8123/api/states/switch.power_smartplug_1 \
-  | jq '.state?'
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Quite simple I’d say - after some playing around, I settled on a jq filter that reduces the curl output to just the value of the state property returned by the GET call: if the switch is off, the command will simply give us an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;off&quot;&lt;/code&gt;. Nice, works for me!&lt;/p&gt;
-
-&lt;h3 id=&quot;post-to-change-switch-state&quot;&gt;POST to change switch state&lt;/h3&gt;
-
-&lt;p&gt;When POSTing to the home assistant endpoint to switch power on or off, normally curl will just give us the (empty) body returned by the http request. That is not a lot - I want to see the http response code at least. There are many ways to skin this cat - after playing around with some options the internet offered, I decided to go with this:&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#!/bin/bash
-curl -is -X POST \
-  -H &quot;Authorization: Bearer `cat api.token`&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -d '{&quot;entity_id&quot;: &quot;switch.power_smartplug_1&quot;}' \
-  http://192.168.0.10:8123/api/services/switch/turn_on \
-  | head -n1  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-i&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-s&lt;/code&gt; switches tell curl to show http result information, but be silent otherwise. This will get us five lines of info about the http response - the http status code with a nice String representation (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HTTP/1.1 200 OK&lt;/code&gt;), plus content-type, -length, date etc. That is nice but I’d rather just have the first line (the http status code). This can be done by piping the entire thing through the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;head&lt;/code&gt; command, telling it to just return the first line it’s seeing (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-n1&lt;/code&gt;).&lt;/p&gt;
-
-&lt;h2 id=&quot;settling-down-for-the-day&quot;&gt;Settling down for the day&lt;/h2&gt;
-
-&lt;p&gt;That’s it, actually! We have three simple scripts that get us the cluster status, and can turn it on and off (modifying the POST script above to turn the cluster off is left as an exercise to the reader ;-) ). There might be follow-on ideas in the future, but for now I’m at the end of this little detour.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;main takeaway from today is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jq&lt;/code&gt; tool&lt;/li&gt;
-  &lt;li&gt;got some more knowledge about using curl&lt;/li&gt;
-  &lt;li&gt;much happiness with home assistant! I love that system more each time I add something to it&lt;/li&gt;
-  &lt;li&gt;added an image to this post, first time; figured out how to do sizing in jekyll/markdown&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The last few days we paused on the journey, doing real-world things involving a guitar and some frustration. Tonight, there was an idea I wanted to follow up on: when I cobbled together my Raspi k8s cluster, I grabbed a zigbee power switch I had lying around, to be able to switch the entire cluster on or off easily.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”. During this phase, I came across the excellent John’s Tech Blog writeup on how to automate garage door openers using Sonoff SV boards.</summary></entry></feed>
