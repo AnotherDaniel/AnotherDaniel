@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-04-07T13:59:46-05:00</updated>
+ <updated>2022-05-18T15:48:58-05:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>NAS setup with an Argon EON</title>
+   <link href="https://www.danielkrippner.de/raspi-NAS"/>
+   <id>https://www.danielkrippner.de/raspi-NAS</id>
+   <updated>2022-05-18T00:00:00-05:00</updated>
+   <content type="html">&lt;p&gt;Looks like I am on a kind of ‘Argon run’ this quarter: since I upgraded the &lt;a href=&quot;https://www.danielkrippner.de/M2-for-raspi&quot;&gt;Argon One case to run off an M.2 drive&lt;/a&gt;, due to a stroke of lucky timing I managed to get an &lt;a href=&quot;https://www.argon40.com/products/argon-eon-pi-nas&quot;&gt;Argon Eon NAS case&lt;/a&gt; at a very fair price point -...</content>
+ </entry>
 
  
 
@@ -99,16 +109,6 @@
    <id>https://www.danielkrippner.de/apple</id>
    <updated>2021-11-17T00:00:00-06:00</updated>
    <content type="html">&lt;p&gt;After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recent advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek...</content>
- </entry>
-
- 
-
- <entry>
-   <title>Add a second hall sensor to Sonoff SV Garage Door Opener</title>
-   <link href="https://www.danielkrippner.de/sonoffsensor"/>
-   <id>https://www.danielkrippner.de/sonoffsensor</id>
-   <updated>2021-05-30T00:00:00-05:00</updated>
-   <content type="html">&lt;p&gt;Over a year ago I was in the process of automating things around the house, having recently discovered Raspberry Pi-driven home automation and the associated potential for “fiddling with things”. During this phase, I came across the excellent &lt;a href=&quot;https://www.hagensieker.com/wordpress/2019/02/18/sonoff-sv-for-garage-door-opener/&quot;&gt;John’s Tech Blog writeup on how to automate garage door openers...</content>
  </entry>
 
  

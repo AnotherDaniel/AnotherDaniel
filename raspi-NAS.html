@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>NAS setup with an Argon EON</title>
+  <meta name="description" content="nas, raspberry, raid, linux">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>NAS setup with an Argon EON</h2>		
+	<time datetime="2022-05-18T00:00:00-05:00" class="by-line">18 May 2022</time>
+	<div class="content">
+
+		<p>Looks like I am on a kind of ‘Argon run’ this quarter: since I upgraded the <a href="https://www.danielkrippner.de/M2-for-raspi">Argon One case to run off an M.2 drive</a>, due to a stroke of lucky timing I managed to get an <a href="https://www.argon40.com/products/argon-eon-pi-nas">Argon Eon NAS case</a> at a very fair price point - looking at the recent Shanghai supply situation, I consider myself lucky I got one at all!</p>
+
+<p>I always fancied the idea of running a NAS in my home network, and regularly ogled the Synology products with my finger hovering over the buy-button. What held me back was the need-vs-pricepoint aspect, and the fact that I’d rather build a system from scratch. So that is where the Argon EON case comes in and pushes all the relevant switches - stylish, practical, put a Raspi and some disks in, voila!</p>
+
+<p>My initial use cases are:</p>
+
+<ul>
+  <li>running a timemachine capsule (now that I’m a Mac user!)</li>
+  <li>doing my own backup of nextcloud-hosted data (in addition to the very professional service I’m privileged to be able to use)</li>
+</ul>
+
+<h2 id="the-box">The box</h2>
+
+<p>The Argon Eon is all I expected it to be. It comes in a nice box with professional packaging, and is a robust, solid-feeling affair that is cleverly designed and a joy to look at and handle. The highlight: it includes a seriously fantastic screwdriver! The one thing that I wasn’t aware of pre-buy is that the case only has room for two 3.5” and two 2.5” hard disks - was expecting four 3.5”-sized bays. Not a realistic expectation considering the overall dimensions of the Eon, but I didn’t really think about that up front.</p>
+
+<p>Installing the parts is what I can only describe as immensely satisfying. Sounds silly, but the scredriver that comes with the Eon is pure bliss. The box is very accessible when removing the two (magnet-held) covers, and while getting the raspi 4 board in place with the ports lined up properly takes a few mindful moments, putting everything together is obvious, easy and satisfying. I chose to run the raspberry operating system off a USB(3) drive located on the main-board, to have a clear separation between system and storage concerns.</p>
+
+<h2 id="my-personal-startup-challenges">My personal startup challenges</h2>
+
+<p>This is not something that will necessarily recur for other users - but I did have a really hard time getting the initial Ubuntu system to my desired state. My setup happened right around the time when Ubuntu 22.04 came out - but I initially attempted to install the previous LTS version and upgrade from there, no joy at all. The update process hung endlessly, doing (or not doing) unfathomable things with no feedback about what was going awry. I tried running this from the SD card, the USB drive, no difference. Then after some googling I managed to find the brand-new raspberry image of <a href="https://ubuntu.com/download/raspberry-pi">22.04 server</a>, which worked from the get-go - so a lot of hand-wringing about nothing. In retrospect I am certain that the Raspberry Ubuntu Server image only became available after I had spent a day trying to upgrade the older version, but that might be just me justifying my excitement getting this Raspberry board set up ;-)</p>
+
+<h2 id="raid-setup">RAID setup</h2>
+
+<p>What to do with the disk-bay size options of the Argon Eon? Originally I was thinking along a <a href="https://en.wikipedia.org/wiki/Standard_RAID_levels#RAID_5">raid level 5</a> setup using three disks, with an option to add a fourth later. Not primarily because I need the space, but because raid 5 always felt like the best compromise between disk space overhead and redundancy. After doing some shopping-research around NAS disk drives and seeing that there’s some useful options for 3.5”, but no dedicated ones for 2.5”, I decided to go with a <a href="https://en.wikipedia.org/wiki/Standard_RAID_levels#RAID_1">raid level 1</a> setup with two 3.5” NAS-optimized hard disk drives. In my case I optimized disk selection for energy consumption and price point, settling on two 4TB drives for my initial setup. I can always add one or two 2.5” drives to that cluster and promote it to raid 5 - there are no dedicated NAS options in that size category, but should I need more disk space there at least are ample options for 2.5” spinning metal in the 4TB class.</p>
+
+<p>Once these decisions were made, the drives ordered and delivered, the actual raid setup was anticlimatic. There are myriad guides out there, one of the ones I was looking at is <a href="https://www.ricmedia.com/build-raspberry-pi3-raid-nas-server/">this one</a>. Having a raid 1 partition running, I’m now looing at an Ubuntu 22.04 LTS installation with some personalization options like <a href="https://ohmyz.sh">oh-my-zsh</a>, the raid cluster mounted into the file system, and the usual docker and docker-compose tools that I want for all the productive workloads.</p>
+
+<h2 id="timemachine-capsule-setup">Timemachine capsule setup</h2>
+
+<p>Running a timemachine backup server for MacOS is a very straighforward thing - there exist a number of docker hub images for the task. As always the selection process involves availability of reasonable documentation (indicating aspiration), recent updates (inidicating commitment) and of course availability for the Raspberry target platform. In my case I went with <a href="https://hub.docker.com/r/mbentley/timemachine">mbentley’s timemachine image</a> which ticks all these boxes.
+Getting this running is trivial, based off the following docker-compose file:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.7"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">timemachine</span><span class="pi">:</span>
+    <span class="na">network_mode</span><span class="pi">:</span> <span class="s2">"</span><span class="s">host"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">CUSTOM_SMB_CONF=false</span>
+      <span class="pi">-</span> <span class="s">CUSTOM_USER=false</span>
+      <span class="pi">-</span> <span class="s">DEBUG_LEVEL=1</span>
+      <span class="pi">-</span> <span class="s">EXTERNAL_CONF=</span>
+      <span class="pi">-</span> <span class="s">HIDE_SHARES=no</span>
+      <span class="pi">-</span> <span class="s">MIMIC_MODEL=TimeCapsule8,119</span>
+      <span class="pi">-</span> <span class="s">TM_USERNAME=timemachine</span>
+      <span class="pi">-</span> <span class="s">TM_GROUPNAME=timemachine</span>
+      <span class="pi">-</span> <span class="s">TM_UID=1111</span>
+      <span class="pi">-</span> <span class="s">TM_GID=1111</span>
+      <span class="pi">-</span> <span class="s">PASSWORD=timemachine</span>
+      <span class="pi">-</span> <span class="s">SET_PERMISSIONS=false</span>
+      <span class="pi">-</span> <span class="s">SHARE_NAME=TimeMachine</span>
+      <span class="pi">-</span> <span class="s">SMB_INHERIT_PERMISSIONS=no</span>
+      <span class="pi">-</span> <span class="s">SMB_NFS_ACES=yes</span>
+      <span class="pi">-</span> <span class="s">SMB_METADATA=stream</span>
+      <span class="pi">-</span> <span class="s">SMB_PORT=445</span>
+      <span class="pi">-</span> <span class="s">SMB_VFS_OBJECTS=acl_xattr fruit streams_xattr</span>
+      <span class="pi">-</span> <span class="s">VOLUME_SIZE_LIMIT=0</span>
+      <span class="pi">-</span> <span class="s">WORKGROUP=WORKGROUP</span>
+      <span class="pi">-</span> <span class="s">ADVERTISED_HOSTNAME=nas</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">unless-stopped</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">/mnt/raid1/timemachine:/opt/timemachine</span>
+      <span class="pi">-</span> <span class="s">timemachine-var-lib-samba:/var/lib/samba</span>
+      <span class="pi">-</span> <span class="s">timemachine-var-cache-samba:/var/cache/samba</span>
+      <span class="pi">-</span> <span class="s">timemachine-run-samba:/run/samba</span>
+    <span class="na">ulimits</span><span class="pi">:</span>
+      <span class="na">nofile</span><span class="pi">:</span>
+        <span class="na">soft</span><span class="pi">:</span> <span class="m">65536</span>
+        <span class="na">hard</span><span class="pi">:</span> <span class="m">65536</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">timemachine</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mbentley/timemachine:smb</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">timemachine-var-lib-samba</span><span class="pi">:</span>
+  <span class="na">timemachine-var-cache-samba</span><span class="pi">:</span>
+  <span class="na">timemachine-run-samba</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>Note that my setup includes a user and group on the host machine matching this docker-compose definition, named “timemachine” with uid/guid 1111. Also, evidently, my raid disk is located at <code class="language-plaintext highlighter-rouge">/mnt/raid1/</code>, and the <code class="language-plaintext highlighter-rouge">timemachine/</code> subdirectory is used for storing mbentley/timemachine backups.</p>
+
+<h2 id="first-step-done">First step: done</h2>
+
+<p>This is sufficient to have a <code class="language-plaintext highlighter-rouge">timemachine</code> backup server appear in my Mac timemachine preferences dialog and the Mac happily use it for timemachine backups.
+We will look at backing up nextcloud data in a separate article.</p>
+
+<hr />
+
+<h3 id="waymarks">Waymarks</h3>
+
+<ul>
+  <li>Argon40 have again put together something cool with the Argon Eon NAS case</li>
+  <li>Hosting your own timemachine server is trivial, thanks to the efforts of others</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>
