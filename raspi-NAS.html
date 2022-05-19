@@ -156,6 +156,8 @@
 
 <p>This is not something that will necessarily recur for other users - but I did have a really hard time getting the initial Ubuntu system to my desired state. My setup happened right around the time when Ubuntu 22.04 came out - but I initially attempted to install the previous LTS version and upgrade from there, no joy at all. The update process hung endlessly, doing (or not doing) unfathomable things with no feedback about what was going awry. I tried running this from the SD card, the USB drive, no difference. Then after some googling I managed to find the brand-new raspberry image of <a href="https://ubuntu.com/download/raspberry-pi">22.04 server</a>, which worked from the get-go - so a lot of hand-wringing about nothing. In retrospect I am certain that the Raspberry Ubuntu Server image only became available after I had spent a day trying to upgrade the older version, but that might be just me justifying my excitement getting this Raspberry board set up ;-)</p>
 
+<p>The final snap was when I had the base system up running beautifully off it’s USB drive, had that cloned to a SD card for good measure, and then went and installed the hard disk drives. For reasons I still don’t understand, that completely removed any usb disk devices from the Ubuntu system. The new harddisks didn’t show up, and the USB drive supposed to be the boot device also was gone (with the system happily booting off the SD card I cloned to earlier). Googling et al didn’t help me figure out what went wrong or how to fix this, so I went and reinstalled everything, again. For some reason this time all went well up to and including installation of the spinning disks, at which point I was finally able to go ahead with configuring them into a raid 1 array - see next section.</p>
+
 <h2 id="raid-setup">RAID setup</h2>
 
 <p>What to do with the disk-bay size options of the Argon Eon? Originally I was thinking along a <a href="https://en.wikipedia.org/wiki/Standard_RAID_levels#RAID_5">raid level 5</a> setup using three disks, with an option to add a fourth later. Not primarily because I need the space, but because raid 5 always felt like the best compromise between disk space overhead and redundancy. After doing some shopping-research around NAS disk drives and seeing that there’s some useful options for 3.5”, but no dedicated ones for 2.5”, I decided to go with a <a href="https://en.wikipedia.org/wiki/Standard_RAID_levels#RAID_1">raid level 1</a> setup with two 3.5” NAS-optimized hard disk drives. In my case I optimized disk selection for energy consumption and price point, settling on two 4TB drives for my initial setup. I can always add one or two 2.5” drives to that cluster and promote it to raid 5 - there are no dedicated NAS options in that size category, but should I need more disk space there at least are ample options for 2.5” spinning metal in the 4TB class.</p>
@@ -214,10 +216,14 @@ Getting this running is trivial, based off the following docker-compose file:</p
 
 <p>Note that my setup includes a user and group on the host machine matching this docker-compose definition, named “timemachine” with uid/guid 1111. Also, evidently, my raid disk is located at <code class="language-plaintext highlighter-rouge">/mnt/raid1/</code>, and the <code class="language-plaintext highlighter-rouge">timemachine/</code> subdirectory is used for storing mbentley/timemachine backups.</p>
 
+<h2 id="one-more-thing">One more thing</h2>
+
+<p><a href="https://www.danielkrippner.de/M2-for-raspi">As with the Argon One</a>, I also run a fork of the Argon software on the Eon - done by Jeff Curless who is very <a href="https://forum.argon40.com/t/extending-the-oled-screens/545">supportive and comprehensive</a> with his <a href="https://github.com/JeffCurless/argoneon">improved version of the original Argon code</a>.</p>
+
 <h2 id="first-step-done">First step: done</h2>
 
 <p>This is sufficient to have a <code class="language-plaintext highlighter-rouge">timemachine</code> backup server appear in my Mac timemachine preferences dialog and the Mac happily use it for timemachine backups.
-We will look at backing up nextcloud data in a separate article.</p>
+I will look into my backup scenario for nextcloud data in a separate article.</p>
 
 <hr />
 
