@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-05-19T15:18:11-05:00</updated>
+ <updated>2022-05-20T15:56:17-05:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>Backing up a nextcloud file share via webdav</title>
+   <link href="https://www.danielkrippner.de/nextcloud-backup"/>
+   <id>https://www.danielkrippner.de/nextcloud-backup</id>
+   <updated>2022-05-20T00:00:00-05:00</updated>
+   <content type="html">&lt;p&gt;The first question after having &lt;a href=&quot;https://www.danielkrippner.de/raspi-NAS&quot;&gt;set up a NAS&lt;/a&gt;: what could we use it for? Mine is already running a timemachine server, but that’s barely making a dent in the disk space utilization of the system. Well, the one entity that stores almost all of our pictures, music, documents,...</content>
+ </entry>
 
  
 
@@ -99,16 +109,6 @@
    <id>https://www.danielkrippner.de/mackeyboard</id>
    <updated>2021-11-20T00:00:00-06:00</updated>
    <content type="html">&lt;p&gt;I’m probably going to have a trend in my Apple-related posts, where I’m going from mostly negative as I get used to things to more positive as I’m coming to grips with the system. So let’s get the biggest gripe out of the way first: the keyboard layout. I knew...</content>
- </entry>
-
- 
-
- <entry>
-   <title>Apple Products</title>
-   <link href="https://www.danielkrippner.de/apple"/>
-   <id>https://www.danielkrippner.de/apple</id>
-   <updated>2021-11-17T00:00:00-06:00</updated>
-   <content type="html">&lt;p&gt;After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recent advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek...</content>
  </entry>
 
  

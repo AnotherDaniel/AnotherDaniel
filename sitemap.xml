@@ -65,6 +65,10 @@
 <lastmod>2022-05-18T00:00:00-05:00</lastmod>
 </url>
 <url>
+<loc>https://www.danielkrippner.de/nextcloud-backup</loc>
+<lastmod>2022-05-20T00:00:00-05:00</lastmod>
+</url>
+<url>
 <loc>https://www.danielkrippner.de/404</loc>
 </url>
 <url>
@@ -75,5 +79,8 @@
 </url>
 <url>
 <loc>https://www.danielkrippner.de/page2/</loc>
+</url>
+<url>
+<loc>https://www.danielkrippner.de/page3/</loc>
 </url>
 </urlset>

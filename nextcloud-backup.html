@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Backing up a nextcloud file share via webdav</title>
+  <meta name="description" content="nas, raspberry, nextcloud, webdav, unison">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Backing up a nextcloud file share via webdav</h2>		
+	<time datetime="2022-05-20T00:00:00-05:00" class="by-line">20 May 2022</time>
+	<div class="content">
+
+		<p>The first question after having <a href="https://www.danielkrippner.de/raspi-NAS">set up a NAS</a>: what could we use it for? Mine is already running a timemachine server, but that’s barely making a dent in the disk space utilization of the system. Well, the one entity that stores almost all of our pictures, music, documents, and everything else is a nextcloud instance that is synced across all relevant devices. It has it’s own existing backup strategy, and I excluded it from the Mac’s timemachine scope for that reason - but now that we have our own storage option, why not add a backup path there? One more replica, one more physical location, one more fallback option.</p>
+
+<h2 id="accessing-the-nextcloud-share">Accessing the nextcloud share</h2>
+
+<p>The two obvious options for accessing the nextcloud file share that we are using are the <a href="https://docs.nextcloud.com/desktop/latest/advancedusage.html#nextcloud-command-line-client">nextcloud-cmd client</a>, and the webdav protocol used by nextcloud to enable filesystem-style access. Normally the official nextcloud client would be the preferred option, but there are two major snags in this case:</p>
+
+<ul>
+  <li>the nextcloud client comes with UI support and pulls in 100s of megabytes of related packages that we neither need nor want on the NAS machine</li>
+  <li>as far as I could see, the client offers no option to define a one-way sync (mirroring) setup - but in the context of a backup solution, I definitely do not want any propagation from backup to server</li>
+</ul>
+
+<p>So webdav to the rescue… ? The good part is that there is an option to mount webdav shares directly into the file system via <a href="https://en.wikipedia.org/wiki/Davfs2">davfs2</a> - and when that is possible we can mount the nextcloud share read-only, plus use all kinds of filesystem-based tools for synchronization.</p>
+
+<h2 id="choosing-a-file-synchronizer-tool">Choosing a file synchronizer tool</h2>
+
+<p>The bad part about webdav is that it’s not fast. At all. The nextcloud share in question contains &gt;160 GB of data, distributed across many 10.000s of files. The first synchronization attempt with rsync turned out to be a non-starter, as even comparing existing files took upwards of half a second (per file) in my setup. The usual performance optimization options didn’t do anything to help.
+There are other options for file synchronization, however, for example the venerable <a href="https://www.cis.upenn.edu/~bcpierce/unison/">unison file synchronizer</a>. I’ve been using unison in various contexts over the years, so this is what I tried next. And it did not disappoint! After a looong initial synchronization run, subsequent daily syncs just take a couple of minutes. With that, we have an option to access the nextcloud file share and found a tool that works reasonably well for performing the actual synchronization.</p>
+
+<h2 id="backup-strategy">Backup strategy…</h2>
+
+<p>With the basics in place, the next step is deciding on a backup strategy. Ours is very uninspired:</p>
+
+<ul>
+  <li>I want a daily synchronization from the nextcloud file server to a local copy</li>
+  <li>this daily copy should be mirrored to a weekly copy once every week (duh)</li>
+  <li>this weekly copy gets archived to “long-term storage” tar balls once a month</li>
+</ul>
+
+<p>For the first two activities I will use unison, the third will be handled by good old <code class="language-plaintext highlighter-rouge">tar</code> + compression.</p>
+
+<h2 id="-and-implementation">… and implementation</h2>
+
+<p>The most direct way to implement the desired backup actions would be crond on the NAS host linux system. But that is too simple, right? Also, I am trying to minimize the scope of configuration I’m doing on the host system, to minimize effort involved for future re-creation of these systems.
+So the plan is to use crond inside a minimal docker container, which mounts the source and backup file system folders of the host system. This way, reinstating the backup setup is as simple as cloning the docker build files from github and running <code class="language-plaintext highlighter-rouge">docker-compose up</code>.</p>
+
+<h2 id="the-swearing">The Swearing</h2>
+
+<p>So far so simple - minimal docker base images usually means Alpine Linux, and setting this up with unison, unison profiles and simple crond configuration is a matter of minutes. Or so I thought.
+It turned out that I could do whatever I wanted - the Alpine (busybox) crond implementation didn’t care. It happily accepts my crontab configuration. It starts and runs fine. But it doesn’t move one finger to actually execute what’s defined in the crontab. I tried removing the newfangled <code class="language-plaintext highlighter-rouge">/etc/periodic</code> stuff, tried all kinds of simplistic example configurations, even looked through the busybox crond code a little bit, no joy. But looking through that code gave me the prompt to try the <code class="language-plaintext highlighter-rouge">/etc/periodic</code> approach, which works as it turned out! What the heck…
+So I decided to forgo the option to precisely define the starting time of my backup scripts, and instead use <code class="language-plaintext highlighter-rouge">/etc/periodic</code> - at that point I had already spend three evenings trying to get busybox crond to work and wanted to move on.</p>
+
+<h2 id="the-result">The Result</h2>
+
+<p>The entire backup container project can be found <a href="https://github.com/AnotherDaniel/nxtcldbackup">on github</a>. The upshot is that this docker-compose file allows building of the container image with one <code class="language-plaintext highlighter-rouge">docker-compose build</code> command:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.7'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">nxtcldbackup</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">nxtcld-backup</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">alpine.dockerfile</span>
+    <span class="na">init</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">SOURCE=/mnt/source</span>
+      <span class="pi">-</span> <span class="s">BACKUP=/mnt/backup</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">unison-conf:/root/.unison</span>
+      <span class="pi">-</span> <span class="s">/mnt/nextcloud:/mnt/source</span>
+      <span class="pi">-</span> <span class="s">/mnt/raid1/nextcloud:/mnt/backup</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">unison-conf</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>There is a reason why I chose to handle the unison configuration directory (<code class="language-plaintext highlighter-rouge">/root/.unison</code>) via docker volume: this is the place where unison keeps it’s synchronization data, so it is desirable to keep that directory persistent across container restarts. At the same time, I didn’t want these synchronization status files to pollute my host file system, which is why I decided to go with a docker volume and add the unison profiles at container build time:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">FROM alpine:latest</span>
+
+<span class="s">RUN apk add --update rsync unison &amp;&amp; rm -rf /var/cache/apk/*</span>
+
+<span class="s">COPY entrypoint.sh /entrypoint.sh</span>
+<span class="s">RUN chmod +x /entrypoint.sh</span>
+
+<span class="s">COPY periodic /etc/periodic</span>
+<span class="s">RUN chmod -R +x /etc/periodic</span>
+
+<span class="c1"># This directory holds unison config profiles, but also the unison sync</span>
+<span class="c1"># reports/datasets. To have this work properly (profiles should be there,</span>
+<span class="c1"># but also the sync reports should be persistent across container restarts),</span>
+<span class="c1"># this directory should be done as a volume-mount when running the container.</span>
+<span class="c1"># ATTENTION: to make a rebuild pick up changes here, remove this volume manually!</span>
+<span class="c1">#   docker volume rm nxtcldbackup_unison-conf</span>
+<span class="s">RUN mkdir /root/.unison</span>
+<span class="s">COPY unison/* /root/.unison/</span>
+
+<span class="s">ENTRYPOINT ["/entrypoint.sh"]</span>
+
+<span class="c1"># -f | Foreground</span>
+<span class="s">CMD ["crond", "-f", "-d", "8", "-c", "/etc/crontabs"]</span>
+</code></pre></div></div>
+
+<p>As stated in the comment above, some care needs to be taken when trying to update/change the unison profile configuration on a system where a <code class="language-plaintext highlighter-rouge">unison-conf</code> docker volume already exists: rebuilding the container will not change the files in that volume, so in that case either remove the existing volume with <code class="language-plaintext highlighter-rouge">docker volume rm nxtcldbackup_unison-conf</code>, or copy the profile files into the running container (<code class="language-plaintext highlighter-rouge">docker cp foo.txt container_id:/foo.txt</code>).</p>
+
+<p>The unison profiles and crond scripts are very straightforward, and can be found in the github repository.</p>
+
+<hr />
+
+<h3 id="waymarks">Waymarks</h3>
+
+<ul>
+  <li>I am 66% certain that busybox crond is currently broken, as it steadfastly ignores crontab configuration other than the <code class="language-plaintext highlighter-rouge">/etc/periodic</code> hooks</li>
+  <li>unison is really deserving more attention - it is robust, reliable and fast; the only thing I’m missing is a configuration option to determine storage location for the synchronization database files</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>

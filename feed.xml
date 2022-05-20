@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-05-19T15:18:11-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">NAS setup with an Argon EON</title><link href="https://www.danielkrippner.de/raspi-NAS" rel="alternate" type="text/html" title="NAS setup with an Argon EON" /><published>2022-05-18T00:00:00-05:00</published><updated>2022-05-18T00:00:00-05:00</updated><id>https://www.danielkrippner.de/raspi-NAS</id><content type="html" xml:base="https://www.danielkrippner.de/raspi-NAS">&lt;p&gt;Looks like I am on a kind of ‘Argon run’ this quarter: since I upgraded the &lt;a href=&quot;https://www.danielkrippner.de/M2-for-raspi&quot;&gt;Argon One case to run off an M.2 drive&lt;/a&gt;, due to a stroke of lucky timing I managed to get an &lt;a href=&quot;https://www.argon40.com/products/argon-eon-pi-nas&quot;&gt;Argon Eon NAS case&lt;/a&gt; at a very fair price point - looking at the recent Shanghai supply situation, I consider myself lucky I got one at all!&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-05-20T15:56:17-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Backing up a nextcloud file share via webdav</title><link href="https://www.danielkrippner.de/nextcloud-backup" rel="alternate" type="text/html" title="Backing up a nextcloud file share via webdav" /><published>2022-05-20T00:00:00-05:00</published><updated>2022-05-20T00:00:00-05:00</updated><id>https://www.danielkrippner.de/nextcloud-backup</id><content type="html" xml:base="https://www.danielkrippner.de/nextcloud-backup">&lt;p&gt;The first question after having &lt;a href=&quot;https://www.danielkrippner.de/raspi-NAS&quot;&gt;set up a NAS&lt;/a&gt;: what could we use it for? Mine is already running a timemachine server, but that’s barely making a dent in the disk space utilization of the system. Well, the one entity that stores almost all of our pictures, music, documents, and everything else is a nextcloud instance that is synced across all relevant devices. It has it’s own existing backup strategy, and I excluded it from the Mac’s timemachine scope for that reason - but now that we have our own storage option, why not add a backup path there? One more replica, one more physical location, one more fallback option.&lt;/p&gt;
+
+&lt;h2 id=&quot;accessing-the-nextcloud-share&quot;&gt;Accessing the nextcloud share&lt;/h2&gt;
+
+&lt;p&gt;The two obvious options for accessing the nextcloud file share that we are using are the &lt;a href=&quot;https://docs.nextcloud.com/desktop/latest/advancedusage.html#nextcloud-command-line-client&quot;&gt;nextcloud-cmd client&lt;/a&gt;, and the webdav protocol used by nextcloud to enable filesystem-style access. Normally the official nextcloud client would be the preferred option, but there are two major snags in this case:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the nextcloud client comes with UI support and pulls in 100s of megabytes of related packages that we neither need nor want on the NAS machine&lt;/li&gt;
+  &lt;li&gt;as far as I could see, the client offers no option to define a one-way sync (mirroring) setup - but in the context of a backup solution, I definitely do not want any propagation from backup to server&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So webdav to the rescue… ? The good part is that there is an option to mount webdav shares directly into the file system via &lt;a href=&quot;https://en.wikipedia.org/wiki/Davfs2&quot;&gt;davfs2&lt;/a&gt; - and when that is possible we can mount the nextcloud share read-only, plus use all kinds of filesystem-based tools for synchronization.&lt;/p&gt;
+
+&lt;h2 id=&quot;choosing-a-file-synchronizer-tool&quot;&gt;Choosing a file synchronizer tool&lt;/h2&gt;
+
+&lt;p&gt;The bad part about webdav is that it’s not fast. At all. The nextcloud share in question contains &amp;gt;160 GB of data, distributed across many 10.000s of files. The first synchronization attempt with rsync turned out to be a non-starter, as even comparing existing files took upwards of half a second (per file) in my setup. The usual performance optimization options didn’t do anything to help.
+There are other options for file synchronization, however, for example the venerable &lt;a href=&quot;https://www.cis.upenn.edu/~bcpierce/unison/&quot;&gt;unison file synchronizer&lt;/a&gt;. I’ve been using unison in various contexts over the years, so this is what I tried next. And it did not disappoint! After a looong initial synchronization run, subsequent daily syncs just take a couple of minutes. With that, we have an option to access the nextcloud file share and found a tool that works reasonably well for performing the actual synchronization.&lt;/p&gt;
+
+&lt;h2 id=&quot;backup-strategy&quot;&gt;Backup strategy…&lt;/h2&gt;
+
+&lt;p&gt;With the basics in place, the next step is deciding on a backup strategy. Ours is very uninspired:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I want a daily synchronization from the nextcloud file server to a local copy&lt;/li&gt;
+  &lt;li&gt;this daily copy should be mirrored to a weekly copy once every week (duh)&lt;/li&gt;
+  &lt;li&gt;this weekly copy gets archived to “long-term storage” tar balls once a month&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For the first two activities I will use unison, the third will be handled by good old &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tar&lt;/code&gt; + compression.&lt;/p&gt;
+
+&lt;h2 id=&quot;-and-implementation&quot;&gt;… and implementation&lt;/h2&gt;
+
+&lt;p&gt;The most direct way to implement the desired backup actions would be crond on the NAS host linux system. But that is too simple, right? Also, I am trying to minimize the scope of configuration I’m doing on the host system, to minimize effort involved for future re-creation of these systems.
+So the plan is to use crond inside a minimal docker container, which mounts the source and backup file system folders of the host system. This way, reinstating the backup setup is as simple as cloning the docker build files from github and running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose up&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-swearing&quot;&gt;The Swearing&lt;/h2&gt;
+
+&lt;p&gt;So far so simple - minimal docker base images usually means Alpine Linux, and setting this up with unison, unison profiles and simple crond configuration is a matter of minutes. Or so I thought.
+It turned out that I could do whatever I wanted - the Alpine (busybox) crond implementation didn’t care. It happily accepts my crontab configuration. It starts and runs fine. But it doesn’t move one finger to actually execute what’s defined in the crontab. I tried removing the newfangled &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/periodic&lt;/code&gt; stuff, tried all kinds of simplistic example configurations, even looked through the busybox crond code a little bit, no joy. But looking through that code gave me the prompt to try the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/periodic&lt;/code&gt; approach, which works as it turned out! What the heck…
+So I decided to forgo the option to precisely define the starting time of my backup scripts, and instead use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/periodic&lt;/code&gt; - at that point I had already spend three evenings trying to get busybox crond to work and wanted to move on.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-result&quot;&gt;The Result&lt;/h2&gt;
+
+&lt;p&gt;The entire backup container project can be found &lt;a href=&quot;https://github.com/AnotherDaniel/nxtcldbackup&quot;&gt;on github&lt;/a&gt;. The upshot is that this docker-compose file allows building of the container image with one &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose build&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.7&apos;&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;nxtcldbackup&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nxtcld-backup&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;.&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;dockerfile&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;alpine.dockerfile&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;SOURCE=/mnt/source&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;BACKUP=/mnt/backup&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unison-conf:/root/.unison&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/mnt/nextcloud:/mnt/source&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/mnt/raid1/nextcloud:/mnt/backup&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unison-conf&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There is a reason why I chose to handle the unison configuration directory (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/root/.unison&lt;/code&gt;) via docker volume: this is the place where unison keeps it’s synchronization data, so it is desirable to keep that directory persistent across container restarts. At the same time, I didn’t want these synchronization status files to pollute my host file system, which is why I decided to go with a docker volume and add the unison profiles at container build time:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;FROM alpine:latest&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;RUN apk add --update rsync unison &amp;amp;&amp;amp; rm -rf /var/cache/apk/*&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;COPY entrypoint.sh /entrypoint.sh&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;RUN chmod +x /entrypoint.sh&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;COPY periodic /etc/periodic&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;RUN chmod -R +x /etc/periodic&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# This directory holds unison config profiles, but also the unison sync&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# reports/datasets. To have this work properly (profiles should be there,&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# but also the sync reports should be persistent across container restarts),&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# this directory should be done as a volume-mount when running the container.&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# ATTENTION: to make a rebuild pick up changes here, remove this volume manually!&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#   docker volume rm nxtcldbackup_unison-conf&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;RUN mkdir /root/.unison&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;COPY unison/* /root/.unison/&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;ENTRYPOINT [&quot;/entrypoint.sh&quot;]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# -f | Foreground&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;CMD [&quot;crond&quot;, &quot;-f&quot;, &quot;-d&quot;, &quot;8&quot;, &quot;-c&quot;, &quot;/etc/crontabs&quot;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As stated in the comment above, some care needs to be taken when trying to update/change the unison profile configuration on a system where a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unison-conf&lt;/code&gt; docker volume already exists: rebuilding the container will not change the files in that volume, so in that case either remove the existing volume with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker volume rm nxtcldbackup_unison-conf&lt;/code&gt;, or copy the profile files into the running container (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker cp foo.txt container_id:/foo.txt&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;The unison profiles and crond scripts are very straightforward, and can be found in the github repository.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I am 66% certain that busybox crond is currently broken, as it steadfastly ignores crontab configuration other than the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/periodic&lt;/code&gt; hooks&lt;/li&gt;
+  &lt;li&gt;unison is really deserving more attention - it is robust, reliable and fast; the only thing I’m missing is a configuration option to determine storage location for the synchronization database files&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The first question after having set up a NAS: what could we use it for? Mine is already running a timemachine server, but that’s barely making a dent in the disk space utilization of the system. Well, the one entity that stores almost all of our pictures, music, documents, and everything else is a nextcloud instance that is synced across all relevant devices. It has it’s own existing backup strategy, and I excluded it from the Mac’s timemachine scope for that reason - but now that we have our own storage option, why not add a backup path there? One more replica, one more physical location, one more fallback option.</summary></entry><entry><title type="html">NAS setup with an Argon EON</title><link href="https://www.danielkrippner.de/raspi-NAS" rel="alternate" type="text/html" title="NAS setup with an Argon EON" /><published>2022-05-18T00:00:00-05:00</published><updated>2022-05-18T00:00:00-05:00</updated><id>https://www.danielkrippner.de/raspi-NAS</id><content type="html" xml:base="https://www.danielkrippner.de/raspi-NAS">&lt;p&gt;Looks like I am on a kind of ‘Argon run’ this quarter: since I upgraded the &lt;a href=&quot;https://www.danielkrippner.de/M2-for-raspi&quot;&gt;Argon One case to run off an M.2 drive&lt;/a&gt;, due to a stroke of lucky timing I managed to get an &lt;a href=&quot;https://www.argon40.com/products/argon-eon-pi-nas&quot;&gt;Argon Eon NAS case&lt;/a&gt; at a very fair price point - looking at the recent Shanghai supply situation, I consider myself lucky I got one at all!&lt;/p&gt;
 
 &lt;p&gt;I always fancied the idea of running a NAS in my home network, and regularly ogled the Synology products with my finger hovering over the buy-button. What held me back was the need-vs-pricepoint aspect, and the fact that I’d rather build a system from scratch. So that is where the Argon EON case comes in and pushes all the relevant switches - stylish, practical, put a Raspi and some disks in, voila!&lt;/p&gt;
 
@@ -733,32 +837,4 @@ What is this supposed to achieve, keep the keyboard looking tidier? This is my f
 
 &lt;ul&gt;
   &lt;li&gt;The Apple keyboard layout simply sucks, and to add insult to injury you need cheat sheets to even find stuff!&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">I’m probably going to have a trend in my Apple-related posts, where I’m going from mostly negative as I get used to things to more positive as I’m coming to grips with the system. So let’s get the biggest gripe out of the way first: the keyboard layout. I knew from afar that Apple has it’s own view on what a decent keyboard looks like - and I’m not talking about the touch bar. Ok so everybody’s to have their own special key, we know that. But there is a few things that I was not expecting.</summary></entry><entry><title type="html">Apple Products</title><link href="https://www.danielkrippner.de/apple" rel="alternate" type="text/html" title="Apple Products" /><published>2021-11-17T00:00:00-06:00</published><updated>2021-11-17T00:00:00-06:00</updated><id>https://www.danielkrippner.de/apple</id><content type="html" xml:base="https://www.danielkrippner.de/apple">&lt;p&gt;After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recent advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden myself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple. The ordering process was quite smooth, leading me to a mid-range-of-the-high-end M1 Max with 32Gigs of RAM and the smallest disk option. The rationalization for spending this much money on just two devices is still ongoing…&lt;/p&gt;
-
-&lt;h2 id=&quot;what-is-this-then&quot;&gt;What is this, then?&lt;/h2&gt;
-
-&lt;p&gt;I’ll be writing down the major observations and thoughts as I’m getting used to MacOS and the M1 MacBook - if just for an opportunity to come to grips with the keyboard on this thing.
-As mentioned above, I’ve been using computers for more than a quarter of a century now, starting with MS DOS on a 80286 system that even a current SSD cache controller would regard with pity. Went through various iterations of DOS, worked with Windows 3.x and wondered what the fuss was about, then 95, NT, Vista and so on. Sometimes during the 95 - NT era I was exposed to Linux and the open source way of thinking about software. The first system I really got into was RedHat Linux I believe, not counting a superficial run-in with various Unix flavors at university. After very few months I migrated all of my ‘serious’ computing to Linux systems, and haven’t looked back since. Moved through distros for some years, everything from Mandrake, Debian, and some more esoteric ones until I’ve settled on Ubuntu quite a few years ago.
-What I never touched at all was Apple systems - couldn’t stand the walled-in feeling I got with any of their devices, and was not amused by the preachiness of the fanboys and this obnoxious &lt;em&gt;think differently&lt;/em&gt; attitude (&lt;em&gt;think differently&lt;/em&gt; - from a group of products that couldn’t be more uniform!).&lt;/p&gt;
-
-&lt;h2 id=&quot;so-whats-changed&quot;&gt;So what’s changed?&lt;/h2&gt;
-
-&lt;p&gt;Good question, not entirely sure. It is a combination of things:
--Timing of Apple M1 silicon product announcements in relation to my old devices getting old
--Availability (lack thereof) of relevant AMD Zen3 notebooks
--Even though I’m not using most Google services thanks to Nextcloud, a desire to &lt;a href=&quot;https://digital-rights.github.io/2021/01/24/the-product.html&quot;&gt;stop being the product&lt;/a&gt; regarding the mobile device ecosystem I live in
--A lack of interesting vanilla-Android tablet products
--Fascination with the Apple M1 move. I love bold new stuff…
--A certain expectation wrt UX and inter-device goodness, by getting everything from one source
--Interest in getting into MacOS, seeing how things work there, finally learning that system
--Some expectations for a more polished experience, based on complete vertical integration of the entire product
--Being old enough to finally afford Apple stuff, even though it still hurts somewhat
--… and finally wanting to know what all the fuss is about!&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The unboxing experience with Apple stuff is just plain amazing, the packaging is sexy and feels like it alone is worth a decent share of the product price. That is nice!&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">After spending almost all of my over 25 years long ‘computing life’ with Windows and especially Linux systems, with the recent advent of M1 silicon and in light of the constant superiority complex that Apple users project into their surroundings, I decided it was time to finally take a peek into that particular walled garden myself. So as both my old Pixel phone and Linux notebook were nearing their end-of-useful-life (no more updates / too slow, respectively) I ordered an iPhone 13 and a 16” MacBook the day the M1 machines were announced by Apple. The ordering process was quite smooth, leading me to a mid-range-of-the-high-end M1 Max with 32Gigs of RAM and the smallest disk option. The rationalization for spending this much money on just two devices is still ongoing…</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">I’m probably going to have a trend in my Apple-related posts, where I’m going from mostly negative as I get used to things to more positive as I’m coming to grips with the system. So let’s get the biggest gripe out of the way first: the keyboard layout. I knew from afar that Apple has it’s own view on what a decent keyboard looks like - and I’m not talking about the touch bar. Ok so everybody’s to have their own special key, we know that. But there is a few things that I was not expecting.</summary></entry></feed>
