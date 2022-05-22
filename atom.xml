@@ -4,7 +4,7 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-05-22T15:30:11-05:00</updated>
+ <updated>2022-05-22T15:32:27-05:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
@@ -18,7 +18,7 @@
    <link href="https://www.danielkrippner.de/use-own-registry"/>
    <id>https://www.danielkrippner.de/use-own-registry</id>
    <updated>2022-05-22T00:00:00-05:00</updated>
-   <content type="html">&lt;p&gt;This will be a short update - just to be consistent about where I keep my configuration gimmicks if I ever need to look things up in the future :-) The problem that is solved in this article is the fact that the Docker Hub free tier only allows hosting...</content>
+   <content type="html">&lt;p&gt;This will be a short update - just to be consistent about where I describe my configuration gimmicks if I ever need to look things up in the future :-) The problem that is solved in this article is the fact that the Docker Hub free tier only allows hosting...</content>
  </entry>
 
  

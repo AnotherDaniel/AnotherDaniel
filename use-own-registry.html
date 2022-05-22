@@ -139,7 +139,7 @@
 	<time datetime="2022-05-22T00:00:00-05:00" class="by-line">22 May 2022</time>
 	<div class="content">
 
-		<p>This will be a short update - just to be consistent about where I keep my configuration gimmicks if I ever need to look things up in the future :-)
+		<p>This will be a short update - just to be consistent about where I describe my configuration gimmicks if I ever need to look things up in the future :-)
 The problem that is solved in this article is the fact that the Docker Hub free tier only allows hosting of one container image. As I’m already using this freebie for my <a href="https://www.danielkrippner.de/airprint">Airprint Relay</a> <a href="https://hub.docker.com/repository/docker/agoodcontainer/airprint-relay">image</a>, the recently built <a href="https://www.danielkrippner.de/nextcloud-backup">nextcloud-backup</a> image requires a different solution.</p>
 
 <h2 id="all-has-been-prepared">All has been prepared</h2>
@@ -188,7 +188,7 @@ The problem that is solved in this article is the fact that the Docker Hub free 
   <span class="na">registry-data</span><span class="pi">:</span>
 </code></pre></div></div>
 
-<p>Straightforward - I’m, just adding a second container to give me a lightweight UI for the registry. Really lightweight, but better than nothing! Note that this is running in my private home network, no links into that from the outside, so I’m not bothering with security, certificates, accounts etc.</p>
+<p>Straightforward - I’m just adding a second container to give me a lightweight UI for the registry. Really lightweight, but better than nothing! Note that this is running in my private home network, no links into that from the outside, so I’m not bothering with security, certificates, accounts etc.</p>
 
 <h2 id="using-my-own-registry">Using my own registry</h2>
 
@@ -199,7 +199,7 @@ The push part requires the image in question to be tagged with the URL of our cu
 docker push &lt;host_url&gt;:&lt;port&gt;/&lt;image_name&gt;
 </code></pre></div></div>
 
-<p>Once the image is available on the registry (e.g., check via the UI), it can be pulled via docker-compose (or whatever rocks your boat) - I’m providing a sample configuration for the nextcloud-backup container:</p>
+<p>Once the image is available on the registry (e.g., check via the UI) it can be pulled via docker-compose (or whatever rocks your boat) - I’m providing a sample configuration for the nextcloud-backup container:</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.7'</span>
 
