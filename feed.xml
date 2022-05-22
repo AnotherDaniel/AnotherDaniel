@@ -1,4 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-05-20T15:56:51-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Backing up a nextcloud file share via webdav</title><link href="https://www.danielkrippner.de/nextcloud-backup" rel="alternate" type="text/html" title="Backing up a nextcloud file share via webdav" /><published>2022-05-20T00:00:00-05:00</published><updated>2022-05-20T00:00:00-05:00</updated><id>https://www.danielkrippner.de/nextcloud-backup</id><content type="html" xml:base="https://www.danielkrippner.de/nextcloud-backup">&lt;p&gt;The first question after having &lt;a href=&quot;https://www.danielkrippner.de/raspi-NAS&quot;&gt;set up a NAS&lt;/a&gt;: what could we use it for? Mine is already running a timemachine server, but that’s barely making a dent in the disk space utilization of the system. Well, the one entity that stores almost all of our pictures, music, documents, and everything else is a nextcloud instance that is synced across all relevant devices. It has it’s own existing backup strategy, and I excluded it from the Mac’s timemachine scope for that reason - but now that we have our own storage option, why not add a backup path there? One more replica, one more physical location, one more fallback option.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-05-22T15:30:11-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Using my own container registry</title><link href="https://www.danielkrippner.de/use-own-registry" rel="alternate" type="text/html" title="Using my own container registry" /><published>2022-05-22T00:00:00-05:00</published><updated>2022-05-22T00:00:00-05:00</updated><id>https://www.danielkrippner.de/use-own-registry</id><content type="html" xml:base="https://www.danielkrippner.de/use-own-registry">&lt;p&gt;This will be a short update - just to be consistent about where I keep my configuration gimmicks if I ever need to look things up in the future :-)
+The problem that is solved in this article is the fact that the Docker Hub free tier only allows hosting of one container image. As I’m already using this freebie for my &lt;a href=&quot;https://www.danielkrippner.de/airprint&quot;&gt;Airprint Relay&lt;/a&gt; &lt;a href=&quot;https://hub.docker.com/repository/docker/agoodcontainer/airprint-relay&quot;&gt;image&lt;/a&gt;, the recently built &lt;a href=&quot;https://www.danielkrippner.de/nextcloud-backup&quot;&gt;nextcloud-backup&lt;/a&gt; image requires a different solution.&lt;/p&gt;
+
+&lt;h2 id=&quot;all-has-been-prepared&quot;&gt;All has been prepared&lt;/h2&gt;
+
+&lt;p&gt;If you don’t want to pay for a service, you host your own - which is what I set up many months ago when I came across Docker Hub’s own &lt;a href=&quot;https://hub.docker.com/_/registry&quot;&gt;registry container image&lt;/a&gt;. This is the docker-compose file I use:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3&apos;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;registry&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry:2&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;5000:5000&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry-data:/var/lib/registry&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;networks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry-ui-net&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;healthcheck&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;wget -q --spider http://localhost:5000 &amp;amp;&amp;gt;/dev/null || exit &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;0m43s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10s&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;retries&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;ui&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry_ui&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;joxit/docker-registry-ui:latest&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;5080:80&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;SINGLE_REGISTRY=true&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;REGISTRY_TITLE=Homecentral Docker Registry&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;NGINX_PROXY_PASS_URL=http://registry:5000&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;restart&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unless-stopped&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;networks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;registry-ui-net&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;networks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;registry-ui-net&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;registry-data&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Straightforward - I’m, just adding a second container to give me a lightweight UI for the registry. Really lightweight, but better than nothing! Note that this is running in my private home network, no links into that from the outside, so I’m not bothering with security, certificates, accounts etc.&lt;/p&gt;
+
+&lt;h2 id=&quot;using-my-own-registry&quot;&gt;Using my own registry&lt;/h2&gt;
+
+&lt;p&gt;Using a custom container registry is also straightforward - there are two aspects to this: push an image to the registry, and pull from the registry when starting a container.
+The push part requires the image in question to be tagged with the URL of our custom registry, then that tagged image needs to be pushed. This is for scenarios where e.g. an image was built locally, then we push it to our custom registry to make it available in our network:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker tag &amp;lt;image_name&amp;gt; &amp;lt;host_url&amp;gt;:&amp;lt;port&amp;gt;/&amp;lt;image_name&amp;gt;
+docker push &amp;lt;host_url&amp;gt;:&amp;lt;port&amp;gt;/&amp;lt;image_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once the image is available on the registry (e.g., check via the UI), it can be pulled via docker-compose (or whatever rocks your boat) - I’m providing a sample configuration for the nextcloud-backup container:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.7&apos;&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;nxtcldbackup&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;lt;host_url&amp;gt;:&amp;lt;port&amp;gt;/&amp;lt;image_name&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;container_name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nxtcld-backup&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;unison-conf:/root/.unison&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/mnt/nextcloud:/mnt/source&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/mnt/raid1/nextcloud:/mnt/backup&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unison-conf&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it - this way we push a container image to our custom registry, and docker-compose will pull it from there when running the container.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Nothing really. No surprises this week.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">This will be a short update - just to be consistent about where I keep my configuration gimmicks if I ever need to look things up in the future :-) The problem that is solved in this article is the fact that the Docker Hub free tier only allows hosting of one container image. As I’m already using this freebie for my Airprint Relay image, the recently built nextcloud-backup image requires a different solution.</summary></entry><entry><title type="html">Backing up a nextcloud file share via webdav</title><link href="https://www.danielkrippner.de/nextcloud-backup" rel="alternate" type="text/html" title="Backing up a nextcloud file share via webdav" /><published>2022-05-20T00:00:00-05:00</published><updated>2022-05-20T00:00:00-05:00</updated><id>https://www.danielkrippner.de/nextcloud-backup</id><content type="html" xml:base="https://www.danielkrippner.de/nextcloud-backup">&lt;p&gt;The first question after having &lt;a href=&quot;https://www.danielkrippner.de/raspi-NAS&quot;&gt;set up a NAS&lt;/a&gt;: what could we use it for? Mine is already running a timemachine server, but that’s barely making a dent in the disk space utilization of the system. Well, the one entity that stores almost all of our pictures, music, documents, and everything else is a nextcloud instance that is synced across all relevant devices. It has it’s own existing backup strategy, and I excluded it from the Mac’s timemachine scope for that reason - but now that we have our own storage option, why not add a backup path there? One more replica, one more physical location, one more fallback option.&lt;/p&gt;
 
 &lt;h2 id=&quot;accessing-the-nextcloud-share&quot;&gt;Accessing the nextcloud share&lt;/h2&gt;
 
@@ -812,29 +898,4 @@ Think differently, indeed.&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;The MacOS App Switcher is conceptually kaputt, by showing stuff that does not do anything at all for the user.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).</summary></entry><entry><title type="html">Mac Keyboard</title><link href="https://www.danielkrippner.de/mackeyboard" rel="alternate" type="text/html" title="Mac Keyboard" /><published>2021-11-20T00:00:00-06:00</published><updated>2021-11-20T00:00:00-06:00</updated><id>https://www.danielkrippner.de/mackeyboard</id><content type="html" xml:base="https://www.danielkrippner.de/mackeyboard">&lt;p&gt;I’m probably going to have a trend in my Apple-related posts, where I’m going from mostly negative as I get used to things to more positive as I’m coming to grips with the system. So let’s get the biggest gripe out of the way first: the keyboard layout. I knew from afar that Apple has it’s own view on what a decent keyboard looks like - and I’m not talking about the touch bar. Ok so everybody’s to have their own special key, we know that. But there is a few things that I was not expecting.&lt;/p&gt;
-
-&lt;h2 id=&quot;missing-keys&quot;&gt;Missing keys&lt;/h2&gt;
-
-&lt;p&gt;I am completely dependent on basic navigation keys for moving around in documents, code, web pages etc - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PageUp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PageDown&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Home&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;End&lt;/code&gt; (let’s not even mention the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Delete&lt;/code&gt; key). And ordering a 16” laptop I didn’t even think of the possibility that these keys might simply not be there. Ok, as this is Apple we’re talking about, these keys probable are nonexistent on any of their hardware. But why? Is this a design thing where “we can’t have too many keys, people would get confused!”?
-The issue synergistically combines with these aggravating half-size cursor keys - because if you have to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Function&lt;/code&gt;-cursor key combinations to substitute, then let’s make this workaround as fiddly as we possibly can? Looking at lists of keyboard shortcuts in MacOS, I get the impressions that the keyboard is actually a first-level citizen for interacting with the system. But for (cursor) navigation, you better bring small fingers and large amounts of patience.
-This leads to the next item in my list:&lt;/p&gt;
-
-&lt;h2 id=&quot;modifier-madness&quot;&gt;Modifier madness&lt;/h2&gt;
-
-&lt;p&gt;On a standard PC keyboard we’ve got &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Shift&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Alt&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Control&lt;/code&gt; keys as often-used modifiers. Sometimes, seldomly, there’s that Windows key, which is not really that useful these days. So that is 3 relevant modifier keys.
-On the Mac we have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Shift&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Function&lt;/code&gt; (needed because of missing basic navigation keys, see above), &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Control&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Option&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Command&lt;/code&gt;. That is 5 relevant modifier keys. Which are continually needed in various combinations for moving cursor, selecting text, moving between Desktops, switching application tabs, etc. Remembering and trial-erroring my way through this combinatorial jungle is not fun, and I’m not doing anything more than I used to on a Linux/Gnome system at this point. I mean I wanted to learn new stuff and don’t mind getting more dexterity on the small fingers of my left hand. But considering that by simply adding 4-5 fundamental keys &lt;strong&gt;that everyone else has as a matter of course&lt;/strong&gt;, this wouldn’t even be worth mentioning - this feels like needless complexity.&lt;/p&gt;
-
-&lt;h2 id=&quot;and-why-the-heck-cant-we-just-know-what-a-key-does&quot;&gt;And why the heck can’t we just know what a key does?!&lt;/h2&gt;
-
-&lt;p&gt;Because constantly juggling 5-modifier-key-combos is not sufficient fun, there is an added twist to a Mac keyboard: all the special symbols that go beyond a very simplistic base set are there - somewhere. A Mac is a Unix system - but curly/angled brackets, pipe, tilde, backslash etc are simply not ‘mentioned’ anywhere on this keyboard. Things that are needed all the time in a terminal.
-Of course they’re not in the same locations as everybody else’s keyboard, that would have been too easy. So I’m having to look this up in search engines, just to be able to interact with the shell and write code.
-What is this supposed to achieve, keep the keyboard looking tidier? This is my first exposure to the hallowed Apple User Experience on one of their top-range products, and I am actually pissed.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The Apple keyboard layout simply sucks, and to add insult to injury you need cheat sheets to even find stuff!&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">I’m probably going to have a trend in my Apple-related posts, where I’m going from mostly negative as I get used to things to more positive as I’m coming to grips with the system. So let’s get the biggest gripe out of the way first: the keyboard layout. I knew from afar that Apple has it’s own view on what a decent keyboard looks like - and I’m not talking about the touch bar. Ok so everybody’s to have their own special key, we know that. But there is a few things that I was not expecting.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).</summary></entry></feed>
