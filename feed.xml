@@ -1,4 +1,142 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2022-05-22T15:32:27-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Using my own container registry</title><link href="https://www.danielkrippner.de/use-own-registry" rel="alternate" type="text/html" title="Using my own container registry" /><published>2022-05-22T00:00:00-05:00</published><updated>2022-05-22T00:00:00-05:00</updated><id>https://www.danielkrippner.de/use-own-registry</id><content type="html" xml:base="https://www.danielkrippner.de/use-own-registry">&lt;p&gt;This will be a short update - just to be consistent about where I describe my configuration gimmicks if I ever need to look things up in the future :-)
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2023-08-01T14:15:35-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Home Assistant integration for SMA PV system</title><link href="https://www.danielkrippner.de/sma-integration-in-ha" rel="alternate" type="text/html" title="Home Assistant integration for SMA PV system" /><published>2023-07-31T00:00:00-05:00</published><updated>2023-07-31T00:00:00-05:00</updated><id>https://www.danielkrippner.de/sma-integration-in-ha</id><content type="html" xml:base="https://www.danielkrippner.de/sma-integration-in-ha">&lt;p&gt;Earlier this year I’ve finally had a photovoltaic system installed in/on our house, and while three months later we still aren’t allowed to turn it on thanks to German bureaucracy, it does provide another playground for home automation integration. This should be easy, right? Our installation uses components from a major German supplier (SMA), there are HomeAssistant integrations for that.&lt;/p&gt;
+
+&lt;p&gt;Well.&lt;/p&gt;
+
+&lt;p&gt;Turns out that the inverter in our setup is of a new model line (SMA Tripower X), which isn’t supported by the official HomeAssistant integration. And while there exist individual data collection tools that can deal with this unit by scraping the parameter status information from it’s built-in web UI, and others that offer an architecture I liked, there was nothing out there combining the required device support, aesthetics and deployment options that I wanted.&lt;/p&gt;
+
+&lt;h2 id=&quot;enter-smahub&quot;&gt;Enter smahub&lt;/h2&gt;
+
+&lt;p&gt;Combining the above situation with a long-standing desire to “do something with Python” and use all of this to check out the utility of LLMs as swiss-army-knifes of programming helpers, I decided to roll my own SMA data aggregator/forwarder. The result is &lt;a href=&quot;https://github.com/AnotherDaniel/smahub&quot;&gt;smahub&lt;/a&gt;, which is a relatively straightforward combination of a central async-protected dictionary with a set of data source and data sink plugins.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;         +-------------+
+         |    SMAHub   |
+         +------+------+
+                |
+   +------------+-------------+
+   |                          |
+   v                          v    +--------+                +--------+    | Source |                |  Sink  |    +--------+                +--------+    | Plugin |                | Plugin |    +--------+                +--------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Essentially, smahub will spawn any configured source plugins, and these will begin to collect or snoop data from SMA devices. Any data points collected by these plugins are published into the central dictionary, which in turn is feeding sink plugins that (regularly or on-change) publish these data points to external consumers, e.g. publish to a MQTT broker.
+For details, please look at the project README, plus the README files of the plugins that you are interested in. The code is open source and constructive criticism (aka pull requests) is welcome!&lt;/p&gt;
+
+&lt;p&gt;All of the actual SMA device data ingest was taken from existing projects - shout-out and kudos to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Sven (littleyoda) - &lt;a href=&quot;https://github.com/littleyoda/Home-Assistant-Tripower-X-MQTT&quot;&gt;Home-Assistant-Tripower-X-MQTT&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Wenger Florian (datenschuft) - &lt;a href=&quot;https://github.com/datenschuft/SMA-EM&quot;&gt;SMA-EM&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Currently, smahub supports a set of core plugins/SMA devices:&lt;/p&gt;
+
+&lt;h3 id=&quot;tripower-x-inverters&quot;&gt;Tripower X inverters&lt;/h3&gt;
+
+&lt;p&gt;These devices do offer a reduced modbus interface, which is not utilized by a smahub plugin at the moment as modbus data can be consumed by HomeAssistant directly.&lt;/p&gt;
+
+&lt;p&gt;Another way to extract live data from the inverter is via its web interface; this is how Sven did it in Home-Assistant-Tripower-X-MQTT, and that is the approach I adopted for the TripowerX source plugin. Essentially, the plugin logs into the inverter web interface and will then periodically get the live-data parameter page, extracting all data points contained there. This usually works nicely, and provides a wealth of operational data that is not accessible otherwise. However, it can happen that the inverter refuses the login after too many attempts (excessive testing sessions…), making this channel somewhat erratic.&lt;/p&gt;
+
+&lt;h3 id=&quot;sunny-home-manager-20-electric-meters&quot;&gt;Sunny Home Manager 2.0 electric meters&lt;/h3&gt;
+
+&lt;p&gt;The other SMA device that is part of my setup is the Sunny Home Manager 2.0 (SHM2), which sits in the between the house mains and all connected consumers and suppliers in our house and measures how much electricity goes which way. SHM2 does not offer any interactive interface whatsoever, instead it periodically sends IP multicast messages (which miraculously also reach the SMA web portal to feed the manufacturer statistics and apps - anyone who knows why/how this works on network level, I’d be interested to learn) according to a SMA protocol called Speedwire. Luckily I did not have to get involved in the details of how to decode any of that, thanks to datenschufts SMA-EM project which has been there before. So I adopted Florians code into the smahub SHM2 plugin, which reads and decodes these periodic messages.&lt;/p&gt;
+
+&lt;h3 id=&quot;mqtt-sink&quot;&gt;mqtt sink&lt;/h3&gt;
+
+&lt;p&gt;The first data sink plugin I wrote was a very simple and straightforward MQTT publisher for the core smahub data dictionary. Essentially this either periodically and/or on-change writes datum/value pairs to MQTT topics, this can be complemented by a set of MQTT sensor configurations for HomeAssistant to make these items consumable there with decent names, unit definitions etc. - for more details on this, refer to the project and mqtt plugin docs, also including the gen_ha_sensors plugin if you want to auto-generate HomeAssistant config records yourself.&lt;/p&gt;
+
+&lt;h3 id=&quot;ha_mqtt-sink&quot;&gt;ha_mqtt sink&lt;/h3&gt;
+
+&lt;p&gt;Becaus semi-manually creating and maintaining HomeAssistant sensor configurations for all the data points collected by smahub is quite a chore, this plugin uses another Python library (ha_mqtt_discoverable) that automatically publishes all information to MQTT that HomeAssistant needs to perform auto-discovery and -configuration of MQTT sensor data. This works beautifully and seamlessly, and is the preferred option for HomeAssistant publication. One caveat is that the ha_mqtt_discoverable library does not offer an option to use non-standard MQTT broker ports, so if you need that you have to take a look at the mqtt sink plugin.&lt;/p&gt;
+
+&lt;h2 id=&quot;ha-integration&quot;&gt;HA integration&lt;/h2&gt;
+
+&lt;p&gt;With the ha_mqtt sink plugin, integration of smahub data into HomeAssistant is trivial - configure and start smahub, and things magically appear in HA’s MQTT integration. The HA Energy dashboard essentially needs three values to be useful:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Grid consumption: assign &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Power Consumption Counter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Return to grid: assign &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Power Supply Counter&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Solar production: assign &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Power&lt;/code&gt; (sensor.power)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;However! It does happen that the inverter rejects smahubs attempts to login and scrape the http parameter page, this happens in my case after excessive testing sessions where the device rejects further logins. This somewhat erratic behavior runs counter to my desire to have this part of my home data infrastructure be hassle-free and solid, which is why I decided on another way to get Tripower X data into HomeAssistant.&lt;/p&gt;
+
+&lt;h2 id=&quot;modbus-after-all&quot;&gt;Modbus after all&lt;/h2&gt;
+
+&lt;p&gt;This other way is to enable modbus on the inverter (via the device network configuration section), and directly snoop the modbus messages into HomeAssistant via the integrated modbus extension. The extension is included in HA by default, but does require manual sensor configuration via &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;configuration.yaml&lt;/code&gt;. I am including the modbus section below, this should only require putting in your device IP address to work:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;modbus&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;SMA&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;tcp&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;lt;INVERTER IP&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;502&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;sensors&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sma_power_ac_raw&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state_class&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;measurement&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;unit_of_measurement&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;W&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;slave&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30775&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;uint32&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;scan_interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sma_power_ac_l1_raw&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;unit_of_measurement&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;W&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state_class&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;measurement&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;slave&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30777&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;int32&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;scan_interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sma_power_ac_l2_raw&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;unit_of_measurement&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;W&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state_class&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;measurement&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;slave&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30779&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;int32&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;scan_interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sma_power_ac_l3_raw&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;unit_of_measurement&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;W&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state_class&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;measurement&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;slave&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30781&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;int32&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;scan_interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sma_power_total_production&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;unit_of_measurement&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Wh&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state_class&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;total_increasing&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;device_class&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;energy&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;slave&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30513&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;scan_interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;int64&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sma_status&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;slave&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30201&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;scan_interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;int32&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;sensor&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;sma_power_ac&quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;&amp;gt;-&lt;/span&gt;
+              
+                
+              
+        &lt;span class=&quot;s&quot;&gt;unit_of_measurement: &quot;W&quot;&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;state_class: measurement&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This configuration gives you a sensor called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sma_power_total_production&lt;/code&gt;, which can be used instead of sensor.Power (see above) for getting information about PV-generation. Either way, smahub or modbus - this should set you with a working HomeAssistant Energy dashboard.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;This would have been a very well-matched project for trialing Elixir, another todo on my list; however I wanted to painlessly reuse the SMA decoding code from the above mentioned projects, as well as offer a path of least resistance for anyone to complement and improve smahub in the future.&lt;/li&gt;
+  &lt;li&gt;I think some minor fixes still needed - more robustness for the http scraper in the smahub TripowerX plugin, maybe a unit dimension conversion here or there…&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">Earlier this year I’ve finally had a photovoltaic system installed in/on our house, and while three months later we still aren’t allowed to turn it on thanks to German bureaucracy, it does provide another playground for home automation integration. This should be easy, right? Our installation uses components from a major German supplier (SMA), there are HomeAssistant integrations for that.</summary></entry><entry><title type="html">Using my own container registry</title><link href="https://www.danielkrippner.de/use-own-registry" rel="alternate" type="text/html" title="Using my own container registry" /><published>2022-05-22T00:00:00-05:00</published><updated>2022-05-22T00:00:00-05:00</updated><id>https://www.danielkrippner.de/use-own-registry</id><content type="html" xml:base="https://www.danielkrippner.de/use-own-registry">&lt;p&gt;This will be a short update - just to be consistent about where I describe my configuration gimmicks if I ever need to look things up in the future :-)
 The problem that is solved in this article is the fact that the Docker Hub free tier only allows hosting of one container image. As I’m already using this freebie for my &lt;a href=&quot;https://www.danielkrippner.de/airprint&quot;&gt;Airprint Relay&lt;/a&gt; &lt;a href=&quot;https://hub.docker.com/repository/docker/agoodcontainer/airprint-relay&quot;&gt;image&lt;/a&gt;, the recently built &lt;a href=&quot;https://www.danielkrippner.de/nextcloud-backup&quot;&gt;nextcloud-backup&lt;/a&gt; image requires a different solution.&lt;/p&gt;
 
 &lt;h2 id=&quot;all-has-been-prepared&quot;&gt;All has been prepared&lt;/h2&gt;
@@ -879,23 +1017,4 @@ And: almost everything costs money, especially via the App Store(s). With an unh
 
 &lt;ul&gt;
   &lt;li&gt;Not entirely surprising, I’m getting used to Apple. It certainly still is intriguing enough to keep playing and learning.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the keyboard layout, and the Application Switcher. Since then I’ve been playing with the system, getting used to things. This is an update and comment on some of the things I’ve been thinking.</summary></entry><entry><title type="html">MacOS Application Switcher</title><link href="https://www.danielkrippner.de/appswitcher" rel="alternate" type="text/html" title="MacOS Application Switcher" /><published>2021-11-21T00:00:00-06:00</published><updated>2021-11-21T00:00:00-06:00</updated><id>https://www.danielkrippner.de/appswitcher</id><content type="html" xml:base="https://www.danielkrippner.de/appswitcher">&lt;p&gt;The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).&lt;/p&gt;
-
-&lt;h2 id=&quot;minimizing-hiding-obscuring&quot;&gt;Minimizing, Hiding, Obscuring&lt;/h2&gt;
-
-&lt;p&gt;The core of my issue with the App Switcher boils down to: ‘why the heck does it cycle through application icons that have no action associated with them?’ Which, with some searching, gets me to ‘who thought of this hiding vs minimizing concept, and what were they thinking??’.&lt;/p&gt;
-
-&lt;p&gt;So I can minimize windows, which is a first-level UI function there’s that little yellow button at the top-left of app windows, after all. Minimized windows/apps show up in the icon list of the App Switcher - but selecting them does not do anything. At all.
-Then, windows can be minimized - this is not a first-level feature, but requires a keyboard shortcut. Hidden windows also show up in the app switcher, and if I select them they pop up again.
-What I could have gotten is minimized things being really minimized, not cluttering the switcher - and then ok, if hiding is a thing for people, let’s have that too. But getting back to the core issue: why does the switcher show me stuff (cluttering up the icon list) that I cannot do anything with?
-This is actually the worst UI design idea that I’ve come across in many years.
-There are two concepts here that do a similar thing from the user’s point of view, behave completely differently, and are making a very core UI concept (app switcher) mostly useless in the process.
-Think differently, indeed.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;waymarks&quot;&gt;Waymarks&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The MacOS App Switcher is conceptually kaputt, by showing stuff that does not do anything at all for the user.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><summary type="html">It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the keyboard layout, and the Application Switcher. Since then I’ve been playing with the system, getting used to things. This is an update and comment on some of the things I’ve been thinking.</summary></entry></feed>

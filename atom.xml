@@ -4,12 +4,22 @@
  <title>messages from ENV</title>
  <link href="https://www.danielkrippner.de/atom.xml" rel="self"/>
  <id>https://www.danielkrippner.de</id>
- <updated>2022-05-22T15:32:27-05:00</updated>
+ <updated>2023-08-01T14:15:35-05:00</updated>
  <author>
    <name>Daniel Krippner</name>
    <uri>https://www.danielkrippner.de</uri>
    <email>dk.mailbox@gmx.net</email>
  </author>
+
+ 
+
+ <entry>
+   <title>Home Assistant integration for SMA PV system</title>
+   <link href="https://www.danielkrippner.de/sma-integration-in-ha"/>
+   <id>https://www.danielkrippner.de/sma-integration-in-ha</id>
+   <updated>2023-07-31T00:00:00-05:00</updated>
+   <content type="html">&lt;p&gt;Earlier this year I’ve finally had a photovoltaic system installed in/on our house, and while three months later we still aren’t allowed to turn it on thanks to German bureaucracy, it does provide another playground for home automation integration. This should be easy, right? Our installation uses components from a...</content>
+ </entry>
 
  
 
@@ -99,16 +109,6 @@
    <id>https://www.danielkrippner.de/after-two-weeks</id>
    <updated>2021-11-29T00:00:00-06:00</updated>
    <content type="html">&lt;p&gt;It’s been two weeks now since I started to grow my Apple garden - one of the M1 MacBooks, a current iPhone, and recently a M1 iPad to complement my core device needs. The major rants I just had to get off my chest were about the &lt;a href=&quot;https://www.danielkrippner.de/mackeyboard&quot;&gt;keyboard layout&lt;/a&gt;,...</content>
- </entry>
-
- 
-
- <entry>
-   <title>MacOS Application Switcher</title>
-   <link href="https://www.danielkrippner.de/appswitcher"/>
-   <id>https://www.danielkrippner.de/appswitcher</id>
-   <updated>2021-11-21T00:00:00-06:00</updated>
-   <content type="html">&lt;p&gt;The MacOS application switcher is my second-biggest gripe after the keyboard layout. I am getting better with remembering which modifier keys to press when, as expected. So let’s get to the second thing that will probably pale with routine: the Application Switcher (the thing you get when pressing command-Tab).&lt;/p&gt; &lt;h2...</content>
  </entry>
 
  

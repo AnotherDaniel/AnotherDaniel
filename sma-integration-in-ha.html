@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Home Assistant integration for SMA PV system</title>
+  <meta name="description" content="homeassistant, home automation, python, SMA, photovoltaic">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+	  	
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="//">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+    
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+        <a href="https://www.danielkrippner.de/">
+        <!-- <a href="https://www.danielkrippner.de/"> -->
+        <h1>
+          <span>messages from </span>ENV
+        </h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/AnotherDaniel?tab=repositories">My projects on Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+		  
+		<main>
+
+			<article id="post-page">
+	<h2>Home Assistant integration for SMA PV system</h2>		
+	<time datetime="2023-07-31T00:00:00-05:00" class="by-line">31 Jul 2023</time>
+	<div class="content">
+
+		<p>Earlier this year I’ve finally had a photovoltaic system installed in/on our house, and while three months later we still aren’t allowed to turn it on thanks to German bureaucracy, it does provide another playground for home automation integration. This should be easy, right? Our installation uses components from a major German supplier (SMA), there are HomeAssistant integrations for that.</p>
+
+<p>Well.</p>
+
+<p>Turns out that the inverter in our setup is of a new model line (SMA Tripower X), which isn’t supported by the official HomeAssistant integration. And while there exist individual data collection tools that can deal with this unit by scraping the parameter status information from it’s built-in web UI, and others that offer an architecture I liked, there was nothing out there combining the required device support, aesthetics and deployment options that I wanted.</p>
+
+<h2 id="enter-smahub">Enter smahub</h2>
+
+<p>Combining the above situation with a long-standing desire to “do something with Python” and use all of this to check out the utility of LLMs as swiss-army-knifes of programming helpers, I decided to roll my own SMA data aggregator/forwarder. The result is <a href="https://github.com/AnotherDaniel/smahub">smahub</a>, which is a relatively straightforward combination of a central async-protected dictionary with a set of data source and data sink plugins.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         +-------------+
+         |    SMAHub   |
+         +------+------+
+                |
+   +------------+-------------+
+   |                          |
+   v                          v    +--------+                +--------+    | Source |                |  Sink  |    +--------+                +--------+    | Plugin |                | Plugin |    +--------+                +--------+
+</code></pre></div></div>
+
+<p>Essentially, smahub will spawn any configured source plugins, and these will begin to collect or snoop data from SMA devices. Any data points collected by these plugins are published into the central dictionary, which in turn is feeding sink plugins that (regularly or on-change) publish these data points to external consumers, e.g. publish to a MQTT broker.
+For details, please look at the project README, plus the README files of the plugins that you are interested in. The code is open source and constructive criticism (aka pull requests) is welcome!</p>
+
+<p>All of the actual SMA device data ingest was taken from existing projects - shout-out and kudos to:</p>
+
+<ul>
+  <li>Sven (littleyoda) - <a href="https://github.com/littleyoda/Home-Assistant-Tripower-X-MQTT">Home-Assistant-Tripower-X-MQTT</a></li>
+  <li>Wenger Florian (datenschuft) - <a href="https://github.com/datenschuft/SMA-EM">SMA-EM</a></li>
+</ul>
+
+<p>Currently, smahub supports a set of core plugins/SMA devices:</p>
+
+<h3 id="tripower-x-inverters">Tripower X inverters</h3>
+
+<p>These devices do offer a reduced modbus interface, which is not utilized by a smahub plugin at the moment as modbus data can be consumed by HomeAssistant directly.</p>
+
+<p>Another way to extract live data from the inverter is via its web interface; this is how Sven did it in Home-Assistant-Tripower-X-MQTT, and that is the approach I adopted for the TripowerX source plugin. Essentially, the plugin logs into the inverter web interface and will then periodically get the live-data parameter page, extracting all data points contained there. This usually works nicely, and provides a wealth of operational data that is not accessible otherwise. However, it can happen that the inverter refuses the login after too many attempts (excessive testing sessions…), making this channel somewhat erratic.</p>
+
+<h3 id="sunny-home-manager-20-electric-meters">Sunny Home Manager 2.0 electric meters</h3>
+
+<p>The other SMA device that is part of my setup is the Sunny Home Manager 2.0 (SHM2), which sits in the between the house mains and all connected consumers and suppliers in our house and measures how much electricity goes which way. SHM2 does not offer any interactive interface whatsoever, instead it periodically sends IP multicast messages (which miraculously also reach the SMA web portal to feed the manufacturer statistics and apps - anyone who knows why/how this works on network level, I’d be interested to learn) according to a SMA protocol called Speedwire. Luckily I did not have to get involved in the details of how to decode any of that, thanks to datenschufts SMA-EM project which has been there before. So I adopted Florians code into the smahub SHM2 plugin, which reads and decodes these periodic messages.</p>
+
+<h3 id="mqtt-sink">mqtt sink</h3>
+
+<p>The first data sink plugin I wrote was a very simple and straightforward MQTT publisher for the core smahub data dictionary. Essentially this either periodically and/or on-change writes datum/value pairs to MQTT topics, this can be complemented by a set of MQTT sensor configurations for HomeAssistant to make these items consumable there with decent names, unit definitions etc. - for more details on this, refer to the project and mqtt plugin docs, also including the gen_ha_sensors plugin if you want to auto-generate HomeAssistant config records yourself.</p>
+
+<h3 id="ha_mqtt-sink">ha_mqtt sink</h3>
+
+<p>Becaus semi-manually creating and maintaining HomeAssistant sensor configurations for all the data points collected by smahub is quite a chore, this plugin uses another Python library (ha_mqtt_discoverable) that automatically publishes all information to MQTT that HomeAssistant needs to perform auto-discovery and -configuration of MQTT sensor data. This works beautifully and seamlessly, and is the preferred option for HomeAssistant publication. One caveat is that the ha_mqtt_discoverable library does not offer an option to use non-standard MQTT broker ports, so if you need that you have to take a look at the mqtt sink plugin.</p>
+
+<h2 id="ha-integration">HA integration</h2>
+
+<p>With the ha_mqtt sink plugin, integration of smahub data into HomeAssistant is trivial - configure and start smahub, and things magically appear in HA’s MQTT integration. The HA Energy dashboard essentially needs three values to be useful:</p>
+
+<ul>
+  <li>Grid consumption: assign <code class="language-plaintext highlighter-rouge">Power Consumption Counter</code></li>
+  <li>Return to grid: assign <code class="language-plaintext highlighter-rouge">Power Supply Counter</code></li>
+  <li>Solar production: assign <code class="language-plaintext highlighter-rouge">Power</code> (sensor.power)</li>
+</ul>
+
+<p>However! It does happen that the inverter rejects smahubs attempts to login and scrape the http parameter page, this happens in my case after excessive testing sessions where the device rejects further logins. This somewhat erratic behavior runs counter to my desire to have this part of my home data infrastructure be hassle-free and solid, which is why I decided on another way to get Tripower X data into HomeAssistant.</p>
+
+<h2 id="modbus-after-all">Modbus after all</h2>
+
+<p>This other way is to enable modbus on the inverter (via the device network configuration section), and directly snoop the modbus messages into HomeAssistant via the integrated modbus extension. The extension is included in HA by default, but does require manual sensor configuration via <code class="language-plaintext highlighter-rouge">configuration.yaml</code>. I am including the modbus section below, this should only require putting in your device IP address to work:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">modbus</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">SMA</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">tcp</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">&lt;INVERTER IP&gt;</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">502</span>
+    <span class="na">sensors</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">sma_power_ac_raw</span>
+        <span class="na">state_class</span><span class="pi">:</span> <span class="s">measurement</span>
+        <span class="na">unit_of_measurement</span><span class="pi">:</span> <span class="s">W</span>
+        <span class="na">slave</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="m">30775</span>
+        <span class="na">count</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">data_type</span><span class="pi">:</span> <span class="s">uint32</span>
+        <span class="na">scan_interval</span><span class="pi">:</span> <span class="m">15</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">sma_power_ac_l1_raw</span>
+        <span class="na">unit_of_measurement</span><span class="pi">:</span> <span class="s">W</span>
+        <span class="na">state_class</span><span class="pi">:</span> <span class="s">measurement</span>
+        <span class="na">slave</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="m">30777</span>
+        <span class="na">count</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">data_type</span><span class="pi">:</span> <span class="s">int32</span>
+        <span class="na">scan_interval</span><span class="pi">:</span> <span class="m">15</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">sma_power_ac_l2_raw</span>
+        <span class="na">unit_of_measurement</span><span class="pi">:</span> <span class="s">W</span>
+        <span class="na">state_class</span><span class="pi">:</span> <span class="s">measurement</span>
+        <span class="na">slave</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">count</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="m">30779</span>
+        <span class="na">data_type</span><span class="pi">:</span> <span class="s">int32</span>
+        <span class="na">scan_interval</span><span class="pi">:</span> <span class="m">15</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">sma_power_ac_l3_raw</span>
+        <span class="na">unit_of_measurement</span><span class="pi">:</span> <span class="s">W</span>
+        <span class="na">state_class</span><span class="pi">:</span> <span class="s">measurement</span>
+        <span class="na">slave</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">count</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="m">30781</span>
+        <span class="na">data_type</span><span class="pi">:</span> <span class="s">int32</span>
+        <span class="na">scan_interval</span><span class="pi">:</span> <span class="m">15</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">sma_power_total_production</span>
+        <span class="na">unit_of_measurement</span><span class="pi">:</span> <span class="s">Wh</span>
+        <span class="na">state_class</span><span class="pi">:</span> <span class="s">total_increasing</span>
+        <span class="na">device_class</span><span class="pi">:</span> <span class="s">energy</span>
+        <span class="na">slave</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="m">30513</span>
+        <span class="na">scan_interval</span><span class="pi">:</span> <span class="m">15</span>
+        <span class="na">data_type</span><span class="pi">:</span> <span class="s">int64</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">sma_status</span>
+        <span class="na">slave</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="m">30201</span>
+        <span class="na">scan_interval</span><span class="pi">:</span> <span class="m">15</span>
+        <span class="na">count</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">data_type</span><span class="pi">:</span> <span class="s">int32</span>
+
+<span class="na">template</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">sensor</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">sma_power_ac"</span>
+        <span class="na">state</span><span class="pi">:</span> <span class="pi">&gt;-</span>
+              
+                
+              
+        <span class="s">unit_of_measurement: "W"</span>
+        <span class="s">state_class: measurement</span>
+</code></pre></div></div>
+
+<p>This configuration gives you a sensor called <code class="language-plaintext highlighter-rouge">sma_power_total_production</code>, which can be used instead of sensor.Power (see above) for getting information about PV-generation. Either way, smahub or modbus - this should set you with a working HomeAssistant Energy dashboard.</p>
+
+<hr />
+
+<h3 id="waymarks">Waymarks</h3>
+
+<ul>
+  <li>This would have been a very well-matched project for trialing Elixir, another todo on my list; however I wanted to painlessly reuse the SMA decoding code from the above mentioned projects, as well as offer a path of least resistance for anyone to complement and improve smahub in the future.</li>
+  <li>I think some minor fixes still needed - more robustness for the http scraper in the smahub TripowerX plugin, maybe a unit dimension conversion here or there…</li>
+</ul>
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+		
+		  <!-- Pagination links -->
+      
+
+	  </div>
+    <div class="clear"></div>
+	    <!-- Footer -->
+	    <footer><span>@2021 - messages from ENV</span></footer>
+
+
+	    <!-- Script -->
+      <script src="/js/main.js"></script>	
+
+
+	</div>
+</body>
+</html>
