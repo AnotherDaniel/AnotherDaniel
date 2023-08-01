@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2023-08-01T14:20:11-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Home Assistant integration for SMA PV system</title><link href="https://www.danielkrippner.de/sma-integration-in-ha" rel="alternate" type="text/html" title="Home Assistant integration for SMA PV system" /><published>2023-07-31T00:00:00-05:00</published><updated>2023-07-31T00:00:00-05:00</updated><id>https://www.danielkrippner.de/sma-integration-in-ha</id><content type="html" xml:base="https://www.danielkrippner.de/sma-integration-in-ha">&lt;p&gt;Earlier this year I’ve finally had a photovoltaic system installed in/on our house, and while three months later we still aren’t allowed to turn it on thanks to German bureaucracy, it does provide another playground for home automation integration. This should be easy, right? Our installation uses components from a major German supplier (SMA), there are HomeAssistant integrations for that.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://www.danielkrippner.de/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.danielkrippner.de/" rel="alternate" type="text/html" /><updated>2023-08-01T14:36:19-05:00</updated><id>https://www.danielkrippner.de/feed.xml</id><title type="html">messages from ENV</title><subtitle>Musings, thoughts, documentation about things that I&apos;m doing to amuse myself</subtitle><author><name>Daniel Krippner</name><email>dk.mailbox@gmx.net</email></author><entry><title type="html">Home Assistant integration for SMA PV system</title><link href="https://www.danielkrippner.de/sma-integration-in-ha" rel="alternate" type="text/html" title="Home Assistant integration for SMA PV system" /><published>2023-07-31T00:00:00-05:00</published><updated>2023-07-31T00:00:00-05:00</updated><id>https://www.danielkrippner.de/sma-integration-in-ha</id><content type="html" xml:base="https://www.danielkrippner.de/sma-integration-in-ha">&lt;p&gt;Earlier this year I’ve finally had a photovoltaic system installed in/on our house, and while three months later we still aren’t allowed to turn it on thanks to German bureaucracy, it does provide another playground for home automation integration. This should be easy, right? Our installation uses components from a major German supplier (SMA), there are HomeAssistant integrations for that.&lt;/p&gt;
 
 &lt;p&gt;Well.&lt;/p&gt;
 
@@ -8,14 +8,22 @@
 
 &lt;p&gt;Combining the above situation with a long-standing desire to “do something with Python” and use all of this to check out the utility of LLMs as swiss-army-knifes of programming helpers, I decided to roll my own SMA data aggregator/forwarder. The result is &lt;a href=&quot;https://github.com/AnotherDaniel/smahub&quot;&gt;smahub&lt;/a&gt;, which is a relatively straightforward combination of a central async-protected dictionary with a set of data source and data sink plugins.&lt;/p&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;         +-------------+
-         |    SMAHub   |
-         +------+------+
-                |
-   +------------+-------------+
-   |                          |
-   v                          v      +--------+                +--------+    | Source |                |  Sink  |    +--------+                +--------+    | Plugin |                | Plugin |    +--------+                +--------+
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Sources:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;demo: a minimal, hello-world style demo source plugin for anyone who wants to create their own&lt;/li&gt;
+  &lt;li&gt;SHM2: reads and decodes Sunny Home Manager 2.0 datagrams (see below)&lt;/li&gt;
+  &lt;li&gt;TripowerX: reads and decodes Tripower X inverter parameters via web-UI (see below)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Sinks:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;demo: a minimal, hello-world style demo source plugin for anyone who wants to create their own&lt;/li&gt;
+  &lt;li&gt;gen_ha_sensors: can be used to generate home assistant style sensor configuration blocks from smahub data&lt;/li&gt;
+  &lt;li&gt;ha_mqtt: MQTT publisher that utilizes home assistant MQTT sensor auto-discovery and -configuration features&lt;/li&gt;
+  &lt;li&gt;mqtt: MQTT publisher&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;Essentially, smahub will spawn any configured source plugins, and these will begin to collect or snoop data from SMA devices. Any data points collected by these plugins are published into the central dictionary, which in turn is feeding sink plugins that (regularly or on-change) publish these data points to external consumers, e.g. publish to a MQTT broker.
 For details, please look at the project README, plus the README files of the plugins that you are interested in. The code is open source and constructive criticism (aka pull requests) is welcome!&lt;/p&gt;
@@ -46,6 +54,10 @@ For details, please look at the project README, plus the README files of the plu
 &lt;h3 id=&quot;ha_mqtt-sink&quot;&gt;ha_mqtt sink&lt;/h3&gt;
 
 &lt;p&gt;Becaus semi-manually creating and maintaining HomeAssistant sensor configurations for all the data points collected by smahub is quite a chore, this plugin uses another Python library (ha_mqtt_discoverable) that automatically publishes all information to MQTT that HomeAssistant needs to perform auto-discovery and -configuration of MQTT sensor data. This works beautifully and seamlessly, and is the preferred option for HomeAssistant publication. One caveat is that the ha_mqtt_discoverable library does not offer an option to use non-standard MQTT broker ports, so if you need that you have to take a look at the mqtt sink plugin.&lt;/p&gt;
+
+&lt;h2 id=&quot;running-smahub&quot;&gt;Running smahub&lt;/h2&gt;
+
+&lt;p&gt;Details on options and configuration can be found in the &lt;a href=&quot;https://github.com/AnotherDaniel/smahub/blob/main/README.md&quot;&gt;project README&lt;/a&gt;. In essence, smahub can be run both as a native Python application, and inside a docker container. Containers are also &lt;a href=&quot;https://github.com/AnotherDaniel/smahub/pkgs/container/smahub&quot;&gt;available on the GitHub Package registry&lt;/a&gt;, both for intel and arm architectures. Again, refer to the project README for pointers how to run and configure the containerized version - this is the recommended way to operate smahub.&lt;/p&gt;
 
 &lt;h2 id=&quot;ha-integration&quot;&gt;HA integration&lt;/h2&gt;
 
