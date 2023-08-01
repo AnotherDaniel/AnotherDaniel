@@ -155,7 +155,7 @@
                 |
    +------------+-------------+
    |                          |
-   v                          v    +--------+                +--------+    | Source |                |  Sink  |    +--------+                +--------+    | Plugin |                | Plugin |    +--------+                +--------+
+   v                          v      +--------+                +--------+    | Source |                |  Sink  |    +--------+                +--------+    | Plugin |                | Plugin |    +--------+                +--------+
 </code></pre></div></div>
 
 <p>Essentially, smahub will spawn any configured source plugins, and these will begin to collect or snoop data from SMA devices. Any data points collected by these plugins are published into the central dictionary, which in turn is feeding sink plugins that (regularly or on-change) publish these data points to external consumers, e.g. publish to a MQTT broker.
